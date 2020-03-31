@@ -116,3 +116,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Train, Test and Valid dataset
+data/*
+
