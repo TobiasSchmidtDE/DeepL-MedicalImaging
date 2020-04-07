@@ -2,7 +2,7 @@
 .idea/
 
 # exclude dataset
-datasets/dev_dataset/*
+src/datasets/dev_dataset/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
