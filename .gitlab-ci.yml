@@ -1,0 +1,28 @@
+image: python:3.7
+
+stages:
+  - install_dependencies
+  - lint
+  - test
+
+
+install_dependencies:
+  stage: install_dependencies
+  script: pip install -r requirements.txt --quiet
+
+lint:
+  stage: lint
+  script: 
+    - pip install pylint --quiet
+    - pylint *.py
+
+test: 
+  stage: test
+  script: 
+    - pip install pytest --quiet
+    - pytest
+
+
+
+
+  
