@@ -1,6 +1,9 @@
 #pycharm
 .idea/
 
+# vscode
+.vscode/
+
 # exclude dataset
 src/datasets/dev_dataset/
 
