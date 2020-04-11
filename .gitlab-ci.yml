@@ -14,7 +14,7 @@ lint:
   stage: lint
   script: 
     - pip install pylint --quiet
-    - pylint *.py
+    - pylint **/*.py
 
 test: 
   stage: test

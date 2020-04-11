@@ -1,4 +1,5 @@
-# This file will be run in the docker container
+"""This file will be run when deploying the docker container"""
+
 import os.path
 import sys
 
