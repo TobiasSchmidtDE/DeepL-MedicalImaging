@@ -21,8 +21,3 @@ test:
   script: 
     - pip install pytest --quiet
     - pytest
-
-
-
-
-  
