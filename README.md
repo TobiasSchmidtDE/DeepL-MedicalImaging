@@ -10,7 +10,7 @@
 
 1. Clone this repository
 
-2. Insall [https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/)
+2. Install [Docker](https://docs.docker.com/engine/install/ubuntu/)
 
 3. Build the Docker image using `docker build --tag idp-radio .`
 
