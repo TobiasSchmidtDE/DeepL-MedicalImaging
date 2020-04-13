@@ -1,24 +1,23 @@
-FROM python:3.7-stretch
+FROM tensorflow/tensorflow:latest-gpu-py3
 LABEL version="1.0"
 
 # update system
-RUN apt-get update && apt-get upgrade
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install wget
 
 # check our python environment
 RUN python3 --version
 RUN pip3 --version
 
-# set the working directory for containers
+# set the working directory for container
 WORKDIR  /srv/idp-radio-1
 
 # Installing python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy all the files from the project’s root to the working directory
-COPY src/ src/
-RUN ls -la src/*
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Download the dataset
 COPY download_dataset.sh .
 RUN bash download_dataset.sh
+
+CMD ["/bin/bash"]
