@@ -26,11 +26,15 @@ class Scaler:
             raise NotImplementedError()
         return out
 
-    @deprecated(version='1.0.0', reason="Not as efficient in np.array handling, use scikit image implementation instead")
+    @deprecated(
+        version='1.0.0',
+        reason='Not as efficient in np.array handling, use scikit image implementation instead'
+    )
     def cv2_interpolate(self, interpolation, path):
         img = cv2.imread(path)
         if interpolation == 'NEAREST':
-            out = cv2.resize(img, self.outsize, interpolation=cv2.INTER_NEAREST)
+            out = cv2.resize(img, self.outsize,
+                             interpolation=cv2.INTER_NEAREST)
         elif interpolation == 'LINEAR':
             out = cv2.resize(img, self.outsize, interpolation=cv2.INTER_LINEAR)
         elif interpolation == 'CUBIC':
