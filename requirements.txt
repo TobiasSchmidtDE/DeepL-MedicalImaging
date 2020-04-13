@@ -3,5 +3,5 @@ pandas
 numpy
 keras
 tensorflow
-skimage
+scikit-image
 cv2
