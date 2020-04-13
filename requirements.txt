@@ -3,3 +3,5 @@ pandas
 numpy
 keras
 tensorflow
+skimage
+cv2

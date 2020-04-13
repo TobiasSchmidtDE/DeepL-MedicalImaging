@@ -1,6 +1,5 @@
 from skimage.transform import resize
 import cv2
-import matplotlib.image as mpimg
 from deprecated import deprecated
 
 
