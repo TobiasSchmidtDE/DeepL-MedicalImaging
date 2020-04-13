@@ -3,3 +3,5 @@ pandas
 numpy
 keras
 tensorflow
+scikit-image
+opencv-python
