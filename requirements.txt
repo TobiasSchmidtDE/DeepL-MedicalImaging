@@ -2,6 +2,7 @@ matplotlib
 pandas
 numpy
 keras
+scipy==1.4.1
 tensorflow
 scikit-image
 opencv-python
