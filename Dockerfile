@@ -3,12 +3,11 @@ LABEL version="1.0"
 
 # update system
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install wget
+RUN apt-get install -y wget libsm6 libxext6 libxrender-dev
 
 # check our python environment
 RUN python3 --version
 RUN pip3 --version
-
 # set the working directory for container
 WORKDIR  /srv/idp-radio-1
 

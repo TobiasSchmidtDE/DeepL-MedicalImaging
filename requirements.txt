@@ -7,3 +7,4 @@ tensorflow
 scikit-image
 opencv-python
 deprecated
+jupyter
