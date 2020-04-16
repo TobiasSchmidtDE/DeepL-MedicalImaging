@@ -16,8 +16,8 @@ WORKDIR  /srv/idp-radio-1
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Download the dataset
-COPY download_dataset.sh .
-RUN bash download_dataset.sh
+# Download the dataset. Skipped for now, as we download the directory onto the server before starting the container.
+# COPY download_dataset.sh .
+# RUN bash download_dataset.sh
 
 CMD ["/bin/bash"]
