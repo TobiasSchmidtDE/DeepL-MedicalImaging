@@ -9,6 +9,9 @@ import tensorflow as tf
 gpus = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
 tf.config.experimental.set_memory_growth(gpus[1], True)
+config = tf.ConfigProto()
+config.gpu_options.per_process_gpu_memory_fraction = 0.9
+keras.backend.tensorflow_backend.set_session(tf.Session(config=config))
 
 dataset_folder = "../../../data/dev_dataset/"
 chexpert_folder = dataset_folder + "CheXpert-v1.0-small/"
