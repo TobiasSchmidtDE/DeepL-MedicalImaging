@@ -4,6 +4,10 @@ import os
 import pandas as pd
 import numpy as np
 from skimage.transform import resize
+import tensorflow as tf
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(gpus[0], True)
 
 dataset_folder = "../../../data/dev_dataset/"
 chexpert_folder = dataset_folder + "CheXpert-v1.0-small/"
