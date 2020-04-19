@@ -6,6 +6,20 @@ import numpy as np
 from keras.datasets import cifar10
 from skimage.transform import resize
 
+from keras.datasets import fashion_mnist
+
+(x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
+x_train_new = []
+x_test_new = []
+
+for sample in x_train:
+    scaled = resize(image=sample, output_shape=(224, 224), order=1)
+    x_train_new.append(np.stack((scaled, scaled, scaled), axis=2))
+
+for sample in x_test:
+    scaled = resize(image=sample, output_shape=(224, 224), order=1)
+    x_test_new.append(np.stack((scaled, scaled, scaled), axis=2))
+
 dataset_folder = "../../../data/dev_dataset/"
 chexpert_folder = dataset_folder + "CheXpert-v1.0-small/"
 
@@ -48,14 +62,13 @@ model.compile(optimizer=keras.optimizers.RMSprop(),
 # y_valid = np.array(y_valid)
 # x_valid = np.array(x_valid)
 
-(x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
 
 print('# Fit model on training data')
-history = model.fit(x_train, y_train,
+history = model.fit(x_train_new, y_train,
                     batch_size=64,
                     epochs=5,
-                    validation_data=(x_test, y_test))
+                    validation_data=(x_test_new, y_test))
 
 print('\nhistory dict:', history.history)
 
