@@ -4,6 +4,7 @@ import os
 import pandas as pd
 import numpy as np
 from skimage.transform import resize
+import tensorflow as tf
 
 
 def make_dataset(data):
@@ -25,6 +26,8 @@ def make_dataset(data):
 dataset_folder = "../../../data/dataset/"
 chexpert_folder = dataset_folder + "CheXpert-v1.0-small/"
 
+tf.get_logger().setLevel('INFO')
+
 model = keras.applications.mobilenet_v2.MobileNetV2(include_top=True, weights=None, pooling=None, classes=3)
 
 model.compile(optimizer=keras.optimizers.RMSprop(),
@@ -32,7 +35,7 @@ model.compile(optimizer=keras.optimizers.RMSprop(),
               metrics=['sparse_categorical_accuracy'])
 
 data_train = pd.read_csv(os.path.join(dataset_folder + 'train.csv'))
-data_train = data_train[:100000]
+data_train = data_train[:80000]
 x_train, y_train = make_dataset(data_train)
 data_valid = pd.read_csv(os.path.join(dataset_folder + 'valid.csv'))
 x_valid, y_valid = make_dataset(data_valid)
