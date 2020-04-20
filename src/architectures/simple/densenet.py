@@ -39,8 +39,8 @@ x_valid, y_valid = make_dataset(data_valid)
 
 print('# Fit model on training data')
 history = model.fit(x_train, y_train,
-                    batch_size=64,
-                    epochs=5,
+                    batch_size=16,
+                    epochs=10,
                     validation_data=(x_valid, y_valid))
 
 print('\nhistory dict:', history.history)
