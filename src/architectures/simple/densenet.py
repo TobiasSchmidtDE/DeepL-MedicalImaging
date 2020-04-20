@@ -3,10 +3,26 @@ import cv2
 import os
 import pandas as pd
 import numpy as np
-from keras.datasets import cifar10
 from skimage.transform import resize
 
-dataset_folder = "../../../data/dev_dataset/"
+
+def make_dataset(data):
+    print('reading dataset')
+    x_data, y_data = [], []
+    for ind in data.index:
+        target = data['Cardiomegaly'][ind]
+        if not pd.isna(target):
+            img = cv2.imread(os.path.join(dataset_folder + data['Path'][ind]), cv2.IMREAD_GRAYSCALE)
+            scaled = resize(image=img, output_shape=(224, 224), order=1)
+            x_data.append(np.stack((scaled, scaled, scaled), axis=2))
+            if target == -1:
+                y_data.append(np.uint8(2))
+            else:
+                y_data.append(np.uint8(target))
+    return np.array(x_data), np.array(y_data)
+
+
+dataset_folder = "../../../data/dataset/"
 chexpert_folder = dataset_folder + "CheXpert-v1.0-small/"
 
 model = keras.applications.mobilenet_v2.MobileNetV2(include_top=True, weights=None, pooling=None, classes=3)
@@ -15,42 +31,11 @@ model.compile(optimizer=keras.optimizers.RMSprop(),
               loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['sparse_categorical_accuracy'])
 
-x_train, y_train = [], []
 data_train = pd.read_csv(os.path.join(dataset_folder + 'train.csv'))
-data_train = data_train[1:10000]
-for ind in data_train.index:
-    target = data_train['Cardiomegaly'][ind]
-    if not pd.isna(target):
-        img = cv2.imread(os.path.join(dataset_folder + data_train['Path'][ind]), cv2.IMREAD_GRAYSCALE)
-        scaled = resize(image=img, output_shape=(224, 224), order=1)
-        x_train.append(np.stack((scaled, scaled, scaled), axis=2))
-        if target == -1:
-            y_train.append(np.float(2))
-        else:
-            y_train.append(target)
-print(y_train)
-
-x_valid, y_valid = [], []
+data_train = data_train[:100000]
+x_train, y_train = make_dataset(data_train)
 data_valid = pd.read_csv(os.path.join(dataset_folder + 'valid.csv'))
-for ind in data_valid.index:
-    target = data_valid['Cardiomegaly'][ind]
-    if not pd.isna(target):
-        img = cv2.imread(os.path.join(dataset_folder + data_valid['Path'][ind]), cv2.IMREAD_GRAYSCALE)
-        scaled = resize(image=img, output_shape=(224, 224), order=1)
-        x_valid.append(np.stack((scaled, scaled, scaled), axis=2))
-        if target == -1:
-            y_valid.append(np.float(2))
-        else:
-            y_valid.append(target)
-
-
-y_train = np.array(y_train)
-x_train = np.array(x_train)
-y_valid = np.array(y_valid)
-x_valid = np.array(x_valid)
-
-
-
+x_valid, y_valid = make_dataset(data_valid)
 
 print('# Fit model on training data')
 history = model.fit(x_train, y_train,
@@ -60,23 +45,6 @@ history = model.fit(x_train, y_train,
 
 print('\nhistory dict:', history.history)
 
-
-# x_test, y_test = [], []
-# data_test = pd.read_csv(os.path.join(dataset_folder + 'test.csv'))
-# for ind in data_test.index:
-#     target = data_test['Cardiomegaly'][ind]
-#     if not pd.isna(target):
-#         img = cv2.imread(os.path.join(dataset_folder + data_test['Path'][ind]), cv2.IMREAD_GRAYSCALE)
-#         scaled = resize(image=img, output_shape=(224, 224), order=1)
-#         x_test.append(np.stack((scaled, scaled, scaled), axis=2))
-#         if target == -1:
-#             y_test.append(2)
-#         else:
-#             y_test.append(target)
-#
-#
-# y_test = np.array(y_test)
-# x_test = np.array(x_test)
 # predictions = model.predict(x_test[:10])
 # print(predictions)
 # print(y_test[:10])
