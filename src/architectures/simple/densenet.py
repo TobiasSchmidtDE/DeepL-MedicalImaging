@@ -4,7 +4,6 @@ import os
 import pandas as pd
 import numpy as np
 from skimage.transform import resize
-from keras.layers import Input, Conv2D
 
 
 def make_dataset(data, rgb):
@@ -29,9 +28,7 @@ def make_dataset(data, rgb):
 dataset_folder = "../../../data/dataset/"
 chexpert_folder = dataset_folder + "CheXpert-v1.0-small/"
 
-input_tensor = Input(shape=(224, 224, 1))
-inc_channel = Conv2D(filters=3, kernel_size=(1, 1), strides=(1, 1), padding='valid')(input_tensor)
-model = keras.applications.densenet.DenseNet121(input_tensor=inc_channel, include_top=True, weights=None, pooling=None, classes=3)
+model = keras.applications.densenet.DenseNet121(include_top=True, weights=None, pooling=None, classes=3)
 
 model.compile(optimizer=keras.optimizers.RMSprop(),
               loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
@@ -39,9 +36,9 @@ model.compile(optimizer=keras.optimizers.RMSprop(),
 
 data_train = pd.read_csv(os.path.join(dataset_folder + 'train.csv'))
 data_train = data_train[:80000]
-x_train, y_train = make_dataset(data_train, rgb=False)
+x_train, y_train = make_dataset(data_train, rgb=True)
 data_valid = pd.read_csv(os.path.join(dataset_folder + 'valid.csv'))
-x_valid, y_valid = make_dataset(data_valid, rgb=False)
+x_valid, y_valid = make_dataset(data_valid, rgb=True)
 
 print('# Fit model on training data')
 history = model.fit(x_train, y_train,
