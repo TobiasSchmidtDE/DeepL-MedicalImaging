@@ -4,9 +4,10 @@ import os
 import pandas as pd
 import numpy as np
 from skimage.transform import resize
+from keras.layers import Input, Conv2D
 
 
-def make_dataset(data):
+def make_dataset(data, rgb):
     print('reading dataset')
     x_data, y_data = [], []
     for ind in data.index:
@@ -14,7 +15,10 @@ def make_dataset(data):
         if not pd.isna(target):
             img = cv2.imread(os.path.join(dataset_folder + data['Path'][ind]), cv2.IMREAD_GRAYSCALE)
             scaled = resize(image=img, output_shape=(224, 224), order=1)
-            x_data.append(np.stack((scaled, scaled, scaled), axis=2))
+            if rgb:
+                x_data.append(np.stack((scaled, scaled, scaled), axis=2))
+            else:
+                x_data.append(scaled)
             if target == -1:
                 y_data.append(np.uint8(2))
             else:
@@ -25,7 +29,9 @@ def make_dataset(data):
 dataset_folder = "../../../data/dataset/"
 chexpert_folder = dataset_folder + "CheXpert-v1.0-small/"
 
-model = keras.applications.densenet.DenseNet121(include_top=True, weights=None, pooling=None, classes=3)
+input_tensor = Input(shape=(224, 224, 1))
+inc_channel = Conv2D(filters=3, kernel_size=(1, 1), strides=(1, 1), padding='valid')(input_tensor)
+model = keras.applications.densenet.DenseNet121(input_tensor=inc_channel, include_top=True, weights=None, pooling=None, classes=3)
 
 model.compile(optimizer=keras.optimizers.RMSprop(),
               loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
@@ -33,9 +39,9 @@ model.compile(optimizer=keras.optimizers.RMSprop(),
 
 data_train = pd.read_csv(os.path.join(dataset_folder + 'train.csv'))
 data_train = data_train[:80000]
-x_train, y_train = make_dataset(data_train)
+x_train, y_train = make_dataset(data_train, rgb=False)
 data_valid = pd.read_csv(os.path.join(dataset_folder + 'valid.csv'))
-x_valid, y_valid = make_dataset(data_valid)
+x_valid, y_valid = make_dataset(data_valid, rgb=False)
 
 print('# Fit model on training data')
 history = model.fit(x_train, y_train,
