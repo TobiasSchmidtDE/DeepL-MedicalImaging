@@ -28,7 +28,8 @@ def make_dataset(data, rgb):
 dataset_folder = "../../../data/dataset/"
 chexpert_folder = dataset_folder + "CheXpert-v1.0-small/"
 
-model = keras.applications.densenet.DenseNet121(include_top=True, weights=None, pooling=None, classes=3)
+model = keras.applications.densenet.DenseNet121(include_top=True,
+                                                weights=None, pooling=None, classes=3)
 
 model.compile(optimizer=keras.optimizers.RMSprop(),
               loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
