@@ -4,7 +4,6 @@ import os
 import pandas as pd
 import numpy as np
 from skimage.transform import resize
-import tensorflow as tf
 
 
 def make_dataset(data):
@@ -26,9 +25,7 @@ def make_dataset(data):
 dataset_folder = "../../../data/dataset/"
 chexpert_folder = dataset_folder + "CheXpert-v1.0-small/"
 
-tf.get_logger().setLevel('INFO')
-
-model = keras.applications.mobilenet_v2.MobileNetV2(include_top=True, weights=None, pooling=None, classes=3)
+model = keras.applications.densenet.DenseNet121(include_top=True, weights=None, pooling=None, classes=3)
 
 model.compile(optimizer=keras.optimizers.RMSprop(),
               loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
@@ -47,6 +44,7 @@ history = model.fit(x_train, y_train,
                     validation_data=(x_valid, y_valid))
 
 print('\nhistory dict:', history.history)
+model.save('densenet.h5')
 
 # predictions = model.predict(x_test[:10])
 # print(predictions)
