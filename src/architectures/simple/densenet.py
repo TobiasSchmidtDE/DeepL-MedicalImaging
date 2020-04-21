@@ -1,6 +1,6 @@
+import os
 import keras
 import cv2
-import os
 import pandas as pd
 import numpy as np
 from skimage.transform import resize
