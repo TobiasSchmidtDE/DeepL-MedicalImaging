@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import keras
@@ -100,4 +101,7 @@ result = model.fit_generator(generator=train_generator,
                              epochs=num_epochs)
 
 # save the model
-model.save('models/resnet/resnet50-v2.h5')
+# save the model
+model_dir = "models/resnet/"
+Path(model_dir).mkdir(parents=True, exist_ok=True)
+model.save(model_dir + 'resnet152-v2.h5')
