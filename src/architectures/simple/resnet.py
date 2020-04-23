@@ -4,52 +4,86 @@ import cv2
 import pandas as pd
 import numpy as np
 from skimage.transform import resize
+from pathlib import Path
+from keras_preprocessing.image import ImageDataGenerator
+from  keras.applications import resnet_v2
+from  keras.applications import inception_v3
+from keras.layers import Dense, GlobalAveragePooling2D
+from keras.models import Model
+from sklearn.model_selection import train_test_split
 
 
-def make_dataset(data, rgb):
-    print('reading dataset')
-    x_data, y_data = [], []
-    for ind in data.index:
-        target = data['Cardiomegaly'][ind]
-        if not pd.isna(target):
-            img = cv2.imread(os.path.join(dataset_folder + data['Path'][ind]), cv2.IMREAD_GRAYSCALE)
-            scaled = resize(image=img, output_shape=(224, 224), order=1)
-            if rgb:
-                x_data.append(np.stack((scaled, scaled, scaled), axis=2))
-            else:
-                x_data.append(scaled)
-            if target == -1:
-                y_data.append(np.uint8(2))
-            else:
-                y_data.append(np.uint8(target))
-    return np.array(x_data), np.array(y_data)
-
-
-dataset_folder = "../../../data/dataset/"
+dataset_folder = "data/dev_dataset/"
 chexpert_folder = dataset_folder + "CheXpert-v1.0-small/"
+DATASET_FOLDER = dataset_folder
+SEED = 17
 
-model = keras.applications.resnet.ResNet152(include_top=True,
-                                                weights=None, pooling=None, classes=3)
 
-model.compile(optimizer=keras.optimizers.RMSprop(),
-              loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-              metrics=['sparse_categorical_accuracy'])
+data = pd.read_csv(os.path.join(DATASET_FOLDER + 'train.csv'))
 
-data_train = pd.read_csv(os.path.join(dataset_folder + 'train.csv'))
-data_train = data_train[:80000]
-x_train, y_train = make_dataset(data_train, rgb=True)
-data_valid = pd.read_csv(os.path.join(dataset_folder + 'valid.csv'))
-x_valid, y_valid = make_dataset(data_valid, rgb=True)
+# preprocess
+data = data.fillna(0)
 
-print('# Fit model on training data')
-history = model.fit(x_train, y_train,
-                    batch_size=16,
-                    epochs=10,
-                    validation_data=(x_valid, y_valid))
+# drop lateral images
+data = data[~data['Frontal/Lateral'].str.contains("Lateral")]
 
-print('\nhistory dict:', history.history)
-# model.save('densenet.h5')
+# drop unrelevant columns
+data = data.drop(["Sex", "Age", "Frontal/Lateral", "AP/PA"], axis=1)
 
-# predictions = model.predict(x_test[:10])
-# print(predictions)
-# print(y_test[:10])
+# deal with uncertanty (-1) values
+data = data.replace(-1,1)
+
+np.random.seed(SEED)
+data_train, data_test = train_test_split(data, test_size=0.2)
+data_train, data_val = train_test_split(data_train, test_size=0.2)
+
+
+train_datagen=ImageDataGenerator(rescale=1./255)
+valid_datagen=ImageDataGenerator(rescale=1./255.)
+test_datagen=ImageDataGenerator(rescale=1./255.)
+
+
+target_size = (224,224)
+train_generator=train_datagen.flow_from_dataframe(
+    dataframe=data_train, directory=DATASET_FOLDER , x_col='Path', y_col=list(data_train.columns[2:16]), class_mode='other', target_size=target_size, batch_size=32
+)
+valid_generator = valid_datagen.flow_from_dataframe(
+    dataframe=data_val, directory=DATASET_FOLDER , x_col='Path', y_col=list(data_val.columns[2:16]), class_mode='other', target_size=target_size, batch_size=32
+)
+test_generator = test_datagen.flow_from_dataframe(
+    dataframe=data_test, directory=DATASET_FOLDER , x_col="Path", y_col=list(data_test.columns[2:16]), class_mode="other", target_size=target_size, shuffle=False, batch_size=1
+)
+
+base_model = resnet_v2.ResNet152V2(include_top=False, weights='imagenet')
+
+# add global pooling and dense output layer 
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dense(1024, activation='relu')(x)
+prediction_layer = Dense(14, activation='sigmoid')(x)
+
+model = Model(inputs=base_model.input, outputs=prediction_layer)
+
+# freeze all convolutional layers
+for layer in base_model.layers:
+    layer.trainable = False
+    
+
+# compile model
+adam = keras.optimizers.Adam()
+model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
+
+
+# fit model 
+num_epochs = 3
+STEP_SIZE_TRAIN= train_generator.n // train_generator.batch_size
+STEP_SIZE_VALID= valid_generator.n // valid_generator.batch_size
+
+result = model.fit_generator(generator=train_generator,
+                    steps_per_epoch=STEP_SIZE_TRAIN,
+                    validation_data=valid_generator,
+                    validation_steps=STEP_SIZE_VALID,
+                    epochs=num_epochs)
+
+# save the model
+model.save('models/resnet/resnet50-v2.h5')
