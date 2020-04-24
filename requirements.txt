@@ -8,3 +8,4 @@ scikit-image
 opencv-python
 deprecated
 jupyter
+sklearn
