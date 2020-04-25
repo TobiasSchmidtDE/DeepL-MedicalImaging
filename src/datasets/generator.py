@@ -1,9 +1,10 @@
 import pandas as pd
 import numpy as np
 import keras
+from src.datasets.u_encoding import uencode, uencode_single
 
 
-def create_generator(train_path, val_path, dim, batch_size, allcoll=True, col_index=None):
+def create_generator(train_path, val_path, dim, batch_size, allcoll=True, col_index=None, u_enc='uzeroes'):
     print('Creating dataset generator')
 
     train_df = pd.read_csv(train_path, index_col=[0])
@@ -16,26 +17,34 @@ def create_generator(train_path, val_path, dim, batch_size, allcoll=True, col_in
                    'Pleural Effusion', 'Pleural Other', 'Fracture', 'Support Devices']
         labels = {key: list(train_df[columns].loc[key]) for key in partition['train']}
         labels.update({key: list(val_df[columns].loc[key]) for key in partition['val']})
+        multiple_labels = True
     elif allcoll is False and col_index is None:
         raise ValueError('If only a specific column is to be used, the column name has to be specified')
     else:
         labels = {key: train_df[col_index].loc[key] for key in partition['train']}
         labels.update({key: val_df[col_index].loc[key] for key in partition['val']})
-    print('Finished reading all labels')
-    #TODO: encode labels correctly
-    #TODO: speficy nclasses correctly
-    #TODO: specify n_channels correctly
+        multiple_labels = False
+
+    if multiple_labels:
+        labels, num_classes = uencode(u_enc, labels)
+    else:
+        labels, num_classes = uencode_single(u_enc, labels)
+
+    print(labels)
     params = {'dim': dim,
               'batch_size': batch_size,
-              'n_classes': 2,
+              'n_classes': num_classes,
               'n_channels': 3,
               'shuffle': True}
+
+    # TODO: specify n_channels correctly
     return DataGenerator(partition['train'], labels, **params), DataGenerator(partition['val'], labels, **params)
 
 
+# TODO: reimplement reading of pictures, add scaling and rgb
 class DataGenerator(keras.utils.Sequence):
-    def __init__(self, list_ids, labels, batch_size=32, dim=(256, 256), n_channels=1,
-                 n_classes=2, shuffle=True):
+    def __init__(self, list_ids, labels, batch_size, dim, n_channels,
+                 n_classes, shuffle):
         self.dim = dim
         self.batch_size = batch_size
         self.labels = labels
@@ -72,4 +81,4 @@ class DataGenerator(keras.utils.Sequence):
         return X, keras.utils.to_categorical(y, num_classes=self.n_classes)
 
 
-create_generator('../../data/dev_dataset/train.csv', '../../data/dev_dataset/valid.csv')
+create_generator('../../data/dev_dataset/train.csv', '../../data/dev_dataset/valid.csv', dim=(256, 256), batch_size=16)
