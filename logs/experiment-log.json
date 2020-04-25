@@ -1,3 +1,39 @@
 {
-    "experiments": []
+    "experiments": [
+        {
+            "id": "a773c676-8720-11ea-bdc5-0242ac110004",
+            "name": "inception",
+            "filename": "inception-v3.h5",
+            "version": "1",
+            "history": {
+                "val_loss": [
+                    0.4385377764701843,
+                    0.5184060335159302,
+                    0.5266363620758057
+                ],
+                "val_accuracy": [
+                    0.8033446073532104,
+                    0.801798403263092,
+                    0.8037551045417786
+                ],
+                "loss": [
+                    0.410362112754645,
+                    0.4035006514596196,
+                    0.40141155506275855
+                ],
+                "accuracy": [
+                    0.8143507838249207,
+                    0.8179158568382263,
+                    0.8192293047904968
+                ]
+            },
+            "description": "Simple Model based on pretrained InceptionNet V3",
+            "validated": false,
+            "test": [
+                0.6924206018447876,
+                0.8033311367034912
+            ],
+            "classification_report": "                            precision    recall  f1-score   support\n\n                No Finding       0.28      0.11      0.15      3380\nEnlarged Cardiomediastinum       0.00      0.00      0.00      3985\n              Cardiomegaly       0.00      0.00      0.00      5925\n              Lung Opacity       0.65      0.23      0.34     19729\n               Lung Lesion       0.00      0.00      0.00      1590\n                     Edema       0.56      0.02      0.03     12316\n             Consolidation       0.00      0.00      0.00      7598\n                 Pneumonia       0.00      0.00      0.00      4133\n               Atelectasis       0.35      0.00      0.00     11982\n              Pneumothorax       0.00      0.00      0.00      4133\n          Pleural Effusion       0.66      0.35      0.46     17381\n             Pleural Other       0.00      0.00      0.00       849\n                  Fracture       0.00      0.00      0.00      1638\n           Support Devices       0.61      0.87      0.72     21735\n\n                 micro avg       0.61      0.26      0.37    116374\n                 macro avg       0.22      0.11      0.12    116374\n              weighted avg       0.43      0.26      0.27    116374\n               samples avg       0.51      0.24      0.31    116374\n"
+        }
+    ]
 }
