@@ -73,7 +73,7 @@ adam = keras.optimizers.Adam()
 model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
 
 # fit model
-num_epochs = 1
+num_epochs = 3
 STEP_SIZE_TRAIN = train_generator.n // train_generator.batch_size
 STEP_SIZE_VALID = valid_generator.n // valid_generator.batch_size
 STEP_SIZE_TEST = test_generator.n // test_generator.batch_size
