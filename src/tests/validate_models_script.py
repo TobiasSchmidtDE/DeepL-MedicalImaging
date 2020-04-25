@@ -2,6 +2,7 @@ import json
 import os
 from pathlib import Path
 import re
+import sys
 
 token = os.environ['TOKEN']
 WIKI_URL = 'https://oauth2:' + token + \
@@ -14,7 +15,7 @@ def execute():
             os.path.realpath(__file__))).parent.parent
         logfile_path = basepath / 'logs/experiment-log.json'
         if not os.path.isfile(logfile_path):
-            return True
+            sys.exit(0)
 
         # load logfile
         f = open(logfile_path, 'r')
@@ -27,7 +28,7 @@ def execute():
             exp for exp in experiments if not exp['validated']]
 
         if len(unvalidated_experiments) < 1:
-            return exit(1)
+            sys.exit(1)
 
         # create temporary directory
         tempdir = str(basepath) + '/temp'
@@ -112,10 +113,12 @@ def execute():
         # commit change
         os.system('git add .; git commit - m "Update logfile"; git push;')
 
-        exit(1)
+        sys.exit(1)
+
+    # pylint: disable=bare-except
     except:
         print('An error occurred')
-        exit(0)
+        sys.exit(0)
 
 
 execute()
