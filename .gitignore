@@ -126,3 +126,6 @@ dmypy.json
 # Train, Test and Valid dataset
 data/*
 
+temp
+
+

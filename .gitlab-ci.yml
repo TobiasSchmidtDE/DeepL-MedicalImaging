@@ -3,6 +3,7 @@ image: python:3.7
 stages:
   - lint
   - test
+  - validate_models
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -35,3 +36,11 @@ test:
   script: 
     - pip install pytest --quiet
     - pytest
+
+validate_models:
+  stage: validate_models
+  only: 
+    refs:
+      - master
+  script:
+    - python3 src/tests/validate_models_script.py
