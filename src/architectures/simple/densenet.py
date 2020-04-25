@@ -88,4 +88,4 @@ result = model.fit_generator(generator=train_generator,
                              epochs=num_epochs)
 
 # save the model
-model.save('../../../models/densenet/densenet121.h5')
+model.save('densenet121.h5')
