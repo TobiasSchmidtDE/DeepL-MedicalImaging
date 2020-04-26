@@ -48,5 +48,5 @@ validate_models:
     - git remote set-url target "https://oauth2:$TOKEN@git.veios.cloud/idp1-radio/idp-radio-1.git"
     - python3 src/tests/validate_models_script.py
     - git add .
-    - git commit -m "Upadate logfile" || echo "No changes, nothing to commit!"
+    - git commit -m "Update logfile" || echo "No changes, nothing to commit!"
     - git push target HEAD:master
