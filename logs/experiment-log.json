@@ -28,7 +28,7 @@
                 ]
             },
             "description": "Simple Model based on pretrained InceptionNet V3",
-            "validated": true,
+            "validated": false,
             "test": [
                 0.6924206018447876,
                 0.8033311367034912
