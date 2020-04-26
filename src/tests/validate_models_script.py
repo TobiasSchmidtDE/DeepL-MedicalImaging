@@ -46,6 +46,9 @@ def execute():
         # execute notebook for each unvalidated model
         notebook_path = str(
             basepath / 'src/tests/validate_model.ipynb')
+        # set git config
+        os.system('git config - -global user.email "krisitan.schwienbacher@tum.de"; \
+                  git config - -global user.name "Kristian Schwienbacher"')
         for exp in unvalidated_experiments:
             # set model data as env variable and execute notebook
             os.environ['EXP_DATA'] = str(json.dumps(exp))
@@ -111,7 +114,7 @@ def execute():
         os.system('rm -rf ' + tempdir)
 
         # commit change
-        os.system('git add .; git commit - m "Update logfile"; git push;')
+        os.system('git add .; git commit -m "Update logfile"; git push;')
 
         sys.exit(1)
 
