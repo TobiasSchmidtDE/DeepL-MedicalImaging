@@ -99,7 +99,7 @@ def execute():
 
             # commit and push changes to wiki git
             os.system('cd ' + tempdir + '/idp-radio-1.wiki; git add .; git commit -m "Add model ' +
-                      exp['name'] + '"; git push;')
+                      exp['name'] + '"; git push HEAD:master;')
 
             # mark model as validated
             exp['validated'] = True
