@@ -99,7 +99,7 @@ def execute():
 
             # commit and push changes to wiki git
             os.system('cd ' + tempdir + '/idp-radio-1.wiki; git add .; git commit -m "Add model ' +
-                      exp['name'] + '"; git push HEAD:master;')
+                      exp['name'] + '"; git push;')
 
             # mark model as validated
             exp['validated'] = True
@@ -114,7 +114,8 @@ def execute():
         os.system('rm -rf ' + tempdir)
 
         # commit change
-        os.system('git add .; git commit -m "Update logfile"; git push;')
+        os.system(
+            'git add .; git commit -m "Update logfile"; git push HEAD:master;')
 
         sys.exit(1)
 
