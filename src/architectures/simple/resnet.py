@@ -3,21 +3,21 @@
 
 # In[ ]:
 
-
 import os
+import numpy as np
+import pandas as pd
+import keras
+from keras_preprocessing.image import ImageDataGenerator
+from keras.applications import resnet_v2
+from keras.layers import Dense, GlobalAveragePooling2D
+from keras.models import Model
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+from utils.save_model import save_model, model_set
+
 
 print(os.getcwd())
 
-import keras
-import pandas as pd
-import numpy as np
-from utils.save_model import save_model, model_set
-from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
-from keras.models import Model
-from keras.layers import Dense, GlobalAveragePooling2D
-from keras.applications import resnet_v2
-from keras_preprocessing.image import ImageDataGenerator
 
 # os.chdir("../../../")
 print(os.getcwd())
