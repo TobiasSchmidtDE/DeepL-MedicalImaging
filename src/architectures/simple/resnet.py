@@ -1,19 +1,34 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[ ]:
+
+
 import os
-from pathlib import Path
+import keras
 import pandas as pd
 import numpy as np
-import keras
-from keras_preprocessing.image import ImageDataGenerator
-from keras.applications import resnet_v2
-from keras.layers import Dense, GlobalAveragePooling2D
-from keras.models import Model
+from src.utils.save_model import save_model, model_set
+from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
+from keras.models import Model
+from keras.layers import Dense, GlobalAveragePooling2D
+from keras.applications import resnet_v2
+from keras_preprocessing.image import ImageDataGenerator
+
+# os.chdir("../../../")
+print(os.getcwd())
 
 
-dataset_folder = "data/dev_dataset/"
-chexpert_folder = dataset_folder + "CheXpert-v1.0-small/"
-DATASET_FOLDER = dataset_folder
+# In[ ]:
+
+
+#DATASET_FOLDER = '../../../data/dataset/'
+DATASET_FOLDER = 'data/dev_dataset/'
 SEED = 17
+
+
+# In[ ]:
 
 
 data = pd.read_csv(os.path.join(DATASET_FOLDER + 'train.csv'))
@@ -35,9 +50,21 @@ data_train, data_test = train_test_split(data, test_size=0.2)
 data_train, data_val = train_test_split(data_train, test_size=0.2)
 
 
+# In[ ]:
+
+
+print(data_train.columns)
+
+
+# In[ ]:
+
+
 train_datagen = ImageDataGenerator(rescale=1./255)
 valid_datagen = ImageDataGenerator(rescale=1./255.)
 test_datagen = ImageDataGenerator(rescale=1./255.)
+
+
+# In[ ]:
 
 
 target_size = (224, 224)
@@ -66,8 +93,13 @@ test_generator = test_datagen.flow_from_dataframe(
     y_col=list(data_test.columns[2:16]),
     class_mode="other",
     target_size=target_size,
-    shuffle=False, batch_size=1
+    shuffle=False,
+    batch_size=1
 )
+
+
+# In[ ]:
+
 
 base_model = resnet_v2.ResNet152V2(include_top=False, weights='imagenet')
 
@@ -79,9 +111,16 @@ prediction_layer = Dense(14, activation='sigmoid')(x)
 
 model = Model(inputs=base_model.input, outputs=prediction_layer)
 
+
+# In[ ]:
+
+
 # freeze all convolutional layers
 for layer in base_model.layers:
     layer.trainable = False
+
+
+# In[ ]:
 
 
 # compile model
@@ -89,10 +128,15 @@ adam = keras.optimizers.Adam()
 model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
 
 
+# In[ ]:
+
+
 # fit model
 num_epochs = 3
 STEP_SIZE_TRAIN = train_generator.n // train_generator.batch_size
 STEP_SIZE_VALID = valid_generator.n // valid_generator.batch_size
+STEP_SIZE_TEST = test_generator.n // test_generator.batch_size
+
 
 result = model.fit_generator(generator=train_generator,
                              steps_per_epoch=STEP_SIZE_TRAIN,
@@ -100,8 +144,46 @@ result = model.fit_generator(generator=train_generator,
                              validation_steps=STEP_SIZE_VALID,
                              epochs=num_epochs)
 
-# save the model
-# save the model
-model_dir = "models/resnet/"
-Path(model_dir).mkdir(parents=True, exist_ok=True)
-model.save(model_dir + 'resnet152-v2.h5')
+
+# In[ ]:
+
+
+model_id = save_model(model, result.history, 'resnetv2',
+                      'resnet-devdataset.h5')
+
+
+# In[ ]:
+
+
+print("predicting...")
+test_generator.reset()
+pred = model.predict_generator(test_generator, steps=STEP_SIZE_TEST, verbose=1)
+
+
+# In[ ]:
+
+
+pred_bool = (pred >= 0.5)
+y_pred = np.array(pred_bool, dtype=int)
+
+dtest = data_test.to_numpy()
+y_true = np.array(dtest[:, 2:16], dtype=int)
+report = classification_report(
+    y_true, y_pred, target_names=list(data_test.columns[1:15]))
+model_id = model_set(model_id, 'classification_report', report)
+
+
+# In[ ]:
+
+
+score, acc = model.evaluate_generator(
+    test_generator, steps=STEP_SIZE_TEST, verbose=1)
+print('Test score:', score)
+print('Test accuracy:', acc)
+model_id = model_set(model_id, 'test', (score, acc))
+
+
+# In[ ]:
+
+
+print("completed training and evaluation")
