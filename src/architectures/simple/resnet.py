@@ -26,10 +26,15 @@ print(os.getcwd())
 # In[ ]:
 
 
-#DATASET_FOLDER = '../../../data/dataset/'
-DATASET_FOLDER = 'data/dev_dataset/'
+DATASET_FOLDER = 'data/dataset/'
+#DATASET_FOLDER = 'data/dev_dataset/'
 SEED = 17
 
+# The dev dataset and full dataset have the features in different columns
+# we define this variable here to quickly switch between the two
+FEATURES_SLICE = slice(1, 15)  # slice(2, 16)
+# also, lets define the model name up here so we don't need to scroll all the way down :P
+MODEL_NAME = "resnetv2_151.h5"
 
 # In[ ]:
 
@@ -75,7 +80,7 @@ train_generator = train_datagen.flow_from_dataframe(
     dataframe=data_train,
     directory=DATASET_FOLDER,
     x_col='Path',
-    y_col=list(data_train.columns[2:16]),
+    y_col=list(data_train.columns[FEATURES_SLICE]),
     class_mode='other',
     target_size=target_size,
     batch_size=32
@@ -84,7 +89,7 @@ valid_generator = valid_datagen.flow_from_dataframe(
     dataframe=data_val,
     directory=DATASET_FOLDER,
     x_col='Path',
-    y_col=list(data_val.columns[2:16]),
+    y_col=list(data_val.columns[FEATURES_SLICE]),
     class_mode='other',
     target_size=target_size,
     batch_size=32
@@ -93,7 +98,7 @@ test_generator = test_datagen.flow_from_dataframe(
     dataframe=data_test,
     directory=DATASET_FOLDER,
     x_col="Path",
-    y_col=list(data_test.columns[2:16]),
+    y_col=list(data_test.columns[FEATURES_SLICE]),
     class_mode="other",
     target_size=target_size,
     shuffle=False,
@@ -152,7 +157,7 @@ result = model.fit_generator(generator=train_generator,
 
 
 model_id = save_model(model, result.history, 'resnetv2',
-                      'resnetv2_151.h5')
+                      MODEL_NAME)
 
 
 # In[ ]:
@@ -170,7 +175,7 @@ pred_bool = (pred >= 0.5)
 y_pred = np.array(pred_bool, dtype=int)
 
 dtest = data_test.to_numpy()
-y_true = np.array(dtest[:, 2:16], dtype=int)
+y_true = np.array(dtest[:, FEATURES_SLICE], dtype=int)
 report = classification_report(
     y_true, y_pred, target_names=list(data_test.columns[1:15]))
 model_id = model_set(model_id, 'classification_report', report)
