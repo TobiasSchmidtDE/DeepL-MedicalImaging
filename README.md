@@ -4,7 +4,7 @@
 
 1. Clone this repository
 
-2. Use the `download_dataset.sh` script to download the dev-dataset.
+2. Use the `download_dataset.sh` script to download the dev dataset. Use `-f` to overwrite the existing dataset and/or `-a` to download both the dev- and full dataset.
 
 ## Deploy using Docker
 

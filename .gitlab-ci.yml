@@ -3,6 +3,7 @@ image: python:3.7
 stages:
   - lint
   - test
+  - validate_models
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -35,3 +36,17 @@ test:
   script: 
     - pip install pytest --quiet
     - pytest
+
+validate_models:
+  stage: validate_models
+  only: 
+    refs:
+      - master
+  script:
+    - git config --global user.email "gitlab@runner.com"
+    - git config --global user.name "Gitlab Runner"
+    - git remote set-url target "https://oauth2:$TOKEN@git.veios.cloud/idp1-radio/idp-radio-1.git"
+    - python3 src/tests/validate_models_script.py
+    - git add .
+    - git commit -m "Update logfile" || echo "No changes, nothing to commit!"
+    - git push target HEAD:master
