@@ -1,10 +1,13 @@
+import os
 import pandas as pd
 import numpy as np
 import keras
+import cv2
 from src.datasets.u_encoding import uencode, uencode_single
+from src.preprocessing.rescaling.scaler import Scaler
 
 
-def create_generator(train_path, val_path, dim, batch_size, allcoll=True, col_index=None, u_enc='uzeroes'):
+def create_generator(train_path, val_path, img_size, batch_size, n_channels, allcoll=True, col_index=None, u_enc='uzeroes'):
     print('Creating dataset generator')
 
     train_df = pd.read_csv(train_path, index_col=[0])
@@ -21,8 +24,8 @@ def create_generator(train_path, val_path, dim, batch_size, allcoll=True, col_in
     elif allcoll is False and col_index is None:
         raise ValueError('If only a specific column is to be used, the column name has to be specified')
     else:
-        labels = {key: train_df[col_index].loc[key] for key in partition['train']}
-        labels.update({key: val_df[col_index].loc[key] for key in partition['val']})
+        labels = {key: np.uint8(train_df[col_index].loc[key]) for key in partition['train']}
+        labels.update({key: np.uint8(val_df[col_index].loc[key]) for key in partition['val']})
         multiple_labels = False
 
     if multiple_labels:
@@ -30,21 +33,20 @@ def create_generator(train_path, val_path, dim, batch_size, allcoll=True, col_in
     else:
         labels, num_classes = uencode_single(u_enc, labels)
 
-    print(labels)
-    params = {'dim': dim,
+    dataset_folder = train_path.replace('train.csv', '')
+
+    params = {'dim': (img_size, img_size),
               'batch_size': batch_size,
               'n_classes': num_classes,
-              'n_channels': 3,
-              'shuffle': True}
-
-    # TODO: specify n_channels correctly
+              'n_channels': n_channels,
+              'shuffle': True,
+              'dataset_folder': dataset_folder}
     return DataGenerator(partition['train'], labels, **params), DataGenerator(partition['val'], labels, **params)
 
 
-# TODO: reimplement reading of pictures, add scaling and rgb
 class DataGenerator(keras.utils.Sequence):
     def __init__(self, list_ids, labels, batch_size, dim, n_channels,
-                 n_classes, shuffle):
+                 n_classes, shuffle, dataset_folder):
         self.dim = dim
         self.batch_size = batch_size
         self.labels = labels
@@ -54,6 +56,7 @@ class DataGenerator(keras.utils.Sequence):
         self.shuffle = shuffle
         self.on_epoch_end()
         self.indexes = np.arange(len(self.list_IDs))
+        self.dataset_folder = dataset_folder
 
     def __len__(self):
         """Denotes the number of batches per epoch"""
@@ -75,10 +78,15 @@ class DataGenerator(keras.utils.Sequence):
         """Generates data containing batch_size samples"""
         X = np.empty(self.batch_size, *self.dim, self.n_channels)
         y = np.empty(self.batch_size, dtype=int)
+
         for i, ID in enumerate(list_ids_temp):
-            X[i, ] = np.load('data/' + ID + '.npy')
+            img = cv2.imread(os.path.join(self.dataset_folder + ID['Path'], cv2.IMREAD_GRAYSCALE))
+            scaled = Scaler(img, self.dim).resize('LINEAR')
+            if self.n_channels == 1:
+                X[i] = scaled
+            elif self.n_channels == 3:
+                X[i] = np.stack((scaled, scaled, scaled), axis=2)
+            else:
+                raise ValueError('Invalid number of channels.')
             y[i] = self.labels[ID]
-        return X, keras.utils.to_categorical(y, num_classes=self.n_classes)
-
-
-create_generator('../../data/dev_dataset/train.csv', '../../data/dev_dataset/valid.csv', dim=(256, 256), batch_size=16)
+        return X, y
