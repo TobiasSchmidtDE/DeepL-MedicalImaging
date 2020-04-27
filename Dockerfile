@@ -91,6 +91,9 @@ RUN python3 -m pip install --no-cache-dir ${TF_PACKAGE}${TF_PACKAGE_VERSION:+==$
 # set working directory
 WORKDIR  /srv/idp-radio-1
 
+# add workdir to pythonpath
+ENV PYTHONPATH "${PYTHONPATH}:/srv/idp-radio-1/src"
+
 # install requirements
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
