@@ -5,10 +5,13 @@
 
 
 import os
+
+print(os.getcwd())
+
 import keras
 import pandas as pd
 import numpy as np
-from src.utils.save_model import save_model, model_set
+from utils.save_model import save_model, model_set
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from keras.models import Model
@@ -149,7 +152,7 @@ result = model.fit_generator(generator=train_generator,
 
 
 model_id = save_model(model, result.history, 'resnetv2',
-                      'resnet-devdataset.h5')
+                      'resnetv2_151.h5')
 
 
 # In[ ]:

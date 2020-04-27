@@ -34,6 +34,76 @@
                 0.8033311367034912
             ],
             "classification_report": "                            precision    recall  f1-score   support\n\n                No Finding       0.28      0.11      0.15      3380\nEnlarged Cardiomediastinum       0.00      0.00      0.00      3985\n              Cardiomegaly       0.00      0.00      0.00      5925\n              Lung Opacity       0.65      0.23      0.34     19729\n               Lung Lesion       0.00      0.00      0.00      1590\n                     Edema       0.56      0.02      0.03     12316\n             Consolidation       0.00      0.00      0.00      7598\n                 Pneumonia       0.00      0.00      0.00      4133\n               Atelectasis       0.35      0.00      0.00     11982\n              Pneumothorax       0.00      0.00      0.00      4133\n          Pleural Effusion       0.66      0.35      0.46     17381\n             Pleural Other       0.00      0.00      0.00       849\n                  Fracture       0.00      0.00      0.00      1638\n           Support Devices       0.61      0.87      0.72     21735\n\n                 micro avg       0.61      0.26      0.37    116374\n                 macro avg       0.22      0.11      0.12    116374\n              weighted avg       0.43      0.26      0.27    116374\n               samples avg       0.51      0.24      0.31    116374\n"
+        },
+        {
+            "id": "eec0c4ac-8874-11ea-8787-0242ac110004",
+            "name": "resnetv2",
+            "filename": "resnet-devdataset.h5",
+            "version": "1",
+            "history": {
+                "val_loss": [
+                    0.433485746383667,
+                    0.4077761471271515,
+                    0.5087971687316895
+                ],
+                "val_accuracy": [
+                    0.801677405834198,
+                    0.8068920969963074,
+                    0.808247447013855
+                ],
+                "loss": [
+                    0.4255451973560885,
+                    0.39939465616746217,
+                    0.3872284054588343
+                ],
+                "accuracy": [
+                    0.8090267181396484,
+                    0.8215961456298828,
+                    0.8266071677207947
+                ]
+            },
+            "description": "",
+            "validated": false,
+            "test": [
+                0.4127134680747986,
+                0.8008315563201904
+            ],
+            "classification_report": "                            precision    recall  f1-score   support\n\n                      Path       0.32      0.30      0.31       218\n                No Finding       0.00      0.00      0.00       292\nEnlarged Cardiomediastinum       0.26      0.02      0.04       431\n              Cardiomegaly       0.67      0.03      0.06      1431\n              Lung Opacity       0.00      0.00      0.00       115\n               Lung Lesion       0.54      0.06      0.11       906\n                     Edema       0.00      0.00      0.00       529\n             Consolidation       0.00      0.00      0.00       301\n                 Pneumonia       0.33      0.03      0.06       834\n               Atelectasis       0.00      0.00      0.00       302\n              Pneumothorax       0.61      0.68      0.65      1222\n          Pleural Effusion       0.00      0.00      0.00        50\n             Pleural Other       0.00      0.00      0.00        94\n                  Fracture       0.71      0.67      0.69      1561\n\n                 micro avg       0.62      0.25      0.36      8286\n                 macro avg       0.25      0.13      0.14      8286\n              weighted avg       0.45      0.25      0.26      8286\n               samples avg       0.45      0.24      0.29      8286\n"
+        },
+        {
+            "id": "c881444a-8876-11ea-84d2-0242ac110004",
+            "name": "resnetv2",
+            "filename": "resnetv2_151.h5",
+            "version": "1",
+            "history": {
+                "val_loss": [
+                    0.4286985397338867,
+                    0.41397133469581604,
+                    0.5048614740371704
+                ],
+                "val_accuracy": [
+                    0.8086444735527039,
+                    0.8046556711196899,
+                    0.7998440265655518
+                ],
+                "loss": [
+                    0.42580906055948087,
+                    0.39915225541910504,
+                    0.38749530008005906
+                ],
+                "accuracy": [
+                    0.8092607259750366,
+                    0.8204730749130249,
+                    0.826163113117218
+                ]
+            },
+            "description": "",
+            "validated": false,
+            "test": [
+                0.5012025237083435,
+                0.7956780195236206
+            ],
+            "classification_report": "                            precision    recall  f1-score   support\n\n                      Path       0.35      0.16      0.22       218\n                No Finding       0.00      0.00      0.00       292\nEnlarged Cardiomediastinum       0.32      0.09      0.14       431\n              Cardiomegaly       0.70      0.13      0.23      1431\n              Lung Opacity       0.00      0.00      0.00       115\n               Lung Lesion       0.56      0.11      0.19       906\n                     Edema       0.00      0.00      0.00       529\n             Consolidation       0.00      0.00      0.00       301\n                 Pneumonia       0.32      0.02      0.04       834\n               Atelectasis       0.00      0.00      0.00       302\n              Pneumothorax       0.68      0.29      0.41      1222\n          Pleural Effusion       0.00      0.00      0.00        50\n             Pleural Other       0.00      0.00      0.00        94\n                  Fracture       0.74      0.40      0.52      1561\n\n                 micro avg       0.65      0.16      0.26      8286\n                 macro avg       0.26      0.09      0.12      8286\n              weighted avg       0.48      0.16      0.23      8286\n               samples avg       0.32      0.15      0.19      8286\n"
         }
     ]
 }
