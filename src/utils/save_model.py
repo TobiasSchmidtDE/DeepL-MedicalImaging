@@ -32,6 +32,9 @@ def save_model(model, history, name, filename, description='', version="1"):
 
     # save model
     path = basepath / 'models' / name / filename
+    print(path)
+    # make sure path exists, ceate one if necessary
+    Path(path).mkdir(parents=True, exist_ok=True)
     model.save(path)
 
     # transform hisory values from np.float32 to regular floats
