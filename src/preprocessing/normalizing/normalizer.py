@@ -8,9 +8,9 @@ class Normalizer:
     Usage:
     1. intantiate the normalizer with a given image using the constructor
         'norm = Normalizer(img)'
-    2. apply as many transformations of the image as you'd like 
+    2. apply as many transformations of the image as you'd like
         (e.g. 'norm = norm.apply_windowing(...).apply_unsharp_mask(...)'')
-    3. retrieve the normalized image using 
+    3. retrieve the normalized image using
         'norm.get_img()'
     """
 
