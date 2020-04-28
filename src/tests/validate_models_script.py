@@ -13,7 +13,7 @@ def execute():
     try:
         basepath = Path(os.path.dirname(
             os.path.realpath(__file__))).parent.parent
-        logfile_path = basepath / 'logs/experiment-log.json'
+        logfile_path = basepath / 'logs/unvalidated-experiment-log.json'
         if not os.path.isfile(logfile_path):
             sys.exit(0)
 
@@ -22,10 +22,8 @@ def execute():
         data = json.load(f)
         f.close()
 
-        # filter experiments for unvalidated
-        experiments = data['experiments']
-        unvalidated_experiments = [
-            exp for exp in experiments if not exp['validated']]
+        # get experiments
+        unvalidated_experiments = data['experiments']
 
         if len(unvalidated_experiments) < 1:
             sys.exit(1)
@@ -98,23 +96,33 @@ def execute():
             os.system('cd ' + tempdir + '/idp-radio-1.wiki; git add .; git commit -m "Add model ' +
                       exp['name'] + '"; git push;')
 
-            # mark model as validated
-            exp['validated'] = True
+        # write to unvalidated experiments log file
+        f = open(logfile_path, 'w')
+        json_data = json.dumps({'experiments': []}, indent=4)
+        f.write(json_data)
+        f.close()
 
-            # write log_file
-            f = open(logfile_path, 'w')
-            json_data = json.dumps(data, indent=4)
-            f.write(json_data)
-            f.close()
+        # append unvalidated models to main log file
+        main_logfile_path = basepath / 'logs/experiment-log.json'
+        f = open(main_logfile_path, 'r')
+        main_data = json.load(f)
+        f.close()
+
+        experiments = main_data['experiments']
+        main_data['experiments'] = experiments + unvalidated_experiments
+
+        # write data back to logfile
+        f = open(main_logfile_path, 'w')
+        json_data = json.dumps(main_data, indent=4)
+        f.write(json_data)
+        f.close()
 
         # remove temp dir
         os.system('rm -rf ' + tempdir)
 
-        sys.exit(1)
-
     # pylint: disable=bare-except
     except:
-        print('An error occurred')
+        print('An error occurred', sys.exc_info()[0])
         sys.exit(0)
 
 

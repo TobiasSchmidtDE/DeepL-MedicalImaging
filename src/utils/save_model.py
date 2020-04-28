@@ -46,13 +46,12 @@ def save_model(model, history, name, filename, description='', version="1"):
         'version': version,
         'history': history,
         'description': description,
-        'validated': False,
         'test': None,
         'classification_report': None,
     }
 
     # append model data to log file
-    log_file = basepath / 'logs/experiment-log.json'
+    log_file = basepath / 'logs/unvalidated-experiment-log.json'
     f = open(log_file, 'r')
     data = json.load(f)
     data['experiments'].append(log)
@@ -89,7 +88,7 @@ def model_set(identifier, attribute, value):
     os.chdir(basepath)
 
     # append model data to log file
-    log_file = basepath / 'logs/experiment-log.json'
+    log_file = basepath / 'logs/unvalidated-experiment-log.json'
     f = open(log_file, 'r')
     data = json.load(f)
     for model in data['experiments']:
