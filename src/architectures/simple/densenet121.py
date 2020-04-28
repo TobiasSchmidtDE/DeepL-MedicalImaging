@@ -11,15 +11,15 @@ from sklearn.metrics import classification_report
 from utils.save_model import save_model, model_set
 
 
-DATASET_FOLDER = 'data/dataset/'
-#DATASET_FOLDER = 'data/dev_dataset/'
+#DATASET_FOLDER = 'data/dataset/'
+DATASET_FOLDER = 'data/dev_dataset/'
 SEED = 17
 
 # The dev dataset and full dataset have the features in different columns
 # we define this variable here to quickly switch between the two
-FEATURES_SLICE = slice(1, 15)  # slice(2, 16)
+FEATURES_SLICE = slice(2, 16)  # slice(2, 16)
 # also, lets define the model name up here so we don't need to scroll all the way down :P
-MODEL_NAME = "densenet_121.h5"
+MODEL_NAME = "densenet_121_dev.h5"
 
 
 data = pd.read_csv(os.path.join(DATASET_FOLDER + 'train.csv'))
