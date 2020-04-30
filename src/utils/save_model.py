@@ -33,7 +33,6 @@ def save_model(model, history, name, filename, description='', version="1"):
     # save model
     folderpath = basepath / 'models' / name
     path = folderpath / filename
-    print(folderpath)
     # make sure path exists, ceate one if necessary
     Path(folderpath).mkdir(parents=True, exist_ok=True)
     model.save(path)
