@@ -45,6 +45,8 @@ def save_model(model, history, name, filename, description, version='1', upload=
         'version': version,
         'history': history,
         'description': description,
+        # the following properties should be set using the `model_set` function
+        # after eveluating the model. See function for documentation.
         'test': None,
         'classification_report': None,
     }
@@ -54,6 +56,7 @@ def save_model(model, history, name, filename, description, version='1', upload=
     f = open(log_file, 'r')
     data = json.load(f)
 
+    # check for exisiting model with same name and version
     for experiment in data['experiments']:
         if experiment['name'] == log['name'] and experiment['version'] == log['version']:
             raise Exception(
@@ -87,7 +90,13 @@ def save_model(model, history, name, filename, description, version='1', upload=
 
 def model_set(identifier, attribute, value):
     """
-    util function to set attributes in the log of the model
+    Util function to set attributes in the log of the model
+
+    Valid attributes:
+     test: List containing the test score and accuracy. Generated using the
+           `model.evaluate_generator function
+     classification_report: generated using `sklearn.metrics.classification_report`
+
 
     Parameters:
     identifier: the id of the model
@@ -99,7 +108,7 @@ def model_set(identifier, attribute, value):
     """
 
     CURRENT_WORKING_DIR = os.getcwd()
-    # path main directory
+    # path to main directory
     basepath = Path(os.path.dirname(os.path.realpath(__file__))).parent.parent
     # set workdir to main directory
     os.chdir(basepath)
@@ -126,7 +135,8 @@ def model_set(identifier, attribute, value):
 
 def load_model(identifier=None, name=None, version=None):
     """
-     Loads a given model from gcp-storage if its not loaded locally
+     Loads a given model (by identifier or by name and version) from gcp-storage if its not
+     loaded locally
 
      Parameters:
      identifier: the id of the model
