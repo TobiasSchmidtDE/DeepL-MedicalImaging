@@ -53,8 +53,8 @@ def save_model(model, history, name, filename, description, version='1', upload=
 
     # append model data to log file
     log_file = basepath / 'logs/unvalidated-experiment-log.json'
-    f = open(log_file, 'r')
-    data = json.load(f)
+    with open(log_file, 'r') as f:
+        data = json.load(f)
 
     # check for exisiting model with same name and version
     for experiment in data['experiments']:
@@ -63,12 +63,10 @@ def save_model(model, history, name, filename, description, version='1', upload=
                 'There is already a model with the same name and version')
 
     data['experiments'].append(log)
-    f.close()
 
-    f = open(log_file, 'w')
-    json_data = json.dumps(data, indent=4)
-    f.write(json_data)
-    f.close()
+    with open(log_file, 'w') as f:
+        json_data = json.dumps(data, indent=4)
+        f.write(json_data)
 
     # save model
     folderpath = basepath / 'models' / name
@@ -115,17 +113,15 @@ def model_set(identifier, attribute, value):
 
     # append model data to log file
     log_file = basepath / 'logs/unvalidated-experiment-log.json'
-    f = open(log_file, 'r')
-    data = json.load(f)
-    for model in data['experiments']:
-        if model['id'] == identifier:
-            model[attribute] = value
-    f.close()
+    with open(log_file, 'r') as f:
+        data = json.load(f)
+        for model in data['experiments']:
+            if model['id'] == identifier:
+                model[attribute] = value
 
-    f = open(log_file, 'w')
-    json_data = json.dumps(data, indent=4)
-    f.write(json_data)
-    f.close()
+    with open(log_file, 'w') as f:
+        json_data = json.dumps(data, indent=4)
+        f.write(json_data)
 
     # reset workdir
     os.chdir(CURRENT_WORKING_DIR)
@@ -159,16 +155,14 @@ def load_model(identifier=None, name=None, version=None):
 
     # load logfile
     log_file = basepath / 'logs/experiment-log.json'
-    f = open(log_file, 'r')
-    data = json.load(f)
-    f.close()
+    with open(log_file, 'r') as f:
+        data = json.load(f)
     experiments = data['experiments']
 
     # append unvalidated experiments
     unvalidated_log_file = basepath / 'logs/unvalidated-experiment-log.json'
-    f = open(unvalidated_log_file, 'r')
-    experiments = experiments + json.load(f)['experiments']
-    f.close()
+    with open(unvalidated_log_file, 'r') as f:
+        experiments = experiments + json.load(f)['experiments']
 
     # reset workdir
     os.chdir(CURRENT_WORKING_DIR)
@@ -182,7 +176,7 @@ def load_model(identifier=None, name=None, version=None):
         raise Exception('Model was not found')
 
     # build model path
-    folderpath = basepath / 'models' / name
+    folderpath = basepath / 'models' / experiment['name']
     exp_path = folderpath / experiment['filename']
 
     # download model if it does not exist
