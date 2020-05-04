@@ -128,4 +128,5 @@ data/*
 
 temp
 
-
+models/*
+gcp_auth/*
