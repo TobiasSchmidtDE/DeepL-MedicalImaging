@@ -6,7 +6,7 @@ from keras.models import load_model as load
 from utils.storage import upload_file, download_file
 
 
-def save_model(model, history, name, filename, description='', version='1', upload=True):
+def save_model(model, history, name, filename, description, version='1', upload=True):
     """
     Wrapper for the model.save function which logs the results
 
