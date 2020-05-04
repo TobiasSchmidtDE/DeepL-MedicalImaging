@@ -157,7 +157,7 @@ result = model.fit_generator(generator=train_generator,
 
 
 model_id = save_model(model, result.history, 'resnetv2',
-                      MODEL_NAME)
+                      MODEL_NAME, description='')
 
 
 # In[ ]:
