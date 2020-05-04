@@ -108,7 +108,7 @@ result = model.fit_generator(generator=train_generator,
 
 # save the model
 model_id = save_model(model, result.history, 'densenet',
-                      MODEL_NAME)
+                      MODEL_NAME, description='')
 
 
 print("predicting...")

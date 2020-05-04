@@ -9,3 +9,5 @@ opencv-python
 deprecated
 jupyter
 sklearn
+python-dotenv
+google-cloud-storage
