@@ -145,6 +145,7 @@ disable=print-statement,
 	    invalid-name,
         too-many-statements,
         too-many-arguments,
+        too-many-instance-attributes,
         too-many-locals,
         duplicate-code
 
