@@ -3,14 +3,11 @@ import keras
 import pandas as pd
 import numpy as np
 from keras_preprocessing.image import ImageDataGenerator
-from keras.applications.densenet import DenseNet121
-from keras.layers import Dense, GlobalAveragePooling2D
-from keras.models import Model
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
-# from utils.save_model import save_model, model_set
+from utils.save_model import save_model, model_set
 from src.architectures.adv.guendel19 import densenet
-import sys
+from src.metrics.losses import weighted_bce
+
 DATASET_FOLDER = 'data/dev_dataset/'
 SEED = 17
 
@@ -22,7 +19,7 @@ MODEL_NAME = "densenet_121_dev.h5"
 
 
 data = pd.read_csv(os.path.join(DATASET_FOLDER + 'train.csv'))
-# TODO: integrate generator here
+# TODO: integrate new generator here
 # preprocess
 data = data.fillna(0)
 
@@ -73,13 +70,10 @@ test_generator = test_datagen.flow_from_dataframe(
     batch_size=1
 )
 
-#TODO: change to new densenet
-#TODO: implement new metric, BCE with weights
 model = densenet()
 adam = keras.optimizers.Adam()
-model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=adam, loss=weighted_bce, metrics=['accuracy'])
 
-# fit model
 num_epochs = 3
 STEP_SIZE_TRAIN = train_generator.n // train_generator.batch_size
 STEP_SIZE_VALID = valid_generator.n // valid_generator.batch_size
