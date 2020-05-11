@@ -1,19 +1,19 @@
 import pandas as pd
 
 
-# TODO: extend encoding to differ between pathologies
+# open: extend encoding to differ between pathologies
 def uencode(enc_type, labels):
     for key in labels:
-        for id, value in enumerate(labels[key]):
+        for i, value in enumerate(labels[key]):
             if pd.isna(value):
-                labels[key][id] = 0
+                labels[key][i] = 0
             if value == -1:
                 if enc_type == 'uzeroes':
-                    labels[key][id] = 0
+                    labels[key][i] = 0
                 elif enc_type == 'uones':
-                    labels[key][id] = 1
+                    labels[key][i] = 1
                 elif enc_type == 'umulticlass':
-                    labels[key][id] = 2
+                    labels[key][i] = 2
     if enc_type == 'umulticlass':
         num_classes = 3
     else:

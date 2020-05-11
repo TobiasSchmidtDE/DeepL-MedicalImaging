@@ -7,7 +7,8 @@ from src.datasets.u_encoding import uencode, uencode_single
 from src.preprocessing.rescaling.scaler import Scaler
 
 
-def create_generator(train_path, val_path, img_size, batch_size, n_channels, allcoll=True, col_index=None, u_enc='uzeroes'):
+def create_generator(train_path, val_path, img_size,
+                     batch_size, n_channels, allcoll=True, col_index=None, u_enc='uzeroes'):
     print('Creating dataset generator')
 
     train_df = pd.read_csv(train_path, index_col=[0])
@@ -15,14 +16,15 @@ def create_generator(train_path, val_path, img_size, batch_size, n_channels, all
     partition = {'train': list(train_df.index), 'val': list(val_df.index)}
 
     if allcoll is True:
-        columns = ['No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity',
-                   'Lung Lesion', 'Edema', 'Consolidation', 'Pneumonia', 'Atelectasis', 'Pneumothorax',
-                   'Pleural Effusion', 'Pleural Other', 'Fracture', 'Support Devices']
+        columns = ['No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly',
+                   'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
+                   'Pneumonia', 'Atelectasis', 'Pneumothorax', 'Pleural Effusion',
+                   'Pleural Other', 'Fracture', 'Support Devices']
         labels = {key: list(train_df[columns].loc[key]) for key in partition['train']}
         labels.update({key: list(val_df[columns].loc[key]) for key in partition['val']})
         multiple_labels = True
     elif allcoll is False and col_index is None:
-        raise ValueError('If only a specific column is to be used, the column name has to be specified')
+        raise ValueError('column name has to be specified')
     else:
         labels = {key: np.uint8(train_df[col_index].loc[key]) for key in partition['train']}
         labels.update({key: np.uint8(val_df[col_index].loc[key]) for key in partition['val']})
@@ -41,7 +43,9 @@ def create_generator(train_path, val_path, img_size, batch_size, n_channels, all
               'n_channels': n_channels,
               'shuffle': True,
               'dataset_folder': dataset_folder}
-    return DataGenerator(partition['train'], labels, **params), DataGenerator(partition['val'], labels, **params)
+    train_gen = DataGenerator(partition['train'], labels, **params)
+    val_gen = DataGenerator(partition['val'], labels, **params)
+    return train_gen, val_gen
 
 
 class DataGenerator(keras.utils.Sequence):
