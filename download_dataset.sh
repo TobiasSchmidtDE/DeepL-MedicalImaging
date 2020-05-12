@@ -44,8 +44,8 @@ else
   
   # move to data directory
   echo "Moving to data directory"
-  rm -r $CHEXPERT_DEV_DATASET_DIRECTORY
-  mkdir -p -f $CHEXPERT_DEV_DATASET_DIRECTORY
+  rm -r -f $CHEXPERT_DEV_DATASET_DIRECTORY
+  mkdir -p $CHEXPERT_DEV_DATASET_DIRECTORY
   mv tmp/*  $CHEXPERT_DEV_DATASET_DIRECTORY
 
   # clean up

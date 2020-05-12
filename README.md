@@ -14,11 +14,11 @@
   - Example for .env file is provided as ".env.example" in the repository's root folder. 
   - The easiest and most reliable way to set this up is to copy the example file using `cp .env.example .env` and edit only the `GOOGLE_APPLICATION_CREDENTIALS` variable
   - Required variables are:
-    - `GOOGLE_APPLICATION_CREDENTIALS`: The path to the service account key json that gives access to the "idp-models" bucket on Google Cloud Storage. This will be required to upload/download models that have been trained and should be added to the pipeline as well as for executing the test pipeline. Additional information on the process for experiment logging can be found in the wiki under [Experiment Logging](https://git.veios.cloud/idp1-radio/idp-radio-1/-/wikis/Experiment%20Logging). To get the service account key either contact [@Kristian.Schwienbacher](https://git.veios.cloud/kristian.schwienbacher) or if you have access to the "idp-server-1" go to 
+    - `GOOGLE_APPLICATION_CREDENTIALS`: The path to the service account key json that gives access to the "idp-models" bucket on Google Cloud Storage. This will be required to upload/download models that have been trained and should be added to the pipeline as well as for executing the test pipeline. Additional information on the process for experiment logging can be found in the wiki under [Experiment Logging](https://git.veios.cloud/idp1-radio/idp-radio-1/-/wikis/Experiment%20Logging). To get the service account key either contact [@Kristian.Schwienbacher](https://git.veios.cloud/kristian.schwienbacher) or if you have access to the "idp-server-1" go to the repository's root folder and navigage into `gcp_auth`. There you will also find the service account key. 
     - `CHEXPERT_DATASET_DIRECTORY`: The path to the chexpert data set that should be used in notebooks and scripts. 
     - `CHESTXRAY14_DATASET_DIRECTORY`: The path to the chexpert data set that should be used in notebooks and scripts. 
     - All paths can be absolut or releative to the repository's root folder
-    - *Important:* Make sure that the paths you provide for the datasets as environment variables match the directory that they are downloaded to. This should be the case for the `.env.example` file. 
+    - **Important:** Make sure that the paths you provide for the datasets as environment variables match the directory that they are downloaded to. This should be the case for the `.env.example` file. 
   
  
 ## Deploy using Docker
