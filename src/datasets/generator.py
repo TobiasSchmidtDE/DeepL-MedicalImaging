@@ -10,6 +10,21 @@ from src.preprocessing.rescaling.scaler import Scaler
 def create_generator(train_path, img_size,
                      batch_size, n_channels, columns, u_enc='uzeroes'):
 
+    """    Returns a generator with the data
+
+    Parameters:
+        train_path (string): path to dataset .csv file
+        img_size (int): size the images will be resized to (img_size x img_size)
+        batch_size (int): batch size
+        n_channels (int): number of channels the image will be converted to
+        columns (list): columns/pathologies we want to use for training
+        u_enc (string): style of encoding for uncertainty
+                        (values: uzeros, uones, umulticlass)
+
+    Returns:
+        generator (DataGenerator): generator with the given specifications
+        """
+
     train_df = pd.read_csv(train_path, index_col=[0])
     # partition = {'train': list(train_df.index), 'val': list(val_df.index)}
     partition = {'train': list(train_df.index)}
