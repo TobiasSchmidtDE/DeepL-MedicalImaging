@@ -128,5 +128,6 @@ data/*
 
 temp
 
+nohup/*
 models/*
 gcp_auth/*
