@@ -7,19 +7,16 @@ from src.datasets.u_encoding import uencode, uencode_single
 from src.preprocessing.rescaling.scaler import Scaler
 
 
-def create_generator(train_path, val_path, img_size,
+def create_generator(train_path, img_size,
                      batch_size, n_channels, columns, u_enc='uzeroes'):
-    print('Creating dataset generator')
 
     train_df = pd.read_csv(train_path, index_col=[0])
-    val_df = pd.read_csv(val_path, index_col=[0])
-    partition = {'train': list(train_df.index), 'val': list(val_df.index)}
-
+    # partition = {'train': list(train_df.index), 'val': list(val_df.index)}
+    partition = {'train': list(train_df.index)}
     if type(columns) is not list:
         raise ValueError('columns has to be a list')
     else:
         labels = {key: list(train_df[columns].loc[key]) for key in partition['train']}
-        labels.update({key: list(val_df[columns].loc[key]) for key in partition['val']})
         multiple_labels = True if len(columns) > 1 else False
 
     if multiple_labels:
@@ -35,9 +32,8 @@ def create_generator(train_path, val_path, img_size,
               'n_channels': n_channels,
               'shuffle': True,
               'dataset_folder': dataset_folder}
-    train_gen = DataGenerator(partition['train'], labels, **params)
-    val_gen = DataGenerator(partition['val'], labels, **params)
-    return train_gen, val_gen
+
+    return DataGenerator(partition['train'], labels, **params)
 
 
 class DataGenerator(keras.utils.Sequence):
