@@ -13,11 +13,10 @@ def create_generator(train_path, img_size,
     train_df = pd.read_csv(train_path, index_col=[0])
     # partition = {'train': list(train_df.index), 'val': list(val_df.index)}
     partition = {'train': list(train_df.index)}
-    if type(columns) is not list:
+    if not isinstance(columns, list):
         raise ValueError('columns has to be a list')
-    else:
-        labels = {key: list(train_df[columns].loc[key]) for key in partition['train']}
-        multiple_labels = True if len(columns) > 1 else False
+    labels = {key: list(train_df[columns].loc[key]) for key in partition['train']}
+    multiple_labels = len(columns) > 1
 
     if multiple_labels:
         labels, num_classes = uencode(u_enc, labels)
