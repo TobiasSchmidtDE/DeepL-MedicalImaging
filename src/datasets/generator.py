@@ -8,27 +8,19 @@ from src.preprocessing.rescaling.scaler import Scaler
 
 
 def create_generator(train_path, val_path, img_size,
-                     batch_size, n_channels, allcoll=True, col_index=None, u_enc='uzeroes'):
+                     batch_size, n_channels, columns, u_enc='uzeroes'):
     print('Creating dataset generator')
 
     train_df = pd.read_csv(train_path, index_col=[0])
     val_df = pd.read_csv(val_path, index_col=[0])
     partition = {'train': list(train_df.index), 'val': list(val_df.index)}
 
-    if allcoll is True:
-        columns = ['No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly',
-                   'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
-                   'Pneumonia', 'Atelectasis', 'Pneumothorax', 'Pleural Effusion',
-                   'Pleural Other', 'Fracture', 'Support Devices']
+    if type(columns) is not list:
+        raise ValueError('columns has to be a list')
+    else:
         labels = {key: list(train_df[columns].loc[key]) for key in partition['train']}
         labels.update({key: list(val_df[columns].loc[key]) for key in partition['val']})
-        multiple_labels = True
-    elif allcoll is False and col_index is None:
-        raise ValueError('column name has to be specified')
-    else:
-        labels = {key: np.uint8(train_df[col_index].loc[key]) for key in partition['train']}
-        labels.update({key: np.uint8(val_df[col_index].loc[key]) for key in partition['val']})
-        multiple_labels = False
+        multiple_labels = True if len(columns) > 1 else False
 
     if multiple_labels:
         labels, num_classes = uencode(u_enc, labels)
