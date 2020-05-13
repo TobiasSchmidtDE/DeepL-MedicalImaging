@@ -1,18 +1,24 @@
-import os
-import keras
-import pandas as pd
+
+import os 
+#make sure your working directory is the repository root. 
+if not os.getcwd().endswith("idp-radio-1"):
+    os.chdir("../../../")
+from pathlib import Path
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
+
 import numpy as np
+import pandas as pd
+import keras
 from keras_preprocessing.image import ImageDataGenerator
-from keras.applications.densenet import DenseNet121
+from keras.applications import resnet_v2
 from keras.layers import Dense, GlobalAveragePooling2D
 from keras.models import Model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
-from utils.save_model import save_model, model_set
+from src.utils.save_model import save_model, model_set
 
-
-#DATASET_FOLDER = 'data/dataset/'
-DATASET_FOLDER = 'data/dev_dataset/'
+DATASET_FOLDER = Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY"))
 SEED = 17
 
 # The dev dataset and full dataset have the features in different columns

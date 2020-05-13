@@ -38,7 +38,7 @@ else
   ### CHEXPERT_DEV_DATASET ###
   # download and unzip dev dataset
   echo "Downloading Chexpert dev dataset..."
-  wget $URL_CHEXPERT_DEV -O "tmp.tar.gz"
+  wget --no-check-certificate $URL_CHEXPERT_DEV -O "tmp.tar.gz"
   mkdir -p tmp
   tar -zxf "tmp.tar.gz" --directory tmp
   
@@ -60,7 +60,7 @@ then
 else
   echo "Downloading Chestxray14_256 dataset..."
   ### CHESTXRAY14_256_DATASET ###
-  wget $URL_CHESTXRAY14_256 -O "tmp.tar.gz"
+  wget --no-check-certificate $URL_CHESTXRAY14_256 -O "tmp.tar.gz"
   mkdir -p tmp
   tar -zxf "tmp.tar.gz" --directory tmp
   
@@ -85,7 +85,7 @@ then
     ### CHEXPERT_FULL_DATASET ###
     echo "Downloading Chexpert full dataset..."
     # download and unzip dev dataset
-    wget $URL_CHEXPERT_FULL -O "tmp.tar.gz"
+    wget --no-check-certificate $URL_CHEXPERT_FULL -O "tmp.tar.gz"
     mkdir -p tmp
     tar -zxf "tmp.tar.gz" --directory tmp
   
@@ -111,7 +111,7 @@ then
   else
     ### CHESTXRAY14_512_DATASET ###
     echo "Downloading Chestxray14_512 dataset..."
-    wget $URL_CHESTXRAY14_512 -O "tmp.tar.gz"
+    wget --no-check-certificate $URL_CHESTXRAY14_512 -O "tmp.tar.gz"
     mkdir -p tmp
     tar -zxf "tmp.tar.gz" --directory tmp
   

@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import os
 from keras.models import load_model as load
-from utils.storage import upload_file, download_file
+from src.utils.storage import upload_file, download_file
 
 
 def save_model(model, history, name, filename, description, version='1', upload=True):
@@ -27,11 +27,11 @@ def save_model(model, history, name, filename, description, version='1', upload=
     if not model or not history:
         raise Exception('Hisory or model are not defined')
 
-    CURRENT_WORKING_DIR = os.getcwd()
+    CURRENT_WORKING_DIR = Path(os.getcwd())
+    basepath = CURRENT_WORKING_DIR
     # path main directory
-    basepath = Path(os.path.dirname(os.path.realpath(__file__))).parent.parent
-    # set workdir to main directory
-    os.chdir(basepath)
+    if not basepath.name == "idp-radio-1":
+        basepath = basepath.parent.parent
 
     # transform hisory values from np.float32 to regular floats
     for key in history.keys():
@@ -64,24 +64,21 @@ def save_model(model, history, name, filename, description, version='1', upload=
 
     data['experiments'].append(log)
 
-    with open(log_file, 'w') as f:
-        json_data = json.dumps(data, indent=4)
-        f.write(json_data)
-
     # save model
     folderpath = basepath / 'models' / name
     path = folderpath / filename
     # make sure path exists, ceate one if necessary
     Path(folderpath).mkdir(parents=True, exist_ok=True)
     model.save(path)
-
+    print(path)
     # upload model to gcp
     if upload:
         remote_name = log['id'] + '.h5'
-        upload_file(path, remote_name)
+        upload_file(str(path), remote_name)
 
-    # reset workdir
-    os.chdir(CURRENT_WORKING_DIR)
+    with open(log_file, 'w') as f:
+        json_data = json.dumps(data, indent=4)
+        f.write(json_data)
 
     return identifier
 

@@ -3,7 +3,14 @@
 
 # In[ ]:
 
-import os
+import os 
+#make sure your working directory is the repository root. 
+if not os.getcwd().endswith("idp-radio-1"):
+    os.chdir("../../../")
+from pathlib import Path
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
+
 import numpy as np
 import pandas as pd
 import keras
@@ -13,21 +20,12 @@ from keras.layers import Dense, GlobalAveragePooling2D
 from keras.models import Model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
-from utils.save_model import save_model, model_set
-
-
-print(os.getcwd())
-
-
-# os.chdir("../../../")
-print(os.getcwd())
-
+from src.utils.save_model import save_model, model_set
 
 # In[ ]:
 
 
-DATASET_FOLDER = 'data/dataset/'
-#DATASET_FOLDER = 'data/dev_dataset/'
+DATASET_FOLDER = Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY"))
 SEED = 17
 
 # The dev dataset and full dataset have the features in different columns
@@ -39,7 +37,7 @@ MODEL_NAME = "resnetv2_151.h5"
 # In[ ]:
 
 
-data = pd.read_csv(os.path.join(DATASET_FOLDER + 'train.csv'))
+data = pd.read_csv(str(DATASET_FOLDER / 'train.csv'))
 
 # preprocess
 data = data.fillna(0)
