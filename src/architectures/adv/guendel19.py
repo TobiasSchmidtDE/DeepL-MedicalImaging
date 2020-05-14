@@ -2,18 +2,38 @@ from keras import layers
 from keras import backend
 from keras import models
 
-"""code taken from keras implementation for densenet and modified 
-according to specifications in the paper"""
-# TODO: what densenet do they actually use? how many blocks?
-# TODO: what is the block in the middle? is that a convolution?
+"""
+code taken from keras implementation for densenet:
+ ttps://github.com/keras-team/keras-applications/blob/master/keras_applications/densenet.py
+and modified according to specifications in the paper
+"""
+
 
 def dense_block(x, blocks, name):
+    """ Creates a dense block
+
+        Parameters:
+            x (layer): previous tensor
+            blocks (int): number of blocks
+            name (string): name for dense layer
+
+        Returns:
+            output tensor for blocks
+        """
     for i in range(blocks):
         x = conv_block(x, 32, name=name + '_block' + str(i + 1))
     return x
 
 
 def transition_block(x, reduction, name):
+    """ Creates a transition block with BN, Relu and Conv
+        # Arguments
+            x (layer): input tensor
+            reduction (float): compression rate at transition layers
+            name (string): block label
+        # Returns
+            output tensor for the block
+    """
     bn_axis = 3 if backend.image_data_format() == 'channels_last' else 1
     x = layers.BatchNormalization(axis=bn_axis, epsilon=1.001e-5,
                                   name=name + '_bn')(x)
@@ -26,6 +46,14 @@ def transition_block(x, reduction, name):
 
 
 def conv_block(x, growth_rate, name):
+    """ Creates a dense block
+       Arguments
+           x (layer): input tensor
+           growth_rate (float): growth rate at dense layers
+           name (string): block label
+       Returns
+           Output tensor for the block
+    """
     bn_axis = 3 if backend.image_data_format() == 'channels_last' else 1
     x1 = layers.BatchNormalization(axis=bn_axis,
                                    epsilon=1.001e-5,
@@ -46,6 +74,12 @@ def conv_block(x, growth_rate, name):
 
 
 def densenet(classes=14):
+    """ instantiates densenet architecture
+        Arguments
+            classes (int): number of classes
+        Returns
+            densenet architecture model
+    """
     blocks = [6, 12, 24, 16]
     img_input = layers.Input(shape=(256, 256, 3))
     bn_axis = 3 if backend.image_data_format() == 'channels_last' else 1
@@ -76,5 +110,3 @@ def densenet(classes=14):
     model = models.Model(img_input, x, name='densenet')
 
     return model
-
-
