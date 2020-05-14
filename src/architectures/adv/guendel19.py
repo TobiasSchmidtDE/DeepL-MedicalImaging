@@ -1,6 +1,7 @@
 from keras import layers
 from keras import backend
 from keras import models
+import tensorflow as tf
 
 """code taken from keras implementation for densenet and modified 
 according to specifications in the paper"""
@@ -65,10 +66,12 @@ def densenet(classes=14):
     x = dense_block(x, blocks[2], name='conv4')
     x = transition_block(x, 0.5, name='pool4')
     x = dense_block(x, blocks[3], name='conv5')
-
-    x = layers.BatchNormalization(
-        axis=bn_axis, epsilon=1.001e-5, name='bn')(x)
-    x = layers.Activation('relu', name='relu')(x)
+    x = transition_block(x, 0.5, name='pool5')
+    print(tf.shape(x))
+    #
+    # x = layers.BatchNormalization(
+    #     axis=bn_axis, epsilon=1.001e-5, name='bn')(x)
+    # x = layers.Activation('relu', name='relu')(x)
 
     x = layers.GlobalAveragePooling2D(name='avg_pool')(x)
     x = layers.Dense(classes, activation='sigmoid', name='fc')(x)
