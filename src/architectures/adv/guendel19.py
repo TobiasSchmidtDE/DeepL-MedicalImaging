@@ -2,12 +2,6 @@ from keras import layers
 from keras import backend
 from keras import models
 
-"""
-code taken from keras implementation for densenet:
- ttps://github.com/keras-team/keras-applications/blob/master/keras_applications/densenet.py
-and modified according to specifications in the paper
-"""
-
 
 def dense_block(x, blocks, name):
     """ Creates a dense block
@@ -74,7 +68,11 @@ def conv_block(x, growth_rate, name):
 
 
 def densenet(classes=14):
-    """ instantiates densenet architecture
+    """ instantiates implementation as described in
+        https://arxiv.org/abs/1905.06362
+        code taken from
+        https://github.com/keras-team/keras-applications/blob/master/keras_applications/densenet.py
+        and modified according to specifications in the paper
         Arguments
             classes (int): number of classes
         Returns
