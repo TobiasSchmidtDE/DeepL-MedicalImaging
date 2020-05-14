@@ -3,56 +3,59 @@ import pandas as pd
 import numpy as np
 import keras
 import cv2
-from src.datasets.u_encoding import uencode, uencode_single
+from src.datasets.u_encoding import uencode
 from src.preprocessing.rescaling.scaler import Scaler
 
 
-def create_generator(train_path, img_size,
-                     batch_size, n_channels, columns, u_enc='uzeroes'):
+def create_generator(data, columns, dataset_folder,
+                     batch_size=64, n_channels=3,
+                     img_size=256, u_enc='uzeroes', shuffle=True):
 
     """    Returns a generator with the data
 
     Parameters:
-        train_path (string): path to dataset .csv file
+        data (pd.dataframe): dataset dataframe
+        dataset_folder (string): path to dataset
         img_size (int): size the images will be resized to (img_size x img_size)
         batch_size (int): batch size
         n_channels (int): number of channels the image will be converted to
         columns (list): columns/pathologies we want to use for training
         u_enc (string): style of encoding for uncertainty
                         (values: uzeros, uones, umulticlass)
+        shuffle (bool): whether to shuffle the data between batches
 
     Returns:
         generator (DataGenerator): generator with the given specifications
         """
 
-    train_df = pd.read_csv(train_path, index_col=[0])
-    # partition = {'train': list(train_df.index), 'val': list(val_df.index)}
-    partition = {'train': list(train_df.index)}
+    if data != pd.DataFrame():
+        raise ValueError('data has to be a dataframe')
+    if not isinstance(columns, list) or len(columns) < 1:
+        raise ValueError('columns need to be a non-empty list')
+    partition = {'train': list(data.index)}
     if not isinstance(columns, list):
         raise ValueError('columns has to be a list')
-    labels = {key: list(train_df[columns].loc[key]) for key in partition['train']}
-    multiple_labels = len(columns) > 1
-
-    if multiple_labels:
-        labels, num_classes = uencode(u_enc, labels)
-    else:
-        labels, num_classes = uencode_single(u_enc, labels)
-
-    dataset_folder = train_path.replace('train.csv', '')
+    labels = {key: list(data[columns].loc[key]) for key in partition['train']}
+    labels, num_classes = uencode(u_enc, labels)
 
     params = {'dim': (img_size, img_size),
               'batch_size': batch_size,
               'n_classes': num_classes,
               'n_channels': n_channels,
-              'shuffle': True,
+              'shuffle': shuffle,
               'dataset_folder': dataset_folder}
 
     return DataGenerator(partition['train'], labels, **params)
 
 
 class DataGenerator(keras.utils.Sequence):
+    """
+    Generates data for Keras
+    https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
+    """
     def __init__(self, list_ids, labels, batch_size, dim, n_channels,
                  n_classes, shuffle, dataset_folder):
+        """Initialization"""
         self.dim = dim
         self.batch_size = batch_size
         self.labels = labels
@@ -69,7 +72,7 @@ class DataGenerator(keras.utils.Sequence):
         return int(np.floor(len(self.list_IDs) / self.batch_size))
 
     def __getitem__(self, index):
-        """Generate one batch of data"""
+        """Generate one batch of data, , samples that are left due to batch size are discarded"""
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
         list_ids_temp = [self.list_IDs[k] for k in indexes]
         X, y = self.__data_generation(list_ids_temp)
