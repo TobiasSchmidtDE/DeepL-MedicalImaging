@@ -1,4 +1,4 @@
-# pylint: too-many-nested-blocks, too-many-branches
+# pylint: disable=too-many-nested-blocks, too-many-branches
 import pandas as pd
 
 
