@@ -1,3 +1,4 @@
+# pylint: too-many-nested-blocks, too-many-branches
 import pandas as pd
 
 
