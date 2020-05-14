@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 import keras
 import cv2
+from skimage.transform import resize
 from src.datasets.u_encoding import uencode
-from src.preprocessing.rescaling.scaler import Scaler
 
 
 def create_generator(data, columns, dataset_folder,
@@ -28,24 +28,23 @@ def create_generator(data, columns, dataset_folder,
         generator (DataGenerator): generator with the given specifications
         """
 
-    if data != pd.DataFrame():
+    if not isinstance(data, pd.DataFrame):
         raise ValueError('data has to be a dataframe')
     if not isinstance(columns, list) or len(columns) < 1:
         raise ValueError('columns need to be a non-empty list')
-    partition = {'train': list(data.index)}
     if not isinstance(columns, list):
         raise ValueError('columns has to be a list')
-    labels = {key: list(data[columns].loc[key]) for key in partition['train']}
+    labels = {key: list(data[columns].loc[key]) for key in data.index}
     labels, num_classes = uencode(u_enc, labels)
 
     params = {'dim': (img_size, img_size),
               'batch_size': batch_size,
-              'n_classes': num_classes,
+              'n_classes': len(columns),
               'n_channels': n_channels,
               'shuffle': shuffle,
               'dataset_folder': dataset_folder}
 
-    return DataGenerator(partition['train'], labels, **params)
+    return DataGenerator(data, labels, **params)
 
 
 class DataGenerator(keras.utils.Sequence):
@@ -53,19 +52,19 @@ class DataGenerator(keras.utils.Sequence):
     Generates data for Keras
     https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
     """
-    def __init__(self, list_ids, labels, batch_size, dim, n_channels,
+    def __init__(self, data, labels, batch_size, dim, n_channels,
                  n_classes, shuffle, dataset_folder):
         """Initialization"""
+        self.data = data
         self.dim = dim
         self.batch_size = batch_size
         self.labels = labels
-        self.list_IDs = list_ids
+        self.list_IDs = self.data.index
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.shuffle = shuffle
-        self.on_epoch_end()
-        self.indexes = np.arange(len(self.list_IDs))
         self.dataset_folder = dataset_folder
+        self.on_epoch_end()
 
     def __len__(self):
         """Denotes the number of batches per epoch"""
@@ -74,23 +73,26 @@ class DataGenerator(keras.utils.Sequence):
     def __getitem__(self, index):
         """Generate one batch of data, , samples that are left due to batch size are discarded"""
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
-        list_ids_temp = [self.list_IDs[k] for k in indexes]
-        X, y = self.__data_generation(list_ids_temp)
+        list_IDs_temp = [self.list_IDs[k] for k in indexes]
+        X, y = self.__data_generation(list_IDs_temp)
         return X, y
 
     def on_epoch_end(self):
         """Updates indexes after each epoch"""
+        # this is where its wrong
+        self.indexes = np.arange(len(self.list_IDs))
         if self.shuffle:
             np.random.shuffle(self.indexes)
 
     def __data_generation(self, list_ids_temp):
         """Generates data containing batch_size samples"""
-        X = np.empty(self.batch_size, *self.dim, self.n_channels)
-        y = np.empty(self.batch_size, dtype=int)
-
+        X = np.empty((self.batch_size, *self.dim, self.n_channels))
+        y = np.empty((self.batch_size, self.n_classes), dtype=int)
+        if not set(list_ids_temp).issubset(set(self.list_IDs)):
+            raise ValueError
         for i, ID in enumerate(list_ids_temp):
-            img = cv2.imread(os.path.join(self.dataset_folder + ID['Path'], cv2.IMREAD_GRAYSCALE))
-            scaled = Scaler(img, self.dim).resize('LINEAR')
+            img = cv2.imread(os.path.join(self.dataset_folder + self.data.loc[ID]['Path']), cv2.IMREAD_GRAYSCALE)
+            scaled = resize(image=img, output_shape=self.dim, order=1)
             if self.n_channels == 1:
                 X[i] = scaled
             elif self.n_channels == 3:
