@@ -30,7 +30,7 @@ def save_model(model, history, name, filename, description, version='1', upload=
     CURRENT_WORKING_DIR = Path(os.getcwd())
     basepath = CURRENT_WORKING_DIR
     # path main directory
-    if not basepath.name == "idp-radio-1":
+    if basepath.name != "idp-radio-1":
         basepath = basepath.parent.parent
 
     # transform hisory values from np.float32 to regular floats
@@ -70,7 +70,7 @@ def save_model(model, history, name, filename, description, version='1', upload=
     # make sure path exists, ceate one if necessary
     Path(folderpath).mkdir(parents=True, exist_ok=True)
     model.save(path)
-    print(path)
+
     # upload model to gcp
     if upload:
         remote_name = log['id'] + '.h5'

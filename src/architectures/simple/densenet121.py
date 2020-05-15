@@ -1,23 +1,18 @@
-
-import os 
-#make sure your working directory is the repository root. 
-if not os.getcwd().endswith("idp-radio-1"):
-    os.chdir("../../../")
+import os
 from pathlib import Path
-from dotenv import load_dotenv, find_dotenv
-load_dotenv(find_dotenv())
-
 import numpy as np
 import pandas as pd
 import keras
+from dotenv import load_dotenv, find_dotenv
 from keras_preprocessing.image import ImageDataGenerator
-from keras.applications import resnet_v2
+from keras.applications.densenet import DenseNet121
 from keras.layers import Dense, GlobalAveragePooling2D
 from keras.models import Model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from src.utils.save_model import save_model, model_set
 
+load_dotenv(find_dotenv())
 DATASET_FOLDER = Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY"))
 SEED = 17
 

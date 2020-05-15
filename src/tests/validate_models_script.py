@@ -13,7 +13,7 @@ def execute():
     try:
         basepath = Path(os.getcwd())
         # make sure your working directory is the repository root.
-        if not basepath.name == "idp-radio-1":
+        if basepath.name != "idp-radio-1":
             basepath = basepath.parent.parent
 
         logfile_path = basepath / "logs" / "unvalidated-experiment-log.json"
@@ -87,7 +87,7 @@ def execute():
             else:
                 mode = 'w'
 
-            with open(wiki_model_dir + '/' + exp['name'] + '.md', mode) as:
+            with open(wiki_model_dir + '/' + exp['name'] + '.md', mode) as f:
                 f.write(content)
 
             # if no model with same name exists add to home page of wiki
