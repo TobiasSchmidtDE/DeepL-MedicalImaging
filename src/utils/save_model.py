@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import os
 from keras.models import load_model as load
-from src.utils.storage import upload_file, download_file
+from src.utils.storage import upload_file, download_file, delete_file
 
 
 def save_model(model, history, name, filename, description, version='1', upload=True):
@@ -164,10 +164,7 @@ def load_model(identifier=None, name=None, version=None):
     # reset workdir
     os.chdir(CURRENT_WORKING_DIR)
 
-    experiment = None
-    for exp in experiments:
-        if exp['id'] == identifier or (exp['name'] == name and exp['version'] == version):
-            experiment = exp
+    experiment = find_experiment(experiments, identifier, name, version)
 
     if not experiment:
         raise Exception('Model was not found')
@@ -183,3 +180,80 @@ def load_model(identifier=None, name=None, version=None):
         download_file(bucket_filename, exp_path)
 
     return load(exp_path)
+
+
+def delete_model(identifier=None, name=None, version=None):
+    """
+    Deletes a given model (by identifier or by name and version)
+
+    Parameters:
+    experiments: list of experiments
+    identifier: the id of the model
+    name: the name of the model
+    version: the version of the model
+    """
+
+    if not (identifier or (name and version)):
+        raise Exception(
+            'You must specify the id, or the name and version of the model')
+
+    # load logfile
+    CURRENT_WORKING_DIR = os.getcwd()
+    basepath = Path(CURRENT_WORKING_DIR)
+    log_file = basepath / 'logs/experiment-log.json'
+
+    experiment = None
+    data = None
+
+    # load validated models
+    with open(log_file, 'r') as f:
+        data = json.load(f)
+    experiments = data['experiments']
+
+    experiment = find_experiment(experiments, identifier, name, version)
+
+    # look for the model in the unvalidated experiment log
+    if not experiment:
+        log_file = basepath / 'logs/unvalidated-experiment-log.json'
+
+        with open(log_file, 'r') as f:
+            data = json.load(f)
+        experiments = data['experiments']
+
+    if not experiment:
+        raise Exception('The model was not found')
+
+    # delete the model from the gcp storage
+    delete_file(experiment['id'] + '.h5')
+
+    # remove the experiment from the log and write it back to the logfile
+    experiments.remove(experiment)
+    with open(log_file, 'w') as f:
+        json_data = json.dumps(data, indent=4)
+        f.write(json_data)
+
+    # delete local instance of model if it exists
+    foldername = basepath / 'models' / experiment['name']
+    filename = foldername / experiment['filename']
+    if os.path.isfile(filename):
+        os.remove(filename)
+
+
+def find_experiment(experiments, identifier=None, name=None, version=None):
+    """
+    Helper function to find an experiment in a list
+
+    Parameters:
+    experiments: list of experiments
+    identifier: the id of the model
+    name: the name of the model
+    version: the version of the model
+
+    Returns:
+    dict
+    """
+
+    for exp in experiments:
+        if exp['id'] == identifier or (exp['name'] == name and exp['version'] == version):
+            return exp
+    return None
