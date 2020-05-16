@@ -102,14 +102,14 @@ def model_set(identifier, attribute, value):
     id string: the id of the model
     """
 
-    
+
     CURRENT_WORKING_DIR = Path(os.getcwd())
     basepath = CURRENT_WORKING_DIR
     # path to main directory
     if basepath.name != "idp-radio-1":
         basepath = basepath.parent.parent
     os.chdir(basepath)
-    
+
     # append model data to log file
     log_file = basepath / 'logs/unvalidated-experiment-log.json'
     with open(log_file, 'r') as f:
