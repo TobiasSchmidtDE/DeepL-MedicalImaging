@@ -102,7 +102,6 @@ def model_set(identifier, attribute, value):
     id string: the id of the model
     """
 
-
     CURRENT_WORKING_DIR = Path(os.getcwd())
     basepath = CURRENT_WORKING_DIR
     # path to main directory
@@ -146,11 +145,11 @@ def load_model(identifier=None, name=None, version=None):
         raise Exception(
             'You must specify the id, or the name and version of the model')
 
-    CURRENT_WORKING_DIR = os.getcwd()
+    CURRENT_WORKING_DIR = Path(os.getcwd())
+    basepath = CURRENT_WORKING_DIR
     # path main directory
-    basepath = Path(os.path.dirname(os.path.realpath(__file__))).parent.parent
-    # set workdir to main directory
-    os.chdir(basepath)
+    if basepath.name != "idp-radio-1":
+        basepath = basepath.parent.parent
 
     # load logfile
     log_file = basepath / 'logs/experiment-log.json'
