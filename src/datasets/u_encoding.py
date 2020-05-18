@@ -1,4 +1,5 @@
 import numpy as np
+import tensorflow
 from tensorflow.keras.utils import to_categorical
 
 # open: extend encoding to differ between pathologies

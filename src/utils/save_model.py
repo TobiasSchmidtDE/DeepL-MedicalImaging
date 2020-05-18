@@ -2,6 +2,7 @@ import uuid
 import json
 from pathlib import Path
 import os
+import tensorflow
 from tensorflow.keras.models import load_model as load
 from src.utils.storage import upload_file, download_file
 
