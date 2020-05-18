@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import re
 import sys
+import traceback
 
 token = os.environ['TOKEN']
 WIKI_URL = 'https://oauth2:' + token + \
@@ -15,7 +16,7 @@ def execute():
             os.path.realpath(__file__))).parent.parent
         logfile_path = basepath / 'logs/unvalidated-experiment-log.json'
         if not os.path.isfile(logfile_path):
-            sys.exit(0)
+            return
 
         # load logfile
         f = open(logfile_path, 'r')
@@ -26,7 +27,7 @@ def execute():
         unvalidated_experiments = data['experiments']
 
         if len(unvalidated_experiments) < 1:
-            sys.exit(0)
+            return
 
         # create temporary directory
         tempdir = str(basepath) + '/temp'
@@ -122,7 +123,7 @@ def execute():
 
     # pylint: disable=bare-except
     except:
-        print('An error occurred', sys.exc_info()[0])
+        traceback.print_exc()
         sys.exit(1)
 
 
