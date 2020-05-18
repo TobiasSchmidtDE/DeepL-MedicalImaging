@@ -1,11 +1,10 @@
-import pandas as pd
+
+from pathlib import Path
 import numpy as np
-import keras
 import cv2
 from skimage.transform import resize
-from src.datasets.u_encoding import uencode
-from pathlib import Path
 from tensorflow.keras.utils import Sequence
+from src.datasets.u_encoding import uencode
 
 
 class ImageDataGenerator(Sequence):
@@ -76,7 +75,7 @@ class ImageDataGenerator(Sequence):
                 + str(dataset.columns))
 
         # check that column for paths only contains strings
-        if any([(type(path) != str) for path in dataset[path_column]]):
+        if any([not isinstance(path, str) for path in dataset[path_column]]):
             raise ValueError(
                 "Paths to images must be given as string. Dataframe contains non-string values in '"
                 + str(path_column) + "' column")
@@ -118,7 +117,7 @@ class ImageDataGenerator(Sequence):
 
     def get_new_index(self):
         """
-            Returns a list of ids for the data generation. 
+            Returns a list of ids for the data generation.
         """
         if self.shuffle:
             return np.random.permutation(len(self.dataset))
@@ -140,7 +139,8 @@ class ImageDataGenerator(Sequence):
         Loads one batch of data.
 
         Parameters:
-            sample_ids (integer list): the ids of the samples that should be loaded as part of the batch
+            sample_ids (integer list): the ids of the samples that should be loaded
+                                       as part of the batch.
 
         Returns:
             Tupel with list of images and list of labels
@@ -188,9 +188,11 @@ class ImageDataGenerator(Sequence):
         start_index = batch_index * self.batch_size
         end_index = (batch_index+1) * self.batch_size
 
-        if ((self.drop_last and end_index > len(self.dataset)) or (start_index > len(self.dataset))):
-            raise ValueError("Index out of range! Number of batches exceeded. Only {max_batches} batches available, not {num_batches}.".format(
-                max_batches=len(self), num_batches=batch_index))
+        if ((self.drop_last and end_index > len(self.dataset))
+                or (start_index > len(self.dataset))):
+            raise ValueError("Index out of range! Number of batches exceeded."
+                             " Only {max_batches} batches available, not {num_batches}.".format(
+                                 max_batches=len(self), num_batches=batch_index))
 
         return self.data_generation(self.index[start_index:end_index])
 
@@ -199,7 +201,7 @@ class ImageDataGenerator(Sequence):
         An iterable function that samples batches from the dataset.
         """
 
-        for i in range(0, len(self)):
+        for i in iter(range(len(self))):
             yield self.data_generation(self[i])
 
     def on_epoch_end(self):
