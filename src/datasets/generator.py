@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 import numpy as np
 import keras
@@ -32,10 +31,10 @@ class ImageDataGenerator(keras.utils.Sequence):
             dataset_folder (string|Path): path to the root of the dataset folder
             label_columns (list): names of columns of pathologies we want to use as labels
                         Valid values in label columns are:
-                                0 for mentioned as not present,
-                                1 for mentioned as present,
+                                0 for mentioned as confidently not present,
+                                1 for mentioned as confidently present,
                                 nan not mentioned,
-                                'unc_value' for mentioned as uncertain.
+                                'unc_value' for mentioned as uncertainly present.
 
             path_column (str): name of the column that contains the relative path from
                             the dataset_folder root directory to each image. (default "Path")
@@ -113,20 +112,18 @@ class ImageDataGenerator(keras.utils.Sequence):
 
     def get_new_index(self):
         """
-        TODO: Doc
+            Returns a list of ids for the data generation. 
         """
         if self.shuffle:
-            return np.random.permutation(len(self.dataset)))
+            return np.random.permutation(len(self.dataset))
         else:
             return range(len(self.dataset))
 
     def __len__(self):
         """
         Denotes the number of batches per epoch
-
-        TODO: Doc
         """
-        num_batches=len(self.dataset) / self.batch_size
+        num_batches = len(self.dataset) / self.batch_size
         if self.drop_last:
             return int(np.floor(num_batches))
         else:
@@ -134,63 +131,74 @@ class ImageDataGenerator(keras.utils.Sequence):
 
     def data_generation(self, sample_ids):
         """
-        Load batch of samples for given IDs
+        Loads one batch of data.
 
-        TODO: Doc
+        Parameters:
+            sample_ids (integer list): the ids of the samples that should be loaded as part of the batch
+
+        Returns:
+            Tupel with list of images and list of labels
         """
 
-        img_paths=self.dataset.iloc[sample_ids][self.path_column].to_numpy()
-        img_paths=self.dataset_folder + img_paths
+        img_paths = self.dataset.iloc[sample_ids][self.path_column].to_numpy()
+        img_paths = self.dataset_folder + img_paths
 
-        images=[self.load_image(img_path) for img_path in img_paths]
-        labels=self.dataset.iloc[sample_ids][self.label_columns].to_numpy()
+        images = [self.load_image(img_path) for img_path in img_paths]
+        labels = self.dataset.iloc[sample_ids][self.label_columns].to_numpy()
+
+        # replace nan values
+        labels[np.isnan(labels)] = self.nan_replacement
+
+        # enforce uncertainty encoding strategy
+        labels
 
         return images, labels
 
     def load_image(self, path):
         """
+        Paramter:
+            path: the path to the image. Either absolut or relative to repositories root directory.
 
-        TODO: Doc
+        Returns a numpy array of the gray scale image
 
         """
-        img=resize(image = cv2.imread(path, cv2.IMREAD_GRAYSCALE),
-                     output_shape = self.dim, order = 1)
+        img = resize(image=cv2.imread(path, cv2.IMREAD_GRAYSCALE),
+                     output_shape=self.dim, order=1)
 
-        return np.array(img) if self.n_channels == 1 else np.stack((img,) * self.n_channels, axis = 2)
+        return np.array(img) if self.n_channels == 1 else np.stack((img,) * self.n_channels, axis=2)
 
     def __getitem__(self, batch_index):
         """
-        Generate one batch of data
+        Loads specific batch of data
 
-        TODO: Doc
+        Paramters:
+            batch_index (int): the id of the batch that should be loaded
+
+        Returns:
+            Tupel with list of images and list of labels of length batch_size
 
         """
 
-        start_index=batch_index * self.batch_size
-        end_index=(batch_index+1) * self.batch_size
+        start_index = batch_index * self.batch_size
+        end_index = (batch_index+1) * self.batch_size
 
         if ((self.drop_last and end_index > len(self.dataset)) or (start_index > len(self.dataset))):
-            raise ValueError("Number of batches exceeded. Only {max_batches} batches available, but not {num_batches}.".format(
+            raise ValueError("Index out of range! Number of batches exceeded. Only {max_batches} batches available, not {num_batches}.".format(
                 max_batches=len(self), num_batches=batch_index))
 
         return self.__data_generation(self.index[start_index:end_index])
 
     def _iter_(self):
         """
-
-        TODO: Doc
-
+        An iterable function that samples batches from the dataset.
         """
+
         for i in range(0, len(self)):
             yield self.__data_generation(self[i])
-
 
     def on_epoch_end(self):
         """
         Updates indexes after each epoch
+        """
 
-        TODO: Doc
-
-        """"
-
-        self.index=self.get_new_index()
+        self.index = self.get_new_index()
