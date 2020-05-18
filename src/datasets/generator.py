@@ -4,6 +4,7 @@ import keras
 import cv2
 from skimage.transform import resize
 from src.datasets.u_encoding import uencode
+from pathlib import Path
 
 
 class ImageDataGenerator(keras.utils.Sequence):
@@ -28,7 +29,7 @@ class ImageDataGenerator(keras.utils.Sequence):
                                     to the dataset_folder).
                                     Must contain all columns defined as labels (in label_columns)
 
-            dataset_folder (string|Path): path to the root of the dataset folder
+            dataset_folder (Pathlib Path): path to the root of the dataset folder
             label_columns (list): names of columns of pathologies we want to use as labels
                         Valid values in label columns are:
                                 0 for mentioned as confidently not present,
@@ -63,6 +64,10 @@ class ImageDataGenerator(keras.utils.Sequence):
             generator (DataGenerator): generator with the given specifications
             """
 
+        if not isinstance(dataset_folder, Path):
+            raise ValueError(
+                "dataset folder needs to be instance of pathlib.Path")
+
         # check dataset has path column
         if not path_column in dataset.columns:
             raise ValueError(
@@ -90,7 +95,7 @@ class ImageDataGenerator(keras.utils.Sequence):
         # check that all label columns contain valid values {0,1, nan, unc_value}
         valid_values = [0, 1, unc_value]
         for label_column in label_columns:
-            if not all(dataset[label_column].isin(valid_values) or dataset[label_column].isna()):
+            if not all(dataset[label_column].isin(valid_values) | dataset[label_column].isna()):
                 raise ValueError(
                     label_column + ' contains values which are not valid or NaN. Valid values are '
                     + str(valid_values))
@@ -141,7 +146,7 @@ class ImageDataGenerator(keras.utils.Sequence):
         """
 
         img_paths = self.dataset.iloc[sample_ids][self.path_column].to_numpy()
-        img_paths = self.dataset_folder + img_paths
+        img_paths = str(self.dataset_folder) + "/" + img_paths
 
         images = [self.load_image(img_path) for img_path in img_paths]
         labels = self.dataset.iloc[sample_ids][self.label_columns].to_numpy()
@@ -162,7 +167,7 @@ class ImageDataGenerator(keras.utils.Sequence):
         Returns a numpy array of the gray scale image
 
         """
-        img = resize(image=cv2.imread(path, cv2.IMREAD_GRAYSCALE),
+        img = resize(image=cv2.imread(str(Path(path)), cv2.IMREAD_GRAYSCALE),
                      output_shape=self.dim, order=1)
 
         return np.array(img) if self.n_channels == 1 else np.stack((img,) * self.n_channels, axis=2)
@@ -186,7 +191,7 @@ class ImageDataGenerator(keras.utils.Sequence):
             raise ValueError("Index out of range! Number of batches exceeded. Only {max_batches} batches available, not {num_batches}.".format(
                 max_batches=len(self), num_batches=batch_index))
 
-        return self.__data_generation(self.index[start_index:end_index])
+        return self.data_generation(self.index[start_index:end_index])
 
     def _iter_(self):
         """
@@ -194,7 +199,7 @@ class ImageDataGenerator(keras.utils.Sequence):
         """
 
         for i in range(0, len(self)):
-            yield self.__data_generation(self[i])
+            yield self.data_generation(self[i])
 
     def on_epoch_end(self):
         """
