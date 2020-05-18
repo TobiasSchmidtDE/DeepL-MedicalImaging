@@ -56,6 +56,10 @@ def save_model(model, history, name, filename, description, version='1', upload=
     with open(log_file, 'r') as f:
         data = json.load(f)
 
+    # add experiments property to dict if the file was empty
+    if not data or not 'experiments' in data:
+        data = {'experiments': []}
+
     # check for exisiting model with same name and version
     for experiment in data['experiments']:
         if experiment['name'] == log['name'] and experiment['version'] == log['version']:
@@ -113,9 +117,14 @@ def model_set(identifier, attribute, value):
     log_file = basepath / 'logs/unvalidated-experiment-log.json'
     with open(log_file, 'r') as f:
         data = json.load(f)
-        for model in data['experiments']:
-            if model['id'] == identifier:
-                model[attribute] = value
+
+    # add experiments property to dict if the file was empty
+    if not data or not 'experiments' in data:
+        raise Exception('No models in log file')
+
+    for model in data['experiments']:
+        if model['id'] == identifier:
+            model[attribute] = value
 
     with open(log_file, 'w') as f:
         json_data = json.dumps(data, indent=4)
@@ -209,9 +218,10 @@ def delete_model(identifier=None, name=None, version=None):
     # load validated models
     with open(log_file, 'r') as f:
         data = json.load(f)
-    experiments = data['experiments']
 
-    experiment = find_experiment(experiments, identifier, name, version)
+    if data and 'experiments' in data:
+        experiment = find_experiment(
+            data['experiments'], identifier, name, version)
 
     # look for the model in the unvalidated experiment log
     if not experiment:
@@ -219,7 +229,10 @@ def delete_model(identifier=None, name=None, version=None):
 
         with open(log_file, 'r') as f:
             data = json.load(f)
-        experiments = data['experiments']
+
+        if data and 'experiments' in data:
+            experiment = find_experiment(
+                data['experiments'], identifier, name, version)
 
     if not experiment:
         raise Exception('The model was not found')
@@ -228,7 +241,7 @@ def delete_model(identifier=None, name=None, version=None):
     delete_file(experiment['id'] + '.h5')
 
     # remove the experiment from the log and write it back to the logfile
-    experiments.remove(experiment)
+    data['experiments'].remove(experiment)
     with open(log_file, 'w') as f:
         json_data = json.dumps(data, indent=4)
         f.write(json_data)
@@ -238,6 +251,9 @@ def delete_model(identifier=None, name=None, version=None):
     filename = foldername / experiment['filename']
     if os.path.isfile(filename):
         os.remove(filename)
+
+    # reset workdir
+    os.chdir(CURRENT_WORKING_DIR)
 
 
 def find_experiment(experiments, identifier=None, name=None, version=None):
