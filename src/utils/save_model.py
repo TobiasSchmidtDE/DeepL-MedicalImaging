@@ -2,8 +2,8 @@ import uuid
 import json
 from pathlib import Path
 import os
-from keras.models import load_model as load
-from utils.storage import upload_file, download_file
+import tensorflow as tf
+from src.utils.storage import upload_file, download_file
 
 
 def save_model(model, history, name, filename, description, version='1', upload=True):
@@ -185,4 +185,4 @@ def load_model(identifier=None, name=None, version=None):
         Path(folderpath).mkdir(parents=True, exist_ok=True)
         download_file(bucket_filename, exp_path)
 
-    return load(exp_path)
+    return tf.keras.models.load_model(exp_path)

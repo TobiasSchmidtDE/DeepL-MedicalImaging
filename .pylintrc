@@ -147,6 +147,7 @@ disable=print-statement,
         too-many-arguments,
         too-many-instance-attributes,
         too-many-locals,
+        too-many-instance-attributes,
         duplicate-code
 
 # Enable the message, report, category or checker with the given id(s). You can
@@ -196,9 +197,7 @@ never-returning-functions=sys.exit
 [MISCELLANEOUS]
 
 # List of note tags to take in consideration, separated by a comma.
-notes=FIXME,
-      XXX,
-      TODO
+notes=
 
 
 [SPELLING]
