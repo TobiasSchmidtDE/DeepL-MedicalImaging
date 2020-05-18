@@ -5,9 +5,10 @@ import cv2
 from skimage.transform import resize
 from src.datasets.u_encoding import uencode
 from pathlib import Path
+from tensorflow.keras.utils import Sequence
 
 
-class ImageDataGenerator(keras.utils.Sequence):
+class ImageDataGenerator(Sequence):
     """
     Generates data for Keras image classifier
     https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
@@ -157,7 +158,7 @@ class ImageDataGenerator(keras.utils.Sequence):
         # enforce uncertainty encoding strategy
         labels = uencode(self.u_enc, labels, unc_value=self.unc_value)
 
-        return images, labels
+        return np.array(images), np.array(labels)
 
     def load_image(self, path):
         """
