@@ -2,13 +2,12 @@
 from pathlib import Path
 import numpy as np
 import cv2
-import tensorflow
-from tensorflow.keras.utils import Sequence
+import tensorflow as tf
 from skimage.transform import resize
 from src.datasets.u_encoding import uencode
 
 
-class ImageDataGenerator(Sequence):
+class ImageDataGenerator(tf.keras.utilsSequence):
     """
     Generates data for Keras image classifier
     https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly

@@ -2,8 +2,7 @@ import uuid
 import json
 from pathlib import Path
 import os
-import tensorflow
-from tensorflow.keras.models import load_model as load
+import tensorflow as tf
 from src.utils.storage import upload_file, download_file
 
 
@@ -186,4 +185,4 @@ def load_model(identifier=None, name=None, version=None):
         Path(folderpath).mkdir(parents=True, exist_ok=True)
         download_file(bucket_filename, exp_path)
 
-    return load(exp_path)
+    return tf.keras.models.load_model(exp_path)

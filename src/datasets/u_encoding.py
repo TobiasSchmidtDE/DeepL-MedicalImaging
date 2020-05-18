@@ -1,6 +1,5 @@
 import numpy as np
-import tensorflow
-from tensorflow.keras.utils import to_categorical
+import tensorflow as tf
 
 # open: extend encoding to differ between pathologies
 
@@ -37,7 +36,7 @@ def uencode(enc_type, labels, unc_value=-1):
     elif enc_type == 'uones':
         labels[uncertainty_mask] = 1
     elif enc_type == 'umulticlass':
-        onehot_matrix = to_categorical(labels)
+        onehot_matrix = tf.keras.utils.to_categorical(labels)
         flattend_shape = labels.shape[:1] + (np.prod(labels.shape[1:]),)
         labels = onehot_matrix.reshape(flattend_shape)
     else:
