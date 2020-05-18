@@ -121,18 +121,19 @@ class ImageDataGenerator(Sequence):
         """
         if self.shuffle:
             return np.random.permutation(len(self.dataset))
-        else:
-            return range(len(self.dataset))
+
+        return range(len(self.dataset))
 
     def __len__(self):
         """
         Denotes the number of batches per epoch
         """
         num_batches = len(self.dataset) / self.batch_size
+
         if self.drop_last:
             return int(np.floor(num_batches))
-        else:
-            return int(np.ceil(num_batches))
+
+        return int(np.ceil(num_batches))
 
     def data_generation(self, sample_ids):
         """
