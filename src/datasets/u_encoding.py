@@ -1,38 +1,46 @@
-# pylint: disable=too-many-nested-blocks, too-many-branches
-import pandas as pd
-
+import numpy as np
+from tensorflow.keras.utils import to_categorical
 
 # open: extend encoding to differ between pathologies
-def uencode(enc_type, labels, unc_value=-1, nan_value=0):
+
+
+def uencode(enc_type, labels, unc_value=-1):
     """
     uncertainty encoding as described in
     https://arxiv.org/pdf/1901.07031.pdf
+
+    Parameters:
+        enc_type (string): One of 'uzeroes', 'uones' or 'umulticlass'.
+            Case 'uzeroes':
+                All uncertainty values are replaced with 0
+            Case 'uones':
+                All uncertainty values are replaced with 1
+            Case 'umulticlass':
+                Each pathologie 'P' get's associated with tree separat classes:
+                    - positiv (confidently present)
+                    - negativ (confidently not present)
+                    - uncertain (uncertainly present)
+                Resulting in new label vector with 3 times the size of the label vector.
+                So for example a label vector [1,-1, 0] gets translated to [1,0,0, 0,0,1, 0,1,0]
+        labels (list): A list of label vectors having 0, 1 or unc_value as values.
+        unc_value (int/str): Value used to indicate uncertainty of pathologies (default -1)
+
+    Returns:
+        A list of label vectors without any occurances of <unc_value> values.
     """
-    for key in labels:
-        if isinstance(labels[key], list):
-            for i, value in enumerate(labels[key]):
-                if pd.isna(value):
-                    labels[key][i] = nan_value
-                if value == unc_value:
-                    if enc_type == 'uzeroes':
-                        if isinstance(labels[key], list):
-                            labels[key][i] = 0
-                    elif enc_type == 'uones':
-                        labels[key][i] = 1
-                    elif enc_type == 'umulticlass':
-                        labels[key][i] = 2
-        else:
-            if pd.isna(labels[key]):
-                labels[key] = nan_value
-            if labels[key] == unc_value:
-                if enc_type == 'uzeroes':
-                    labels[key] = 0
-                elif enc_type == 'uones':
-                    labels[key] = 1
-                elif enc_type == 'umulticlass':
-                    labels[key] = 2
-    if enc_type == 'umulticlass':
-        num_classes = 3
+
+    uncertainty_mask = labels == unc_value
+
+    if enc_type == 'uzeroes':
+        labels[uncertainty_mask] = 0
+    elif enc_type == 'uones':
+        labels[uncertainty_mask] = 1
+    elif enc_type == 'umulticlass':
+        onehot_matrix = to_categorical(labels)
+        flattend_shape = labels.shape[:1] + (np.prod(labels.shape[1:]),)
+        labels = onehot_matrix.reshape(flattend_shape)
     else:
-        num_classes = 2
-    return labels, num_classes
+        raise NotImplementedError(
+            "Encodings of type {} are not supported".format(enc_type))
+
+    return labels

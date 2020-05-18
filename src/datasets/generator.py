@@ -150,7 +150,7 @@ class ImageDataGenerator(keras.utils.Sequence):
         labels[np.isnan(labels)] = self.nan_replacement
 
         # enforce uncertainty encoding strategy
-        labels
+        labels = uencode(self.u_enc, labels, unc_value=self.unc_value)
 
         return images, labels
 
