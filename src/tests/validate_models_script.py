@@ -26,7 +26,7 @@ def execute():
         unvalidated_experiments = data['experiments']
 
         if len(unvalidated_experiments) < 1:
-            sys.exit(1)
+            sys.exit(0)
 
         # create temporary directory
         tempdir = str(basepath) + '/temp'
@@ -123,7 +123,7 @@ def execute():
     # pylint: disable=bare-except
     except:
         print('An error occurred', sys.exc_info()[0])
-        sys.exit(0)
+        sys.exit(1)
 
 
 execute()
