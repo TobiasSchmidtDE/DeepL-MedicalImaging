@@ -7,7 +7,7 @@ from skimage.transform import resize
 from src.datasets.u_encoding import uencode
 
 
-class ImageDataGenerator(tf.keras.utilsSequence):
+class ImageDataGenerator(tf.keras.utils.Sequence):
     """
     Generates data for Keras image classifier
     https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
