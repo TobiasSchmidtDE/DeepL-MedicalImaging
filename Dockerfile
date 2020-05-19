@@ -103,4 +103,3 @@ RUN apt-get -y install git wget unzip ipython
 RUN pip install ipython[notebook] jupyterlab
 
 ENTRYPOINT ["./remote_access/open_remoteaccess.sh"]
-#CMD ["bin", "bash"]

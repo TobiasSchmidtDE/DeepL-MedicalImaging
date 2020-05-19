@@ -27,11 +27,41 @@
 
 2. Install [Docker](https://docs.docker.com/engine/install/ubuntu/)
 
-3. Build the Docker Image: `docker build --tag idp-radio .` This will build a docker image based on the tensorflow image, install all dependecies and download the dataset into the container. 
+3. Build the Docker Image: 
+```
+docker build --tag idp-radio .
+```
+This will build a docker image based on the tensorflow image, install all dependecies and download the dataset into the container. 
 
-4. Start and run commands in the Docker container: `docker run -v $PWD:/srv/idp-radio-1 --gpus all -it idp-radio /bin/bash`.
+4. Start and run commands in the Docker container: 
+```
+docker run -d -v $PWD:/srv/idp-radio-1 --name radio --gpus all idp-radio
+```
+  - `-d` runs the container in detached mode
   - `-v` mounts the src folder into the docker container
+  - `--name radio` sets the name of the container to `radio`
   - `--gpus all` enables all GPUs
-  - The working directory inside the container is ` /srv/idp-radio-1` 
+  - The working directory inside the container is `/srv/idp-radio-1` 
 
-5. Run commands in the container if its already running `docker exec -it container_name command`
+
+5. To access Jupyter Lab/Notebook or Tensorboard you need to get the public url for the ngrok tunnel. The most comfortable way to get this is to look at the logs of the docker container using:
+```
+docker logs radio
+```
+
+There you will find an entry from where you can copy & paste the public url for the service you'd like to access. The entry is generated every 5 minutes and should look like this: 
+```
+Retrieving open ngrok tunnels...
+URLs open for the following services: [('jupyterlab', 'http://abcde12345.ngrok.io'), ('tensorboard', 'http://abcde12345.ngrok.io'), ('jupyternotebook', 'http://abcde12345.ngrok.io')]
+```
+
+
+6. To start an interative bash to run commands in the container use:
+```
+docker exec -it radio /bin/bash
+```
+
+To run with root access inside the conatiner use:
+```
+docker exec --user root -it radio  /bin/bash
+```
