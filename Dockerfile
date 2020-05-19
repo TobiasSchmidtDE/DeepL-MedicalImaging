@@ -102,4 +102,5 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 RUN apt-get -y install git wget unzip ipython
 RUN pip install ipython[notebook] jupyterlab
 
-CMD ["./remote_access/open_remoteaccess.sh", "&", "bin", "bash"]
+ENTRYPOINT ["./remote_access/open_remoteaccess.sh"]
+#CMD ["bin", "bash"]
