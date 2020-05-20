@@ -16,6 +16,8 @@ class SimpleBase:
             base_model = ResNet152V2(include_top=False, weights='imagenet')
         else:
             raise NotImplementedError()
+        for layer in base_model.layers:
+            layer.trainable = False
         x = base_model.output
         x = GlobalAveragePooling2D()(x)
         x = Dense(1024, activation='relu')(x)
