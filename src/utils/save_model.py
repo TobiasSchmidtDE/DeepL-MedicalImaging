@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import os
 import tensorflow as tf
-from src.utils.storage import upload_file, download_file
+from src.utils.storage import upload_file, download_file, delete_file
 
 
 def save_model(model, history, name, filename, description, version='1', upload=True):
@@ -27,11 +27,11 @@ def save_model(model, history, name, filename, description, version='1', upload=
     if not model or not history:
         raise Exception('Hisory or model are not defined')
 
-    CURRENT_WORKING_DIR = os.getcwd()
+    CURRENT_WORKING_DIR = Path(os.getcwd())
+    basepath = CURRENT_WORKING_DIR
     # path main directory
-    basepath = Path(os.path.dirname(os.path.realpath(__file__))).parent.parent
-    # set workdir to main directory
-    os.chdir(basepath)
+    if basepath.name != "idp-radio-1":
+        basepath = basepath.parent.parent
 
     # transform hisory values from np.float32 to regular floats
     for key in history.keys():
@@ -56,6 +56,10 @@ def save_model(model, history, name, filename, description, version='1', upload=
     with open(log_file, 'r') as f:
         data = json.load(f)
 
+    # add experiments property to dict if the file was empty
+    if not data or not 'experiments' in data:
+        data = {'experiments': []}
+
     # check for exisiting model with same name and version
     for experiment in data['experiments']:
         if experiment['name'] == log['name'] and experiment['version'] == log['version']:
@@ -63,10 +67,6 @@ def save_model(model, history, name, filename, description, version='1', upload=
                 'There is already a model with the same name and version')
 
     data['experiments'].append(log)
-
-    with open(log_file, 'w') as f:
-        json_data = json.dumps(data, indent=4)
-        f.write(json_data)
 
     # save model
     folderpath = basepath / 'models' / name
@@ -78,10 +78,11 @@ def save_model(model, history, name, filename, description, version='1', upload=
     # upload model to gcp
     if upload:
         remote_name = log['id'] + '.h5'
-        upload_file(path, remote_name)
+        upload_file(str(path), remote_name)
 
-    # reset workdir
-    os.chdir(CURRENT_WORKING_DIR)
+    with open(log_file, 'w') as f:
+        json_data = json.dumps(data, indent=4)
+        f.write(json_data)
 
     return identifier
 
@@ -105,19 +106,25 @@ def model_set(identifier, attribute, value):
     id string: the id of the model
     """
 
-    CURRENT_WORKING_DIR = os.getcwd()
+    CURRENT_WORKING_DIR = Path(os.getcwd())
+    basepath = CURRENT_WORKING_DIR
     # path to main directory
-    basepath = Path(os.path.dirname(os.path.realpath(__file__))).parent.parent
-    # set workdir to main directory
+    if basepath.name != "idp-radio-1":
+        basepath = basepath.parent.parent
     os.chdir(basepath)
 
     # append model data to log file
     log_file = basepath / 'logs/unvalidated-experiment-log.json'
     with open(log_file, 'r') as f:
         data = json.load(f)
-        for model in data['experiments']:
-            if model['id'] == identifier:
-                model[attribute] = value
+
+    # add experiments property to dict if the file was empty
+    if not data or not 'experiments' in data:
+        raise Exception('No models in log file')
+
+    for model in data['experiments']:
+        if model['id'] == identifier:
+            model[attribute] = value
 
     with open(log_file, 'w') as f:
         json_data = json.dumps(data, indent=4)
@@ -147,11 +154,11 @@ def load_model(identifier=None, name=None, version=None):
         raise Exception(
             'You must specify the id, or the name and version of the model')
 
-    CURRENT_WORKING_DIR = os.getcwd()
+    CURRENT_WORKING_DIR = Path(os.getcwd())
+    basepath = CURRENT_WORKING_DIR
     # path main directory
-    basepath = Path(os.path.dirname(os.path.realpath(__file__))).parent.parent
-    # set workdir to main directory
-    os.chdir(basepath)
+    if basepath.name != "idp-radio-1":
+        basepath = basepath.parent.parent
 
     # load logfile
     log_file = basepath / 'logs/experiment-log.json'
@@ -167,10 +174,7 @@ def load_model(identifier=None, name=None, version=None):
     # reset workdir
     os.chdir(CURRENT_WORKING_DIR)
 
-    experiment = None
-    for exp in experiments:
-        if exp['id'] == identifier or (exp['name'] == name and exp['version'] == version):
-            experiment = exp
+    experiment = find_experiment(experiments, identifier, name, version)
 
     if not experiment:
         raise Exception('Model was not found')
@@ -186,3 +190,87 @@ def load_model(identifier=None, name=None, version=None):
         download_file(bucket_filename, exp_path)
 
     return tf.keras.models.load_model(exp_path)
+
+
+def delete_model(identifier=None, name=None, version=None):
+    """
+    Deletes a given model (by identifier or by name and version)
+
+    Parameters:
+    experiments: list of experiments
+    identifier: the id of the model
+    name: the name of the model
+    version: the version of the model
+    """
+
+    if not (identifier or (name and version)):
+        raise Exception(
+            'You must specify the id, or the name and version of the model')
+
+    # load logfile
+    CURRENT_WORKING_DIR = os.getcwd()
+    basepath = Path(CURRENT_WORKING_DIR)
+    log_file = basepath / 'logs/experiment-log.json'
+
+    experiment = None
+    data = None
+
+    # load validated models
+    with open(log_file, 'r') as f:
+        data = json.load(f)
+
+    if data and 'experiments' in data:
+        experiment = find_experiment(
+            data['experiments'], identifier, name, version)
+
+    # look for the model in the unvalidated experiment log
+    if not experiment:
+        log_file = basepath / 'logs/unvalidated-experiment-log.json'
+
+        with open(log_file, 'r') as f:
+            data = json.load(f)
+
+        if data and 'experiments' in data:
+            experiment = find_experiment(
+                data['experiments'], identifier, name, version)
+
+    if not experiment:
+        raise Exception('The model was not found')
+
+    # delete the model from the gcp storage
+    delete_file(experiment['id'] + '.h5')
+
+    # remove the experiment from the log and write it back to the logfile
+    data['experiments'].remove(experiment)
+    with open(log_file, 'w') as f:
+        json_data = json.dumps(data, indent=4)
+        f.write(json_data)
+
+    # delete local instance of model if it exists
+    foldername = basepath / 'models' / experiment['name']
+    filename = foldername / experiment['filename']
+    if os.path.isfile(filename):
+        os.remove(filename)
+
+    # reset workdir
+    os.chdir(CURRENT_WORKING_DIR)
+
+
+def find_experiment(experiments, identifier=None, name=None, version=None):
+    """
+    Helper function to find an experiment in a list
+
+    Parameters:
+    experiments: list of experiments
+    identifier: the id of the model
+    name: the name of the model
+    version: the version of the model
+
+    Returns:
+    dict
+    """
+
+    for exp in experiments:
+        if exp['id'] == identifier or (exp['name'] == name and exp['version'] == version):
+            return exp
+    return None
