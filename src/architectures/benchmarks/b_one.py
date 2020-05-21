@@ -8,8 +8,22 @@ from utils.save_model import save_model, model_set
 
 
 class BenchmarkOne:
+    """
+       wrapper class to standardize experiment execution for benchmark one
+    """
     def __init__(self, model, model_name, dataset_folder, columns, epochs,
                  optimizer=Adam(), loss='binary_crossentropy', metrics=None):
+        """ instantiates model and generator
+                # Arguments
+                    model (keras.model): model for which the experiment is executed
+                    model_name (string): name of the model
+                    dataset_folder (Path): path to the dataset
+                    columns (list): list of pathologies to be predicted
+                    epochs (int): numer of epochs for training
+                    optimizer (keras.optimizer): optimizer used in training
+                    loss (keras.loss): loss used in training
+                    metrics (list): metrics to be watched during training
+        """
         self.result = None
         if metrics is None:
             metrics = ['accuracy']
@@ -32,6 +46,7 @@ class BenchmarkOne:
                                           label_columns=columns)
 
     def fit_model(self):
+        """ executes training on model """
         STEP_SIZE_TRAIN = self.traingen.n // self.traingen.batch_size
         STEP_SIZE_VALID = self.valgen.n // self.valgen.batch_size
         self.result = self.model.fit_generator(generator=self.traingen,
@@ -42,6 +57,7 @@ class BenchmarkOne:
         return self.result
 
     def eval_model(self):
+        """ evaluates model on test data """
         if self.model_id is None:
             raise LookupError('call save_model before the evaluation')
         STEP_SIZE_TEST = self.testgen.n // self.testgen.batch_size
@@ -63,6 +79,7 @@ class BenchmarkOne:
         model_id = model_set(model_id, 'test', (score, acc))
 
     def save_model(self):
+        """ saves trained model """
         dataset = self.dataset_folder.parent.name
         dataset_version = self.dataset_folder.name
         model_filename = self.model_name + "_" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + ".h5"
