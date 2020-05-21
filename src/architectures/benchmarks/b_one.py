@@ -35,7 +35,7 @@ class BenchmarkOne:
 
         self.dataset_folder = dataset_folder
         self.train_dataset = pd.read_csv(self.dataset_folder / 'train.csv')
-        self.val_dataset = pd.read_csv(self.dataset_folder / 'val.csv')
+        self.val_dataset = pd.read_csv(self.dataset_folder / 'valid.csv')
         self.test_dataset = pd.read_csv(self.dataset_folder / 'test.csv')
 
         self.traingen = ImageDataGenerator(dataset=self.train_dataset, dataset_folder=self.dataset_folder,
