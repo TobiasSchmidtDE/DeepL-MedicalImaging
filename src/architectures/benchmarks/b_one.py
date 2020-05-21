@@ -39,6 +39,7 @@ class BenchmarkOne:
                                  validation_data=self.valgen,
                                  validation_steps=STEP_SIZE_VALID,
                                  epochs=self.epochs)
+        return self.result
 
     def eval_model(self):
         if self.model_id is None:
