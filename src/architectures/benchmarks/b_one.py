@@ -27,6 +27,7 @@ class BenchmarkOne:
         self.result = None
         if metrics is None:
             metrics = ['accuracy']
+        self.columns = columns
         self.epochs = epochs
         self.model = model
         self.model_id = None
@@ -36,14 +37,13 @@ class BenchmarkOne:
         self.dataset_folder = dataset_folder
         self.train_dataset = pd.read_csv(self.dataset_folder / 'train.csv')
         self.val_dataset = pd.read_csv(self.dataset_folder / 'valid.csv')
-        self.test_dataset = pd.read_csv(self.dataset_folder / 'test.csv')
+        self.test_dataset = None
 
         self.traingen = ImageDataGenerator(dataset=self.train_dataset, dataset_folder=self.dataset_folder,
                                            label_columns=columns)
         self.valgen = ImageDataGenerator(dataset=self.val_dataset, dataset_folder=self.dataset_folder,
                                          label_columns=columns)
-        self.testgen = ImageDataGenerator(dataset=self.test_dataset, dataset_folder=self.dataset_folder,
-                                          label_columns=columns)
+        self.testgen = None
 
     def fit_model(self):
         """ executes training on model """
@@ -58,6 +58,9 @@ class BenchmarkOne:
 
     def eval_model(self):
         """ evaluates model on test data """
+        self.test_dataset = pd.read_csv(self.dataset_folder / 'test.csv')
+        self.testgen = ImageDataGenerator(dataset=self.test_dataset, dataset_folder=self.dataset_folder,
+                                          label_columns=self.columns)
         if self.model_id is None:
             raise LookupError('call save_model before the evaluation')
         STEP_SIZE_TEST = self.testgen.n // self.testgen.batch_size
