@@ -6,7 +6,17 @@ from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 
 
 class SimpleBase:
+    """
+        class to construct baseline models
+    """
     def __init__(self, model_name, num_classes):
+        """
+        instantiates model
+
+        Parameters:
+            model_name (string): name of the model to be constructed
+            num_classes (int): number of classes predicted by the model
+        """
         # TODO: implement ResNext, other densenet
         if model_name == 'inceptionv3':
             base_model = InceptionV3(include_top=False, weights='imagenet')
@@ -25,4 +35,5 @@ class SimpleBase:
         self.model = Model(inputs=base_model.input, outputs=prediction_layer)
 
     def get_model(self):
+        """ returns model """
         return self.model
