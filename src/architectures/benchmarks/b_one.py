@@ -1,10 +1,12 @@
 import datetime
 import pandas as pd
 import numpy as np
+from pathlib import Path
 from tensorflow.keras.optimizers import Adam
 from sklearn.metrics import classification_report
 from src.datasets.generator import ImageDataGenerator
 from utils.save_model import save_model, model_set
+from tensorflow.keras.callbacks import TensorBoard
 
 
 class BenchmarkOne:
@@ -49,11 +51,17 @@ class BenchmarkOne:
         """ executes training on model """
         STEP_SIZE_TRAIN = len(self.train_dataset) // self.traingen.batch_size
         STEP_SIZE_VALID = len(self.val_dataset) // self.valgen.batch_size
+
+        models_dir = Path("models/") / self.model_name
+        log_dir = models_dir / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        tensorboard_callback = TensorBoard(log_dir=str(log_dir))
+
         self.result = self.model.fit(generator=self.traingen,
                                  steps_per_epoch=STEP_SIZE_TRAIN,
                                  validation_data=self.valgen,
                                  validation_steps=STEP_SIZE_VALID,
-                                 epochs=self.epochs)
+                                 epochs=self.epochs,
+                                 callbacks=[tensorboard_callback])
         return self.result
 
     def eval_model(self):
