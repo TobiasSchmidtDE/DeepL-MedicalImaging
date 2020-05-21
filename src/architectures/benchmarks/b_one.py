@@ -1,9 +1,9 @@
 import datetime
 import pandas as pd
 import numpy as np
-from src.datasets.generator import ImageDataGenerator
-from keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam
 from sklearn.metrics import classification_report
+from src.datasets.generator import ImageDataGenerator
 from utils.save_model import save_model, model_set
 
 
@@ -34,9 +34,9 @@ class BenchmarkOne:
         self.model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
 
         self.dataset_folder = dataset_folder
-        self.train_dataset = pd.read_csv(self.dataset_folder / 'train.csv', index_col=[0])
-        self.val_dataset = pd.read_csv(self.dataset_folder / 'val.csv', index_col=[0])
-        self.test_dataset = pd.read_csv(self.dataset_folder / 'test.csv', index_col=[0])
+        self.train_dataset = pd.read_csv(self.dataset_folder / 'train.csv')
+        self.val_dataset = pd.read_csv(self.dataset_folder / 'val.csv')
+        self.test_dataset = pd.read_csv(self.dataset_folder / 'test.csv')
 
         self.traingen = ImageDataGenerator(dataset=self.train_dataset, dataset_folder=self.dataset_folder,
                                            label_columns=columns)

@@ -1,6 +1,6 @@
-from keras.applications.inception_v3 import InceptionV3
-from keras.applications.densenet import DenseNet121
-from keras.applications.resnet_v2 import ResNet152V2
+from tensorflow.keras.applications.inception_v3 import InceptionV3
+from tensorflow.keras.applications.densenet import DenseNet121
+from tensorflow.keras.applications.resnet_v2 import ResNet152V2
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 
