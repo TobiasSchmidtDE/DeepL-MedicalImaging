@@ -1,7 +1,7 @@
 from sklearn.model_selection import GroupShuffleSplit
 
 
-def train_test_split(data, test_size=0.2, seed=None):
+def train_test_split(data, test_size=0.2, group='patient_id', seed=None):
     """
      Split dataset into random train and test subsets, while keeping all the
      samples of one patient in the same set.
@@ -18,16 +18,19 @@ def train_test_split(data, test_size=0.2, seed=None):
           A list consisting of the train and test split
     """
 
+    if not group in data.columns:
+        raise Exception('The column ' + group + ' does not exist')
+
     # create the group shuffle splitter
     shuffle_split = GroupShuffleSplit(
         test_size=test_size, random_state=seed)
 
     # define groups as patient ids
-    groups = data['patient_id'].to_numpy()
+    groups = data[group].to_numpy()
 
     train_idx, test_idx = next(shuffle_split.split(data, groups=groups))
 
     train_data = data.iloc[train_idx]
     test_data = data.iloc[test_idx]
 
-    return [train_data, test_data]
+    return (train_data, test_data)
