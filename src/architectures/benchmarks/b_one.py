@@ -49,7 +49,7 @@ class BenchmarkOne:
         """ executes training on model """
         STEP_SIZE_TRAIN = len(self.train_dataset) // self.traingen.batch_size
         STEP_SIZE_VALID = len(self.val_dataset) // self.valgen.batch_size
-        self.result = self.model.fit_generator(generator=self.traingen,
+        self.result = self.model.fit(generator=self.traingen,
                                  steps_per_epoch=STEP_SIZE_TRAIN,
                                  validation_data=self.valgen,
                                  validation_steps=STEP_SIZE_VALID,
@@ -75,7 +75,7 @@ class BenchmarkOne:
             y_true, y_pred, target_names=list(self.test_dataset.columns[1:15]))
         model_id = model_set(self.model_id, 'classification_report', report)
 
-        score, acc = self.model.evaluate_generator(
+        score, acc = self.model.evaluate(
             self.testgen, steps=STEP_SIZE_TEST, verbose=1)
         print('Test score:', score)
         print('Test accuracy:', acc)
