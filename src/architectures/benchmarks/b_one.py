@@ -47,8 +47,8 @@ class BenchmarkOne:
 
     def fit_model(self):
         """ executes training on model """
-        STEP_SIZE_TRAIN = self.traingen.n // self.traingen.batch_size
-        STEP_SIZE_VALID = self.valgen.n // self.valgen.batch_size
+        STEP_SIZE_TRAIN = len(self.train_dataset) // self.traingen.batch_size
+        STEP_SIZE_VALID = len(self.val_dataset) // self.valgen.batch_size
         self.result = self.model.fit_generator(generator=self.traingen,
                                  steps_per_epoch=STEP_SIZE_TRAIN,
                                  validation_data=self.valgen,
@@ -63,7 +63,7 @@ class BenchmarkOne:
                                           label_columns=self.columns)
         if self.model_id is None:
             raise LookupError('call save_model before the evaluation')
-        STEP_SIZE_TEST = self.testgen.n // self.testgen.batch_size
+        STEP_SIZE_TEST = len(self.test_dataset) // self.testgen.batch_size
         self.testgen.reset()
         pred = self.model.predict_generator(self.testgen, steps=STEP_SIZE_TEST, verbose=1)
         pred_bool = (pred >= 0.5)
