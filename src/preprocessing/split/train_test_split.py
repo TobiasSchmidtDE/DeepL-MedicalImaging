@@ -8,14 +8,19 @@ def train_test_split(data, test_size=0.2, group='patient_id', seed=None):
 
      Parameters:
         data (pd.Dataframe):
-          The data that should be splitted
-        test_size (float):
-          A number between 0.0 and 1.0 specifying the size of the test set.
-        seed (int):
-          Controlls the shuffling applied to the data before the it is split.
+            The data that should be splitted.
+            Needs to contain a column with the name specified by the group parameter.
+        test_size (float): (Default: 0.2)
+            A number between 0.0 and 1.0 specifying the relative size of the test set.
+        group (string): (Default: 'patient_id')
+            The name of the column that the data should be split by.
+            Having multiple entries of the same value in this column will result in a split,
+            where all of these entries will end up in the same subset.
+        seed (int): (Default: None)
+            Controlls the shuffling applied to the data before the it is split.
      Returns:
-        splits (list):
-          A list consisting of the train and test split
+        train_data, test_data (touple of lists):
+            Two lists consisting of the train and test split
     """
 
     if not group in data.columns:
