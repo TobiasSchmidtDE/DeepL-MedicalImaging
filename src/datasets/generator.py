@@ -1,8 +1,8 @@
 
 from pathlib import Path
 import numpy as np
-import cv2
 import tensorflow as tf
+import cv2
 from skimage.transform import resize
 from src.datasets.u_encoding import uencode
 
@@ -135,6 +135,26 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
         return int(np.ceil(num_batches))
 
+    def label_generation(self, sample_ids):
+        """
+        Loads one batch of encoded and cleaned labels.
+
+        Parameters:
+            sample_ids (integer list): the ids of the samples for which the
+                                       labels should be retrieved.
+
+        Returns:
+            list (numpy.array) of the encoded labels
+        """
+        labels = self.dataset.iloc[sample_ids][self.label_columns].to_numpy()
+
+        # replace nan values
+        labels[np.isnan(labels)] = self.nan_replacement
+
+        # enforce uncertainty encoding strategy
+        labels = uencode(self.u_enc, labels, unc_value=self.unc_value)
+        return np.array(labels, dtype=int)
+
     def data_generation(self, sample_ids):
         """
         Loads one batch of data.
@@ -151,15 +171,8 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         img_paths = str(self.dataset_folder) + "/" + img_paths
 
         images = [self.load_image(img_path) for img_path in img_paths]
-        labels = self.dataset.iloc[sample_ids][self.label_columns].to_numpy()
 
-        # replace nan values
-        labels[np.isnan(labels)] = self.nan_replacement
-
-        # enforce uncertainty encoding strategy
-        labels = uencode(self.u_enc, labels, unc_value=self.unc_value)
-
-        return np.array(images), np.array(labels)
+        return np.array(images), self.label_generation(sample_ids)
 
     def load_image(self, path):
         """
@@ -204,6 +217,34 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
         for i in iter(range(len(self))):
             yield self.data_generation(self[i])
+
+    def get_label_batch(self, batch_index):
+        """
+        Loads a batch of labels (without loading the images)
+
+        Paramters:
+            batch_index (int): the id of the batch that should be loaded
+
+        Returns:
+            list of labels of length batch_size
+
+        """
+        start_index = batch_index * self.batch_size
+        end_index = (batch_index+1) * self.batch_size
+
+        if ((self.drop_last and end_index > len(self.dataset))
+                or (start_index > len(self.dataset))):
+            raise ValueError("Index out of range! Number of batches exceeded."
+                             " Only {max_batches} batches available, not {num_batches}.".format(
+                                 max_batches=len(self), num_batches=batch_index))
+
+        return self.label_generation(self.index[start_index:end_index])
+
+    def get_encoded_labels(self):
+        """
+        Returns all labels encoded and cleaned
+        """
+        return self.label_generation(self.index)
 
     def on_epoch_end(self):
         """
