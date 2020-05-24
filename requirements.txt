@@ -3,7 +3,6 @@ pandas
 numpy
 keras
 scipy==1.4.1
-tensorflow
 scikit-image
 opencv-python
 deprecated
@@ -11,3 +10,4 @@ jupyter
 sklearn
 python-dotenv
 google-cloud-storage
+tensorflow

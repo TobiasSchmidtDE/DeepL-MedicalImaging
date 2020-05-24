@@ -98,4 +98,8 @@ ENV PYTHONPATH "${PYTHONPATH}:/srv/idp-radio-1/src"
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-CMD ["bin", "bash"]
+# install requirements for access jupyter lab and notebook remotely
+RUN apt-get -y install git wget unzip ipython
+RUN pip install ipython[notebook] jupyterlab
+
+ENTRYPOINT ["./remote_access/open_remoteaccess.sh"]
