@@ -252,3 +252,4 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
 
         self.index = self.get_new_index()
+        

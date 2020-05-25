@@ -45,8 +45,8 @@ class Experiment:
         traingen = self.benchmark.traingen
         valgen = self.benchmark.valgen
 
-        traingen.reset()
-        valgen.reset()
+        traingen.on_epoch_end()
+        valgen.on_epoch_end()
 
         STEP_SIZE_TRAIN = len(traingen) // traingen.batch_size
         STEP_SIZE_VALID = len(valgen) // valgen.batch_size
@@ -66,7 +66,7 @@ class Experiment:
     def evaluate(self):
         """ evaluates model on test data """
         testgen = self.benchmark.testgen
-        testgen.reset()
+        testgen.on_epoch_end()
 
         STEP_SIZE_TEST = len(testgen) // testgen.batch_size
 
@@ -87,8 +87,8 @@ class Experiment:
 
         self.evaluation_result = {
             "report": report,
-            "score": score,
-            "acc": acc,
+            "score": float(score),
+            "acc": float(acc),
             "predictions": predictions,
         }
 
@@ -106,6 +106,10 @@ class Experiment:
                                    self.model_filename,
                                    self.model_description,
                                    version=self.model_version)
+        
+        model_set(self.model_id, 'benchmark',
+                      self.benchmark.as_dict())
+        
         if self.evaluation_result != None:
             model_set(self.model_id, 'test',
                       (self.evaluation_result["score"], self.evaluation_result["acc"]))
@@ -216,8 +220,8 @@ class Benchmark:
     def as_dict(self):
         return {
             "dataset_name": self.dataset_name,
-            "dataset_folder": self.dataset_folder,
-            "models_dir": self.models_dir,
+            "dataset_folder": str(self.dataset_folder),
+            "models_dir": str(self.models_dir),
             "epochs": self.epochs,
             "optimizer": self.optimizer.__class__.__name__,
             "loss": self.loss,
