@@ -13,7 +13,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
     https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
     """
 
-    def __init__(self, dataset, dataset_folder, label_columns, path_column="Path",
+    def __init__(self, dataset, dataset_folder, label_columns, path_column="Path", path_column_prefix="",
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
                  shuffle=True, drop_last=False, batch_size=64, dim=(256, 256), n_channels=3,
@@ -104,6 +104,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         self.dataset_folder = dataset_folder
         self.label_columns = label_columns
         self.path_column = path_column
+        self.path_column_prefix = path_column_prefix
         self.shuffle = shuffle
         self.batch_size = batch_size
         self.dim = dim
@@ -168,7 +169,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
 
         img_paths = self.dataset.iloc[sample_ids][self.path_column].to_numpy()
-        img_paths = str(self.dataset_folder) + "/" + img_paths
+        img_paths = str(self.dataset_folder) + "/" + self.path_column_prefix + img_paths
 
         images = [self.load_image(img_path) for img_path in img_paths]
 
@@ -244,6 +245,8 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
         Returns all labels encoded and cleaned
         """
+        if self.drop_last:
+            return self.label_generation(self.index[:len(self)*self.batch_size])
         return self.label_generation(self.index)
 
     def on_epoch_end(self):

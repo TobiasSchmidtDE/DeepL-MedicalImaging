@@ -22,12 +22,12 @@ class SimpleBase:
                 "You must provide a function from tf.keras.applications " +
                 "that instantiates a model architecure")
 
-        for layer in base_model.layers:
-            layer.trainable = False
-
         x = base_model.output
         x = GlobalAveragePooling2D()(x)
         x = Dense(1024, activation='relu')(x)
+
+        for layer in base_model.layers:
+            layer.trainable = False
 
         prediction_layer = Dense(num_classes, activation='sigmoid')(x)
         self.model = Model(inputs=base_model.input, outputs=prediction_layer)

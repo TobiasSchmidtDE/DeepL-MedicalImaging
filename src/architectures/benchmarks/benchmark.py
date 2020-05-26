@@ -48,19 +48,22 @@ class Experiment:
         traingen.on_epoch_end()
         valgen.on_epoch_end()
 
-        STEP_SIZE_TRAIN = len(traingen) // traingen.batch_size
-        STEP_SIZE_VALID = len(valgen) // valgen.batch_size
-
         model_dir = self.benchmark.models_dir / self.model_name
         log_dir = model_dir / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        tensorboard_callback = TensorBoard(log_dir=str(log_dir))
+        log_dir.mkdir(parents=True, exist_ok=True)
+        tensorboard_callback = TensorBoard(log_dir=str(log_dir),
+                                           update_freq= 2,#len(traingen) // 20,
+                                           histogram_freq=1,
+                                           write_graph=False,
+                                           write_images=True,
+                                           embeddings_freq=1)
 
-        self.train_result = self.model.fit_generator(generator=traingen,
-                                                     steps_per_epoch=STEP_SIZE_TRAIN,
-                                                     validation_data=valgen,
-                                                     validation_steps=STEP_SIZE_VALID,
-                                                     epochs=self.benchmark.epochs,
-                                                     callbacks=[tensorboard_callback])
+        self.train_result = self.model.fit(x=traingen,
+                                           steps_per_epoch=len(traingen),
+                                           validation_data=valgen,
+                                           validation_steps=len(valgen),
+                                           epochs=self.benchmark.epochs,
+                                           callbacks=[tensorboard_callback])
         return self.train_result
 
     def evaluate(self):
@@ -68,10 +71,8 @@ class Experiment:
         testgen = self.benchmark.testgen
         testgen.on_epoch_end()
 
-        STEP_SIZE_TEST = len(testgen) // testgen.batch_size
-
-        predictions = self.model.predict_generator(
-            testgen, steps=STEP_SIZE_TEST, verbose=1)
+        predictions = self.model.predict(
+            testgen, steps=len(testgen), verbose=1)
 
         predictions_bool = (predictions >= 0.5)
 
@@ -82,14 +83,13 @@ class Experiment:
         report = classification_report(
             groundtruth_label, y_pred, target_names=list(self.benchmark.label_columns))
 
-        score, acc = self.model.evaluate_generator(
-            testgen, steps=STEP_SIZE_TEST, verbose=1)
-
+        eval_res = self.model.evaluate(
+            x=testgen, steps=len(testgen), verbose=1)
+        
+        eval_metrics = dict(zip (["loss"] + self.benchmark.metrics, [float (i) for i in eval_res]))
         self.evaluation_result = {
             "report": report,
-            "score": float(score),
-            "acc": float(acc),
-            "predictions": predictions,
+            "metrics": eval_metrics,
         }
 
         return self.evaluation_result
@@ -111,8 +111,7 @@ class Experiment:
                       self.benchmark.as_dict())
         
         if self.evaluation_result != None:
-            model_set(self.model_id, 'test',
-                      (self.evaluation_result["score"], self.evaluation_result["acc"]))
+            model_set(self.model_id, 'test', self.evaluation_result["metrics"])
             model_set(self.model_id, 'classification_report',
                       self.evaluation_result["report"])
 
@@ -124,12 +123,12 @@ class Benchmark:
        Wrapper class to standardize experiment execution
     """
 
-    def __init__(self, dataset_folder, label_columns, epochs, models_dir=Path("models/"),
-                 optimizer=Adam(), loss='binary_crossentropy', metrics=None,
+    def __init__(self, dataset_folder, label_columns, epochs=10, models_dir=Path("models/"),
+                 optimizer=Adam(), loss='categorical_crossentropy', metrics=None,
                  train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
                  shuffle=True, drop_last=False, batch_size=64, dim=(256, 256), n_channels=3,
-                 nan_replacement=0, unc_value=-1, u_enc='uzeroes', path_column="Path"):
+                 nan_replacement=0, unc_value=-1, u_enc='uzeroes', path_column="Path", path_column_prefix="",):
         """
         TODO: adjust documention
 
@@ -151,6 +150,7 @@ class Benchmark:
         self.models_dir = models_dir
         self.label_columns = label_columns
         self.path_column = path_column
+        self.path_column_prefix = path_column_prefix
         self.shuffle = shuffle
         self.batch_size = batch_size
         self.dim = dim
@@ -184,6 +184,7 @@ class Benchmark:
         self.traingen = ImageDataGenerator(dataset=train_labels,
                                            dataset_folder=self.dataset_folder,
                                            label_columns=self.label_columns,
+                                           path_column_prefix=self.path_column_prefix,
                                            path_column=self.path_column,
                                            shuffle=self.shuffle,
                                            drop_last=self.drop_last,
@@ -197,6 +198,7 @@ class Benchmark:
                                          dataset_folder=self.dataset_folder,
                                          label_columns=self.label_columns,
                                          path_column=self.path_column,
+                                         path_column_prefix=self.path_column_prefix,
                                          shuffle=self.shuffle,
                                          drop_last=self.drop_last,
                                          batch_size=self.batch_size,
@@ -209,6 +211,7 @@ class Benchmark:
                                           dataset_folder=self.dataset_folder,
                                           label_columns=self.label_columns,
                                           path_column=self.path_column,
+                                          path_column_prefix=self.path_column_prefix,
                                           shuffle=self.shuffle,
                                           drop_last=self.drop_last,
                                           batch_size=self.batch_size,
@@ -228,6 +231,7 @@ class Benchmark:
             "metrics": self.metrics,
             "label_columns": self.label_columns,
             "path_column": self.path_column,
+            "path_column_prefix": self.path_column_prefix,
             "shuffle": self.shuffle,
             "batch_size": self.batch_size,
             "dim": self.dim,
