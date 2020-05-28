@@ -34,14 +34,14 @@ class Experiment:
         self.train_result = None
         self.evaluation_result = None
 
-    def run(self):
-        self.train()
+    def run(self, initial_epoch=0):
+        self.train(initial_epoch=initial_epoch)
         self.evaluate()
         self.save()
 
         return self.train_result, self.evaluation_result, self.model_id
 
-    def train(self):
+    def train(self, initial_epoch=0):
         """ executes training on model """
         traingen = self.benchmark.traingen
         valgen = self.benchmark.valgen
@@ -50,7 +50,7 @@ class Experiment:
         valgen.on_epoch_end()
 
         model_dir = self.benchmark.models_dir / self.model_name
-        log_dir = model_dir / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        log_dir = model_dir / "logs" # / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         log_dir.mkdir(parents=True, exist_ok=True)
         tensorboard_callback = TensorBoard(log_dir=str(log_dir),
                                            update_freq= 10,
@@ -66,6 +66,7 @@ class Experiment:
                                            validation_data=valgen,
                                            validation_steps=len(valgen),
                                            epochs=self.benchmark.epochs,
+                                           initial_epoch=initial_epoch,
                                            callbacks=[tensorboard_callback, early_stopping_callback])
         return self.train_result
 
@@ -89,7 +90,9 @@ class Experiment:
         eval_res = self.model.evaluate(
             x=testgen, steps=len(testgen), verbose=1)
         
-        eval_metrics = dict(zip (["loss"] + self.benchmark.metrics, [float (i) for i in eval_res]))
+        metric_names = self.benchmark.as_dict()["metrics"]
+        eval_metrics = dict(zip (["loss"] + metric_names, [float (i) for i in eval_res]))
+        
         self.evaluation_result = {
             "report": report,
             "metrics": eval_metrics,

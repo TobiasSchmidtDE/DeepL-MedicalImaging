@@ -10,4 +10,4 @@ jupyter
 sklearn
 python-dotenv
 google-cloud-storage
-tf-nightly-gpu
+tf-nightly

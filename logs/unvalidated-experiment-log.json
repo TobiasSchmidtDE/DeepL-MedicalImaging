@@ -1,4 +1,105 @@
 {
-    "experiments": [    
+    "experiments": [
+        {
+            "id": "7aed425e-a0bf-11ea-b887-0242ac110005",
+            "name": "ResNet152V2_CheXpert",
+            "filename": "ResNet152V2_CheXpert_20200528-084444.h5",
+            "version": "1",
+            "history": {
+                "loss": [
+                    0.31965067982673645
+                ],
+                "AUC_ROC": [
+                    0.6876832246780396
+                ],
+                "precision": [
+                    0.6445401310920715
+                ],
+                "recall": [
+                    0.42173248529434204
+                ],
+                "f2_score": [
+                    0.45305538177490234
+                ],
+                "binary_accuracy": [
+                    0.8659988045692444
+                ],
+                "val_loss": [
+                    0.316573828458786
+                ],
+                "val_AUC_ROC": [
+                    0.713415265083313
+                ],
+                "val_precision": [
+                    0.6391276121139526
+                ],
+                "val_recall": [
+                    0.43904900550842285
+                ],
+                "val_f2_score": [
+                    0.4683738648891449
+                ],
+                "val_binary_accuracy": [
+                    0.8677292466163635
+                ]
+            },
+            "description": "Trained ResNet152V2_CheXpert architecture using predefined benchmark.The benchmark was initialized for the chexpert_full dataset with batch size of 128, shuffel set to True and images rescaled to dimension (256, 256).\nThe training was done for 10 epochs using the Adam optimizer and binary_crossentropy loss.\nA total of 14 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 144408 number of sample, the validation set 35074, and the test set 43932. ",
+            "test": {
+                "loss": 0.31639569997787476,
+                "AUC": 0.711091935634613,
+                "Precision": 0.6435400247573853,
+                "Recall": 0.4399869441986084,
+                "F2Score": 0.4697003960609436,
+                "BinaryAccuracy": 0.8677648305892944
+            },
+            "classification_report": "                            precision    recall  f1-score   support\n\n                No Finding       0.12      0.03      0.04      4485\nEnlarged Cardiomediastinum       0.00      0.00      0.00      2137\n              Cardiomegaly       0.08      0.00      0.00      5377\n              Lung Opacity       0.47      0.58      0.52     20771\n               Lung Lesion       0.00      0.00      0.00      1771\n                     Edema       0.25      0.02      0.04     10177\n             Consolidation       0.00      0.00      0.00      2987\n                 Pneumonia       0.00      0.00      0.00      1186\n               Atelectasis       0.00      0.00      0.00      6458\n              Pneumothorax       0.07      0.00      0.00      3710\n          Pleural Effusion       0.38      0.31      0.34     16662\n             Pleural Other       0.00      0.00      0.00       737\n                  Fracture       0.00      0.00      0.00      1833\n           Support Devices       0.52      0.64      0.57     22837\n\n                 micro avg       0.46      0.32      0.38    101128\n                 macro avg       0.13      0.11      0.11    101128\n              weighted avg       0.31      0.32      0.30    101128\n               samples avg       0.37      0.29      0.30    101128\n",
+            "benchmark": {
+                "dataset_name": "chexpert_full",
+                "dataset_folder": "data/chexpert/full",
+                "models_dir": "models",
+                "epochs": 10,
+                "optimizer": "Adam",
+                "loss": "binary_crossentropy",
+                "metrics": [
+                    "AUC",
+                    "Precision",
+                    "Recall",
+                    "F2Score",
+                    "BinaryAccuracy"
+                ],
+                "label_columns": [
+                    "No Finding",
+                    "Enlarged Cardiomediastinum",
+                    "Cardiomegaly",
+                    "Lung Opacity",
+                    "Lung Lesion",
+                    "Edema",
+                    "Consolidation",
+                    "Pneumonia",
+                    "Atelectasis",
+                    "Pneumothorax",
+                    "Pleural Effusion",
+                    "Pleural Other",
+                    "Fracture",
+                    "Support Devices"
+                ],
+                "path_column": "Path",
+                "path_column_prefix": "",
+                "shuffle": true,
+                "batch_size": 128,
+                "dim": [
+                    256,
+                    256
+                ],
+                "n_channels": 3,
+                "nan_replacement": 0,
+                "unc_value": -1,
+                "u_enc": "uzeroes",
+                "drop_last": true,
+                "train_num_samples": 144408,
+                "valid_num_samples": 35074,
+                "test_num_samples": 43932
+            }
+        }
     ]
 }
