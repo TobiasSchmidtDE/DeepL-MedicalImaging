@@ -50,6 +50,7 @@ class Experiment:
         valgen.on_epoch_end()
 
         model_dir = self.benchmark.models_dir / self.model_name
+        checkpoints_filepath = str(model_dir / "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
         log_dir = model_dir / "logs" # / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         log_dir.mkdir(parents=True, exist_ok=True)
         tensorboard_callback = TensorBoard(log_dir=str(log_dir),
@@ -58,16 +59,32 @@ class Experiment:
                                            write_graph=False,
                                            embeddings_freq=1)
         
-        early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='loss',
-                                                           patience=3)
-
+        early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='epoch_loss',
+                                                                   patience=3)
+        
+        model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath = checkpoints_filepath,
+                                           monitor='epoch_loss',
+                                           verbose=0,
+                                           save_best_only=False,
+                                           save_weights_only=False,
+                                           mode='auto',
+                                           save_freq='epoch')
+        
+        reduce_lr_callback = tf.keras.callbacks.ReduceLROnPlateau(monitor='loss',
+                                               factor=0.2,
+                                               patience=3,
+                                               min_lr=0.001)
+        
         self.train_result = self.model.fit(x=traingen,
                                            steps_per_epoch=len(traingen),
                                            validation_data=valgen,
                                            validation_steps=len(valgen),
                                            epochs=self.benchmark.epochs,
                                            initial_epoch=initial_epoch,
-                                           callbacks=[tensorboard_callback, early_stopping_callback])
+                                           callbacks=[tensorboard_callback,
+                                                      early_stopping_callback,
+                                                      model_checkpoint_callback,
+                                                      reduce_lr_callback])
         return self.train_result
 
     def evaluate(self):
