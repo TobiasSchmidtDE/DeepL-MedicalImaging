@@ -1,6 +1,7 @@
 import datetime
 from pathlib import Path
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import TensorBoard
 import pandas as pd
@@ -52,18 +53,20 @@ class Experiment:
         log_dir = model_dir / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         log_dir.mkdir(parents=True, exist_ok=True)
         tensorboard_callback = TensorBoard(log_dir=str(log_dir),
-                                           update_freq= 2,#len(traingen) // 20,
+                                           update_freq= 10,
                                            histogram_freq=1,
                                            write_graph=False,
-                                           write_images=True,
                                            embeddings_freq=1)
+        
+        early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='loss',
+                                                           patience=3)
 
         self.train_result = self.model.fit(x=traingen,
                                            steps_per_epoch=len(traingen),
                                            validation_data=valgen,
                                            validation_steps=len(valgen),
                                            epochs=self.benchmark.epochs,
-                                           callbacks=[tensorboard_callback])
+                                           callbacks=[tensorboard_callback, early_stopping_callback])
         return self.train_result
 
     def evaluate(self):
@@ -124,10 +127,10 @@ class Benchmark:
     """
 
     def __init__(self, dataset_folder, label_columns, epochs=10, models_dir=Path("models/"),
-                 optimizer=Adam(), loss='categorical_crossentropy', metrics=None,
+                 optimizer=Adam(), loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()],
                  train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
-                 shuffle=True, drop_last=False, batch_size=64, dim=(256, 256), n_channels=3,
+                 shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), n_channels=3,
                  nan_replacement=0, unc_value=-1, u_enc='uzeroes', path_column="Path", path_column_prefix="",):
         """
         TODO: adjust documention
@@ -221,6 +224,8 @@ class Benchmark:
                                           u_enc=self.u_enc)
 
     def as_dict(self):
+        metrics = [name for name in self.metrics if type(name) == str] 
+        metrics += [name.__class__.__name__ for name in self.metrics if type(name) != str]
         return {
             "dataset_name": self.dataset_name,
             "dataset_folder": str(self.dataset_folder),
@@ -228,7 +233,7 @@ class Benchmark:
             "epochs": self.epochs,
             "optimizer": self.optimizer.__class__.__name__,
             "loss": self.loss,
-            "metrics": self.metrics,
+            "metrics": metrics,
             "label_columns": self.label_columns,
             "path_column": self.path_column,
             "path_column_prefix": self.path_column_prefix,
