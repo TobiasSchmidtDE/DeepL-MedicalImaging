@@ -3,6 +3,7 @@ pandas
 numpy
 keras
 scipy==1.4.1
+scikit-multilearn
 scikit-image
 opencv-python
 deprecated
