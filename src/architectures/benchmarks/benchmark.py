@@ -23,8 +23,8 @@ class Experiment:
         self.model_filename = None
         self.model_id = None
 
-        self.model_description = ("Trained {model_name} architecture using predefined benchmark."
-                                  ).format(model_name=self.model_name) + benchmark.summary_str()
+        self.model_description = ("Trained {model_name} architecture using the {benchmark_name} benchmark."
+                                  ).format(model_name=self.model_name, benchmark_name=benchmark.name) + benchmark.summary_str()
 
         self.model = model
         self.model.compile(optimizer=self.benchmark.optimizer,
@@ -33,15 +33,16 @@ class Experiment:
 
         self.train_result = None
         self.evaluation_result = None
+        self.predictions = None
 
-    def run(self, initial_epoch=0):
-        self.train(initial_epoch=initial_epoch)
+    def run(self):
+        self.train()
         self.evaluate()
         self.save()
 
         return self.train_result, self.evaluation_result, self.model_id
 
-    def train(self, initial_epoch=0):
+    def train(self):
         """ executes training on model """
         traingen = self.benchmark.traingen
         valgen = self.benchmark.valgen
@@ -51,8 +52,10 @@ class Experiment:
 
         model_dir = self.benchmark.models_dir / self.model_name
         checkpoints_filepath = str(model_dir / "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
+        
         log_dir = model_dir / "logs" # / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         log_dir.mkdir(parents=True, exist_ok=True)
+        
         tensorboard_callback = TensorBoard(log_dir=str(log_dir),
                                            update_freq= 10,
                                            histogram_freq=1,
@@ -70,7 +73,7 @@ class Experiment:
                                            mode='auto',
                                            save_freq='epoch')
         
-        reduce_lr_callback = tf.keras.callbacks.ReduceLROnPlateau(monitor='loss',
+        reduce_lr_callback = tf.keras.callbacks.ReduceLROnPlateau(monitor='epoch_loss',
                                                factor=0.2,
                                                patience=3,
                                                min_lr=0.001)
@@ -80,7 +83,6 @@ class Experiment:
                                            validation_data=valgen,
                                            validation_steps=len(valgen),
                                            epochs=self.benchmark.epochs,
-                                           initial_epoch=initial_epoch,
                                            callbacks=[tensorboard_callback,
                                                       early_stopping_callback,
                                                       model_checkpoint_callback,
@@ -92,10 +94,10 @@ class Experiment:
         testgen = self.benchmark.testgen
         testgen.on_epoch_end()
 
-        predictions = self.model.predict(
+        self.predictions = self.model.predict(
             testgen, steps=len(testgen), verbose=1)
 
-        predictions_bool = (predictions >= 0.5)
+        predictions_bool = (self.predictions >= 0.5)
 
         y_pred = np.array(predictions_bool, dtype=int)
 
@@ -146,7 +148,7 @@ class Benchmark:
        Wrapper class to standardize experiment execution
     """
 
-    def __init__(self, dataset_folder, label_columns, epochs=10, models_dir=Path("models/"),
+    def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
                  optimizer=Adam(), loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()],
                  train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
@@ -164,6 +166,7 @@ class Benchmark:
             metrics (list): metrics to be watched during training
         """
 
+        self.name = name
         self.epochs = epochs
         self.optimizer = optimizer
         self.loss = loss
@@ -247,6 +250,7 @@ class Benchmark:
         metrics = [name for name in self.metrics if type(name) == str] 
         metrics += [name.__class__.__name__ for name in self.metrics if type(name) != str]
         return {
+            "benchmark_name": self.name,
             "dataset_name": self.dataset_name,
             "dataset_folder": str(self.dataset_folder),
             "models_dir": str(self.models_dir),
