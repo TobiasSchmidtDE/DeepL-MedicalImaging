@@ -14,7 +14,21 @@ from src.preprocessing.split.train_test_split import train_test_split
 class Experiment:
     def __init__(self, benchmark, model, model_name, model_version='1'):
         """
-        TODO Documentation
+        Intiantiates an experiment to train and evaluate a given model.
+
+        Parameters:
+            benchmark (src.architecures.benchmark.Benchmark):
+                    The benchmark configuration to be used providing model
+                    and dataset configurations.
+            model (tf.keras.Model):
+                    An valid keras model instance to be trained.
+            model_name (str):
+                    Name of the model to be used for documentation/logging.
+            model_version (str): (default "1")
+                    The version number of the model
+        Returns:
+            experiment (Experiment):
+                    A experiment instance with the given specifications
         """
 
         self.benchmark = benchmark
@@ -23,8 +37,11 @@ class Experiment:
         self.model_filename = None
         self.model_id = None
 
-        self.model_description = ("Trained {model_name} architecture using the {benchmark_name} benchmark."
-                                  ).format(model_name=self.model_name, benchmark_name=benchmark.name) + benchmark.summary_str()
+        self.model_description = ("Trained {model_name} architecture using the "
+                                  "{benchmark_name} benchmark."
+                                  ).format(model_name=self.model_name,
+                                           benchmark_name=benchmark.name)
+        self.model_description += benchmark.summary_str()
 
         self.model = model
         self.model.compile(optimizer=self.benchmark.optimizer,
@@ -36,6 +53,10 @@ class Experiment:
         self.predictions = None
 
     def run(self):
+        """
+        Trains, evaluates and saves the model
+        """
+
         self.train()
         self.evaluate()
         self.save()
@@ -51,33 +72,34 @@ class Experiment:
         valgen.on_epoch_end()
 
         model_dir = self.benchmark.models_dir / self.model_name
-        checkpoints_filepath = str(model_dir / "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
-        
-        log_dir = model_dir / "logs" # / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        checkpoint_filepath = str(
+            model_dir / "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
+
+        log_dir = model_dir / "logs"  # / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         log_dir.mkdir(parents=True, exist_ok=True)
-        
+
         tensorboard_callback = TensorBoard(log_dir=str(log_dir),
-                                           update_freq= 10,
+                                           update_freq=10,
                                            histogram_freq=1,
                                            write_graph=False,
                                            embeddings_freq=1)
-        
+
         early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='epoch_loss',
                                                                    patience=3)
-        
-        model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath = checkpoints_filepath,
-                                           monitor='epoch_loss',
-                                           verbose=0,
-                                           save_best_only=False,
-                                           save_weights_only=False,
-                                           mode='auto',
-                                           save_freq='epoch')
-        
+
+        model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_filepath,
+                                                                       monitor='epoch_loss',
+                                                                       verbose=0,
+                                                                       save_best_only=False,
+                                                                       save_weights_only=False,
+                                                                       mode='auto',
+                                                                       save_freq='epoch')
+
         reduce_lr_callback = tf.keras.callbacks.ReduceLROnPlateau(monitor='epoch_loss',
-                                               factor=0.2,
-                                               patience=3,
-                                               min_lr=0.001)
-        
+                                                                  factor=0.2,
+                                                                  patience=3,
+                                                                  min_lr=0.001)
+
         self.train_result = self.model.fit(x=traingen,
                                            steps_per_epoch=len(traingen),
                                            validation_data=valgen,
@@ -108,13 +130,16 @@ class Experiment:
 
         eval_res = self.model.evaluate(
             x=testgen, steps=len(testgen), verbose=1)
-        
+
         metric_names = self.benchmark.as_dict()["metrics"]
-        eval_metrics = dict(zip (["loss"] + metric_names, [float (i) for i in eval_res]))
-        
+        eval_metrics = dict(
+            zip(["loss"] + metric_names, [float(i) for i in eval_res]))
+
         self.evaluation_result = {
             "report": report,
             "metrics": eval_metrics,
+            "predictions": self.predictions,
+            "groundtruth_label": groundtruth_label,
         }
 
         return self.evaluation_result
@@ -131,10 +156,10 @@ class Experiment:
                                    self.model_filename,
                                    self.model_description,
                                    version=self.model_version)
-        
+
         model_set(self.model_id, 'benchmark',
-                      self.benchmark.as_dict())
-        
+                  self.benchmark.as_dict())
+
         if self.evaluation_result != None:
             model_set(self.model_id, 'test', self.evaluation_result["metrics"])
             model_set(self.model_id, 'classification_report',
@@ -144,26 +169,85 @@ class Experiment:
 
 
 class Benchmark:
-    """
-       Wrapper class to standardize experiment execution
-    """
-
     def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
-                 optimizer=Adam(), loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()],
+                 optimizer=Adam(), loss='binary_crossentropy', metrics=[tf.keras.metrics.AUC()],
                  train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
                  shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), n_channels=3,
-                 nan_replacement=0, unc_value=-1, u_enc='uzeroes', path_column="Path", path_column_prefix="",):
+                 nan_replacement=0, unc_value=-1, u_enc='uzeroes', path_column="Path",
+                 path_column_prefix="",):
         """
-        TODO: adjust documention
+        Instaniates a benchmark that can be provided as basis of an
+        src.architecures.benchmark.Experiment. Provides these experiments with the same
+        training/validation/test data as well as model configurations.
 
         Parameters:
-            dataset_folder (Path): path to the dataset
-            columns (list): list of pathologies to be predicted
-            epochs (int): numer of epochs for training
-            optimizer (keras.optimizer): optimizer used in training
-            loss (keras.loss): loss used in training
-            metrics (list): metrics to be watched during training
+            dataset_folder (Pathlib Path):
+                    See docs of src.datasets.generator.ImageDataGenerator
+            label_columns (list):
+                    See docs of src.datasets.generator.ImageDataGenerator
+            name (str):
+                    The human readable name of the benchmark for documentation purposes.
+            epochs (int): (default 10)
+                    Number of epochs to run the training for
+            models_dir (Pathlib Path): (default: Path("models/"))
+                    The directory where the models should be saved to
+
+            optimizer (tf.keras.optimizers.Optimizer):  (default: Adam())
+                    A valid keras optimizer instance. Learning rate and other parameters
+                    can be provided to the Optimizer class when initializing.
+
+            loss (str | tf.keras.losses.Loss):(default: "binary_crossentropy")
+                    Either the name or an instance of a valid keras loss.
+
+            metrics (list tf.keras.metrics.Metric): (default [tf.keras.metrics.AUC()])
+                    A list of metrics to be evaluated after each epoch. List can contain
+                    Either the name or an instance of a valid keras metrics.
+
+            train_labels (str): (default "train.csv")
+                    The name of the CSV file containing the labels and features
+                    (paths to images) for each data sample to be used for training.
+                    These will be split into test, train and validation set
+            test_labels (str): (default None)
+                    The name of the CSV file for the test data. If given, the samples given
+                    in the train_labels file will be used for train and validation only.
+                    The samples of the test_labels file will then be used as the test set.
+            split_test_size (float): (default 0.2)
+                    The relative size of the test set in the train/test split. Only used
+                    when no test_labels are provided separately
+            split_valid_size (float): (default 0.2)
+                    The relative size of the validation set in the train/validation split
+                    When no test_labels are provided. The data is first split in train and test.
+                    Then the train data is split again in train and validation.
+            split_group (bool): (default "patient_id")
+                    See docs of src.preprocessing.split.train_test_split.train_test_split
+            split_seed (bool): (default None)
+                    See docs of src.preprocessing.split.train_test_split.train_test_split
+
+            shuffle (bool): (default True)
+                    See docs of src.datasets.generator.ImageDataGenerator
+            drop_last (bool): (default False)
+                    See docs of src.datasets.generator.ImageDataGenerator
+            batch_size (int): (default 64)
+                    See docs of src.datasets.generator.ImageDataGenerator
+            dim (int): (default 256x256)
+                    See docs of src.datasets.generator.ImageDataGenerator
+            n_channels (int): (default 3)
+                    See docs of src.datasets.generator.ImageDataGenerator
+            unc_value (int/str): (default -1)
+                    See docs of src.datasets.generator.ImageDataGenerator
+            nan_replacement (int): (default 0)
+                    See docs of src.datasets.generator.ImageDataGenerator
+            u_enc (string): (default uzeros)
+                    See docs of src.datasets.generator.ImageDataGenerator
+            path_column (str): (default "Path")
+                    See docs of src.datasets.generator.ImageDataGenerator
+            path_column_prefix (str): (default "")
+                    See docs of src.datasets.generator.ImageDataGenerator
+
+        Returns:
+            benchmark (Benchmark):
+                    A benchmark given the specifications with data generators already initialized
         """
 
         self.name = name
@@ -188,9 +272,6 @@ class Benchmark:
 
         if self.dataset_name is None:
             self.dataset_name = dataset_folder.parent.name + "_" + dataset_folder.name
-
-        if self.metrics is None:
-            self.metrics = ['accuracy']
 
         if test_labels is None:
             # read all labels from one file and split into train/test/valid
@@ -240,15 +321,20 @@ class Benchmark:
                                           path_column_prefix=self.path_column_prefix,
                                           shuffle=self.shuffle,
                                           drop_last=self.drop_last,
-                                          batch_size=self.batch_size,
+                                          batch_size=1,
                                           n_channels=self.n_channels,
                                           nan_replacement=self.nan_replacement,
                                           unc_value=self.unc_value,
                                           u_enc=self.u_enc)
 
     def as_dict(self):
-        metrics = [name for name in self.metrics if type(name) == str] 
-        metrics += [name.__class__.__name__ for name in self.metrics if type(name) != str]
+        """
+        Returns the configuration of this benchmark as a dictionary that is serializable
+        """
+
+        metrics = [name for name in self.metrics if isinstance(name, str)]
+        metrics += [
+            name.__class__.__name__ for name in self.metrics if not isinstance(name, str)]
         return {
             "benchmark_name": self.name,
             "dataset_name": self.dataset_name,
@@ -278,6 +364,9 @@ class Benchmark:
         return str(self.as_dict())
 
     def summary_str(self):
+        """
+        Returns human readable description of the benchmark configuration
+        """
         bench_dict = self.as_dict()
         return ("The benchmark was initialized for the {dataset_name} dataset "
                 "with batch size of {batch_size}, shuffel set to {shuffle} "

@@ -13,11 +13,12 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
     https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
     """
 
-    def __init__(self, dataset, dataset_folder, label_columns, path_column="Path", path_column_prefix="",
+    def __init__(self, dataset, dataset_folder, label_columns, path_column="Path",
+                 path_column_prefix="", shuffle=True, drop_last=False, batch_size=64,
+                 dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes'
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
-                 shuffle=True, drop_last=False, batch_size=64, dim=(256, 256), n_channels=3,
-                 nan_replacement=0, unc_value=-1, u_enc='uzeroes'):
+                 ):
         """
         Returns a data generator for an image classifier model, that provides batch wise access
         to the data.
@@ -39,6 +40,11 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
             path_column (str): name of the column that contains the relative path from
                             the dataset_folder root directory to each image. (default "Path")
+
+            path_column_prefix (str): prefix that should be applied to the values of path_column.
+                                      This is intendet to be used for cases, where the paths are
+                                      not relative to the dataset_folder, but to a subfolder
+                                      within the dataset_folder. (default "")
 
             shuffle (bool): whether to shuffle the data between batches (default True)
             drop_last (bool): wheter to drop the last incomplete batch,
@@ -62,7 +68,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
         Returns:
             generator (DataGenerator): generator with the given specifications
-            """
+        """
 
         if not isinstance(dataset_folder, Path):
             raise ValueError(
@@ -169,7 +175,8 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
 
         img_paths = self.dataset.iloc[sample_ids][self.path_column].to_numpy()
-        img_paths = str(self.dataset_folder) + "/" + self.path_column_prefix + img_paths
+        img_paths = str(self.dataset_folder) + "/" + \
+            self.path_column_prefix + img_paths
 
         images = [self.load_image(img_path) for img_path in img_paths]
 
@@ -241,7 +248,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
         return self.label_generation(self.index[start_index:end_index])
 
-    def get_encoded_labels(self):
+    def get_labels(self):
         """
         Returns all labels encoded and cleaned
         """
@@ -255,4 +262,3 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
 
         self.index = self.get_new_index()
-        
