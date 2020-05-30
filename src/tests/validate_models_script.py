@@ -54,6 +54,7 @@ def execute():
             os.environ['EXP_DATA'] = str(json.dumps(exp))
             output_path = tempdir / exp['id']
             output_path_md = tempdir / (exp['id'] + '.md')
+            print("Executing validate_model notebook for " + str(exp['id']))
             os.system('jupyter nbconvert --to markdown --execute ' +
                       str(notebook_path) + ' --output ' + str(output_path))
 
