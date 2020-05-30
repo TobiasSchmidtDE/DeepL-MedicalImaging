@@ -75,7 +75,7 @@ class Experiment:
         checkpoint_filepath = str(
             model_dir / "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
 
-        log_dir = model_dir / "logs"  # / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        log_dir = model_dir / "logs"
         log_dir.mkdir(parents=True, exist_ok=True)
 
         tensorboard_callback = TensorBoard(log_dir=str(log_dir),
@@ -160,7 +160,7 @@ class Experiment:
         model_set(self.model_id, 'benchmark',
                   self.benchmark.as_dict())
 
-        if self.evaluation_result != None:
+        if not self.evaluation_result is None:
             model_set(self.model_id, 'test', self.evaluation_result["metrics"])
             model_set(self.model_id, 'classification_report',
                       self.evaluation_result["report"])
@@ -170,7 +170,7 @@ class Experiment:
 
 class Benchmark:
     def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
-                 optimizer=Adam(), loss='binary_crossentropy', metrics=[tf.keras.metrics.AUC()],
+                 optimizer=Adam(), loss='binary_crossentropy', metrics=None,
                  train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
                  shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), n_channels=3,
@@ -272,6 +272,9 @@ class Benchmark:
 
         if self.dataset_name is None:
             self.dataset_name = dataset_folder.parent.name + "_" + dataset_folder.name
+
+        if self.metrics is None:
+            self.metrics = [tf.keras.metrics.AUC()]
 
         if test_labels is None:
             # read all labels from one file and split into train/test/valid

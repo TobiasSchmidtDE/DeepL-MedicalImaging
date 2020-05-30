@@ -57,8 +57,9 @@ def save_model(model, history, name, filename, description, version='1', upload=
     try:
         with open(log_file, 'r') as f:
             data = json.load(f)
-    except:
-        print("WARNING: {log_file} could not be read as json and will be overwritten".format(log_file = log_file))
+    except ValueError:
+        print("WARNING: {log_file} could not be read as json and will be overwritten".format(
+            log_file=log_file))
 
     # add experiments property to dict if the file was empty
     if not data or not 'experiments' in data:
@@ -83,7 +84,7 @@ def save_model(model, history, name, filename, description, version='1', upload=
     if upload:
         remote_name = log['id'] + '.h5'
         upload_file(str(path), remote_name)
-        
+
     with open(log_file, 'w') as f:
         json_data = json.dumps(data, indent=4)
         f.write(json_data)
@@ -123,8 +124,9 @@ def model_set(identifier, attribute, value):
     try:
         with open(log_file, 'r') as f:
             data = json.load(f)
-    except:
-        print("WARNING: {log_file} could not be read as json and will be overwritten".format(log_file = log_file))
+    except ValueError:
+        print("WARNING: {log_file} could not be read as json and will be overwritten".format(
+            log_file=log_file))
 
     # add experiments property to dict if the file was empty
     if not data or not 'experiments' in data:
@@ -174,8 +176,9 @@ def load_model(identifier=None, name=None, version=None):
     try:
         with open(log_file, 'r') as f:
             data = json.load(f)
-    except:
-        print("WARNING: {log_file} could not be read as json and will be overwritten".format(log_file = log_file))
+    except ValueError:
+        print("WARNING: {log_file} could not be read as json and will be overwritten".format(
+            log_file=log_file))
     experiments = data['experiments']
 
     # append unvalidated experiments
@@ -231,8 +234,9 @@ def delete_model(identifier=None, name=None, version=None):
     try:
         with open(log_file, 'r') as f:
             data = json.load(f)
-    except:
-        print("WARNING: {log_file} could not be read as json and will be overwritten".format(log_file = log_file))
+    except ValueError:
+        print("WARNING: {log_file} could not be read as json and will be overwritten".format(
+            log_file=log_file))
 
     if data and 'experiments' in data:
         experiment = find_experiment(
