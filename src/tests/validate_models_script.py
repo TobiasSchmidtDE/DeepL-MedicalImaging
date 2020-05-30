@@ -53,7 +53,7 @@ def execute():
             # set model data as env variable and execute notebook
             os.environ['EXP_DATA'] = str(json.dumps(exp))
             output_path = tempdir / exp['id']
-            output_path_md = tempdir / (exp['id'] +  '.md')
+            output_path_md = tempdir / (exp['id'] + '.md')
             os.system('jupyter nbconvert --to markdown --execute ' +
                       str(notebook_path) + ' --output ' + str(output_path))
 
@@ -122,7 +122,7 @@ def execute():
             f.write(json_data)
 
         # remove temp dir
-        #os.system('rm  -rf' + str(tempdir))
+        os.system('rm  -rf' + str(tempdir))
 
     # pylint: disable=bare-except
     except:
