@@ -12,3 +12,4 @@ sklearn
 python-dotenv
 google-cloud-storage
 tf-nightly
+jupyter_client
