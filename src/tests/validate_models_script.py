@@ -5,7 +5,7 @@ import re
 import sys
 import traceback
 
-token = os.environ['TOKEN']
+token = 'Vz2bzV6yuLjmM38aNEMa'
 WIKI_URL = 'https://oauth2:' + token + \
     '@git.veios.cloud/idp1-radio/idp-radio-1.wiki.git'
 
@@ -102,7 +102,7 @@ def execute():
             # commit and push changes to wiki git
             commit_msg = "Add model '" + exp['name'] + "'"
             os.system('cd ' + str(wikidir) +
-                      '; git add .; git commit -m ' + str(commit_msg) + '; git push;')
+                      '; git commit -am "' + commit_msg + '"; git push;')
 
         # write to unvalidated experiments log file
         with open(logfile_path, 'w') as f:
@@ -123,7 +123,7 @@ def execute():
             f.write(json_data)
 
         # remove temp dir
-        os.system('rm  -rf' + str(tempdir))
+        os.system('rm  -rf ' + str(tempdir))
 
     # pylint: disable=bare-except
     except:
