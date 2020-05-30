@@ -53,11 +53,12 @@ def execute():
             # set model data as env variable and execute notebook
             os.environ['EXP_DATA'] = str(json.dumps(exp))
             output_path = tempdir / exp['id']
+            output_path_md = tempdir / (exp['id'] + '.md')
             os.system('jupyter nbconvert --to markdown --execute ' +
                       str(notebook_path) + ' --output ' + str(output_path))
 
             # load exectuted notebooks data
-            f = open(output_path / '.md', 'r')
+            f = open(output_path_md, 'r')
             content = f.read()
             f.close()
 
@@ -83,17 +84,17 @@ def execute():
 
             # write md file into wiki, either append if model with same name exists
             # or create a new file
-            if os.path.exists(wiki_model_dir + '/' + exp['name'] + '.md'):
+            if os.path.exists(wiki_model_dir / (exp['name'] + '.md')):
                 mode = 'a'
             else:
                 mode = 'w'
 
-            with open(wiki_model_dir + '/' + exp['name'] + '.md', mode) as f:
+            with open(wiki_model_dir / (exp['name'] + '.md'), mode) as f:
                 f.write(content)
 
             # if no model with same name exists add to home page of wiki
             if not mode == 'a':
-                with open(tempdir + '/idp-radio-1.wiki/home.md', 'a') as f:
+                with open(tempdir / 'idp-radio-1.wiki/home.md', 'a') as f:
                     f.write('\n - [' + exp['name'] + '](' +
                             'models/' + exp['name'] + ')')
 
@@ -121,7 +122,7 @@ def execute():
             f.write(json_data)
 
         # remove temp dir
-        os.system('rm -rf ' + str(tempdir))
+        os.system('rm  -rf' + str(tempdir))
 
     # pylint: disable=bare-except
     except:

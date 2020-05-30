@@ -1,8 +1,8 @@
 
 from pathlib import Path
 import numpy as np
-import cv2
 import tensorflow as tf
+import cv2
 from skimage.transform import resize
 from src.datasets.u_encoding import uencode
 
@@ -14,10 +14,11 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
     """
 
     def __init__(self, dataset, dataset_folder, label_columns, path_column="Path",
+                 path_column_prefix="", shuffle=True, drop_last=False, batch_size=64,
+                 dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes'
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
-                 shuffle=True, drop_last=False, batch_size=64, dim=(256, 256), n_channels=3,
-                 nan_replacement=0, unc_value=-1, u_enc='uzeroes'):
+                 ):
         """
         Returns a data generator for an image classifier model, that provides batch wise access
         to the data.
@@ -39,6 +40,11 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
             path_column (str): name of the column that contains the relative path from
                             the dataset_folder root directory to each image. (default "Path")
+
+            path_column_prefix (str): prefix that should be applied to the values of path_column.
+                                      This is intendet to be used for cases, where the paths are
+                                      not relative to the dataset_folder, but to a subfolder
+                                      within the dataset_folder. (default "")
 
             shuffle (bool): whether to shuffle the data between batches (default True)
             drop_last (bool): wheter to drop the last incomplete batch,
@@ -62,7 +68,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
         Returns:
             generator (DataGenerator): generator with the given specifications
-            """
+        """
 
         if not isinstance(dataset_folder, Path):
             raise ValueError(
@@ -104,6 +110,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         self.dataset_folder = dataset_folder
         self.label_columns = label_columns
         self.path_column = path_column
+        self.path_column_prefix = path_column_prefix
         self.shuffle = shuffle
         self.batch_size = batch_size
         self.dim = dim
@@ -135,6 +142,26 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
         return int(np.ceil(num_batches))
 
+    def label_generation(self, sample_ids):
+        """
+        Loads one batch of encoded and cleaned labels.
+
+        Parameters:
+            sample_ids (integer list): the ids of the samples for which the
+                                       labels should be retrieved.
+
+        Returns:
+            list (numpy.array) of the encoded labels
+        """
+        labels = self.dataset.iloc[sample_ids][self.label_columns].to_numpy()
+
+        # replace nan values
+        labels[np.isnan(labels)] = self.nan_replacement
+
+        # enforce uncertainty encoding strategy
+        labels = uencode(self.u_enc, labels, unc_value=self.unc_value)
+        return np.array(labels, dtype=int)
+
     def data_generation(self, sample_ids):
         """
         Loads one batch of data.
@@ -148,18 +175,12 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
 
         img_paths = self.dataset.iloc[sample_ids][self.path_column].to_numpy()
-        img_paths = str(self.dataset_folder) + "/" + img_paths
+        img_paths = str(self.dataset_folder) + "/" + \
+            self.path_column_prefix + img_paths
 
         images = [self.load_image(img_path) for img_path in img_paths]
-        labels = self.dataset.iloc[sample_ids][self.label_columns].to_numpy()
 
-        # replace nan values
-        labels[np.isnan(labels)] = self.nan_replacement
-
-        # enforce uncertainty encoding strategy
-        labels = uencode(self.u_enc, labels, unc_value=self.unc_value)
-
-        return np.array(images), np.array(labels)
+        return np.array(images), self.label_generation(sample_ids)
 
     def load_image(self, path):
         """
@@ -204,6 +225,36 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
         for i in iter(range(len(self))):
             yield self.data_generation(self[i])
+
+    def get_label_batch(self, batch_index):
+        """
+        Loads a batch of labels (without loading the images)
+
+        Paramters:
+            batch_index (int): the id of the batch that should be loaded
+
+        Returns:
+            list of labels of length batch_size
+
+        """
+        start_index = batch_index * self.batch_size
+        end_index = (batch_index+1) * self.batch_size
+
+        if ((self.drop_last and end_index > len(self.dataset))
+                or (start_index > len(self.dataset))):
+            raise ValueError("Index out of range! Number of batches exceeded."
+                             " Only {max_batches} batches available, not {num_batches}.".format(
+                                 max_batches=len(self), num_batches=batch_index))
+
+        return self.label_generation(self.index[start_index:end_index])
+
+    def get_labels(self):
+        """
+        Returns all labels encoded and cleaned
+        """
+        if self.drop_last:
+            return self.label_generation(self.index[:len(self)*self.batch_size])
+        return self.label_generation(self.index)
 
     def on_epoch_end(self):
         """

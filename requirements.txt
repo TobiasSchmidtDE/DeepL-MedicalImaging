@@ -11,4 +11,4 @@ jupyter
 sklearn
 python-dotenv
 google-cloud-storage
-tensorflow
+tf-nightly
