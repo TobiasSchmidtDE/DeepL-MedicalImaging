@@ -19,7 +19,7 @@ class F2Score(tf.keras.metrics.Metric):
                                                      name=name,
                                                      dtype=dtype)
 
-    def update_state(self, y_true, y_pred, sample_weight=None):
+    def update_state(self, y_true, y_pred, sample_weight=None):  # pylint: disable=W:279
         self.precision_metric.update_state(
             y_true, y_pred, sample_weight=sample_weight)
         self.recall_metric.update_state(
