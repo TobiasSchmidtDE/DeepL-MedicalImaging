@@ -38,10 +38,10 @@ class Experiment:
         self.model_id = None
 
         self.model_description = ("Trained {model_name} architecture using the "
-                                  "{benchmark_name} benchmark."
+                                  "'{benchmark_name}' benchmark. "
                                   ).format(model_name=self.model_name,
                                            benchmark_name=benchmark.name)
-        self.model_description += benchmark.summary_str()
+        self.model_description += benchmark.summary()
 
         self.model = model
         self.model.compile(optimizer=self.benchmark.optimizer,
@@ -366,7 +366,7 @@ class Benchmark:
     def __str__(self):
         return str(self.as_dict())
 
-    def summary_str(self):
+    def summary(self):
         """
         Returns human readable description of the benchmark configuration
         """
@@ -386,7 +386,7 @@ class Benchmark:
                          dim=bench_dict["dim"],
                          epochs=bench_dict["epochs"],
                          optimizer=bench_dict["optimizer"],
-                         loss=bench_dict["loss"],
+                         loss=bench_dict["loss"] if isinstance(bench_dict["loss"], str) else bench_dict["loss"].name,
                          label_count=len(bench_dict["label_columns"]),
                          u_enc=bench_dict["u_enc"],
                          train_num_samples=bench_dict["train_num_samples"],

@@ -160,7 +160,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
         # enforce uncertainty encoding strategy
         labels = uencode(self.u_enc, labels, unc_value=self.unc_value)
-        return np.array(labels, dtype=int)
+        return np.array(labels, dtype=float)
 
     def data_generation(self, sample_ids):
         """
