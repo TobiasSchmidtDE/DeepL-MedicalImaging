@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from pathlib import Path
 import numpy as np
 import tensorflow as tf
@@ -12,7 +12,7 @@ from src.preprocessing.split.train_test_split import train_test_split
 
 
 class Experiment:
-    def __init__(self, benchmark, model, model_name, model_version='1'):
+    def __init__(self, benchmark, model, model_name=None, model_version='1'):
         """
         Intiantiates an experiment to train and evaluate a given model.
 
@@ -32,18 +32,23 @@ class Experiment:
         """
 
         self.benchmark = benchmark
+        self.model = model
         self.model_name = model_name
+        self.model_simple_name = model_name
         self.model_version = model_version
         self.model_filename = None
         self.model_id = None
+        
+        if self.model_name is None:
+            self.model_name = self.model.simple_name + datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+            self.model_simple_name = self.model.simple_name 
 
         self.model_description = ("Trained {model_name} architecture using the "
                                   "'{benchmark_name}' benchmark. "
-                                  ).format(model_name=self.model_name,
+                                  ).format(model_name=self.model_simple_name,
                                            benchmark_name=benchmark.name)
         self.model_description += benchmark.summary()
 
-        self.model = model
         self.model.compile(optimizer=self.benchmark.optimizer,
                            loss=self.benchmark.loss,
                            metrics=self.benchmark.metrics)
@@ -393,3 +398,4 @@ class Benchmark:
                          valid_num_samples=bench_dict["valid_num_samples"],
                          test_num_samples=bench_dict["test_num_samples"],
                          )
+
