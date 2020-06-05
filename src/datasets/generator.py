@@ -5,6 +5,7 @@ import tensorflow as tf
 import cv2
 from skimage.transform import resize
 from src.datasets.u_encoding import uencode
+from src.preprocessing.cropping.template_matching import TemplateMatcher
 
 
 class ImageDataGenerator(tf.keras.utils.Sequence):
@@ -15,7 +16,8 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
     def __init__(self, dataset, dataset_folder, label_columns, path_column="Path",
                  path_column_prefix="", shuffle=True, drop_last=False, batch_size=64,
-                 dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes'
+                 dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
+                 crop_dim=None
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
                  ):
@@ -65,6 +67,8 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                                 Must be a valid value for label columns.
             u_enc (string): style of encoding for uncertainty (default)
                             (values: uzeros, uones, umulticlass)
+            crop_dim (int): dimension to which the images will be cropped, after the initial resize
+                            specified in `dim`
 
         Returns:
             generator (DataGenerator): generator with the given specifications
@@ -119,6 +123,9 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         self.unc_value = unc_value
         self.u_enc = u_enc
         self.drop_last = drop_last
+
+        if crop_dim:
+            self.template_matcher = TemplateMatcher(size=crop_dim)
 
         self.on_epoch_end()
 
@@ -192,6 +199,9 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
         img = resize(image=cv2.imread(str(Path(path)), cv2.IMREAD_GRAYSCALE),
                      output_shape=self.dim, order=1)
+
+        if self.template_matcher:
+            img = self.template_matcher.match(img.astype(np.float32))
 
         return np.array(img) if self.n_channels == 1 else np.stack((img,) * self.n_channels, axis=2)
 
