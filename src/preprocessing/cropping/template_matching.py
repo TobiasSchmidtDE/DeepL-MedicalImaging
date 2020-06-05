@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 import cv2
+from skimage.transform import resize
 
 load_dotenv(find_dotenv())
 
@@ -10,7 +11,8 @@ DATASET_FOLDER = Path(os.environ.get('CHEXPERT_DEV_DATASET_DIRECTORY'))
 DEFAULT_TEMPLATE = {
     'path': 'CheXpert-v1.0-small/train/patient00165/study2/view1_frontal.jpg',
     'x': (30, 300),
-    'y': (30, 300)
+    'y': (30, 300),
+    'dim': (320, 327)
 }
 
 
@@ -32,7 +34,12 @@ class TemplateMatcher():
         if not template:
             template = DEFAULT_TEMPLATE
 
-        template_img = cv2.imread(str(DATASET_FOLDER / template['path']), 0)
+        # load template image in the same way as it is loaded in the generator
+        img_path = str(DATASET_FOLDER / template['path'])
+        # the image is converted to a float32 dtype since template matching does not work
+        # with float64
+        template_img = resize(image=cv2.imread(img_path, cv2.IMREAD_GRAYSCALE),
+                              output_shape=template['dim'], order=1).astype('float32')
 
         x1, x2 = template['x']
         y1, y2 = template['y']
