@@ -173,9 +173,9 @@ class Benchmark:
                  optimizer=Adam(), loss='binary_crossentropy', metrics=None,
                  train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
-                 shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), n_channels=3,
-                 nan_replacement=0, unc_value=-1, u_enc='uzeroes', path_column="Path",
-                 path_column_prefix="",):
+                 shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), crop_dim=None,
+                 n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
+                 path_column="Path", path_column_prefix="",):
         """
         Instaniates a benchmark that can be provided as basis of an
         src.architecures.benchmark.Experiment. Provides these experiments with the same
@@ -232,6 +232,8 @@ class Benchmark:
                     See docs of src.datasets.generator.ImageDataGenerator
             dim (int): (default 256x256)
                     See docs of src.datasets.generator.ImageDataGenerator
+            crop_dim (int): (default None)
+                    See docs of src.datasets.generator.ImageDataGenerator
             n_channels (int): (default 3)
                     See docs of src.datasets.generator.ImageDataGenerator
             unc_value (int/str): (default -1)
@@ -264,6 +266,7 @@ class Benchmark:
         self.shuffle = shuffle
         self.batch_size = batch_size
         self.dim = dim
+        self.crop_dim = crop_dim
         self.n_channels = n_channels
         self.nan_replacement = nan_replacement
         self.unc_value = unc_value
@@ -302,7 +305,9 @@ class Benchmark:
                                            n_channels=self.n_channels,
                                            nan_replacement=self.nan_replacement,
                                            unc_value=self.unc_value,
-                                           u_enc=self.u_enc)
+                                           u_enc=self.u_enc,
+                                           dim=self.dim,
+                                           crop_dim=self.crop_dim)
 
         self.valgen = ImageDataGenerator(dataset=validation_labels,
                                          dataset_folder=self.dataset_folder,
@@ -315,7 +320,9 @@ class Benchmark:
                                          n_channels=self.n_channels,
                                          nan_replacement=self.nan_replacement,
                                          unc_value=self.unc_value,
-                                         u_enc=self.u_enc)
+                                         u_enc=self.u_enc,
+                                         dim=self.dim,
+                                         crop_dim=self.crop_dim)
 
         self.testgen = ImageDataGenerator(dataset=test_labels,
                                           dataset_folder=self.dataset_folder,
@@ -328,7 +335,9 @@ class Benchmark:
                                           n_channels=self.n_channels,
                                           nan_replacement=self.nan_replacement,
                                           unc_value=self.unc_value,
-                                          u_enc=self.u_enc)
+                                          u_enc=self.u_enc,
+                                          dim=self.dim,
+                                          crop_dim=self.crop_dim)
 
     def as_dict(self):
         """
@@ -353,6 +362,7 @@ class Benchmark:
             "shuffle": self.shuffle,
             "batch_size": self.batch_size,
             "dim": self.dim,
+            "crop_dim": self.crop_dim,
             "n_channels": self.n_channels,
             "nan_replacement": self.nan_replacement,
             "unc_value": self.unc_value,
@@ -372,8 +382,9 @@ class Benchmark:
         """
         bench_dict = self.as_dict()
         return ("The benchmark was initialized for the {dataset_name} dataset "
-                "with batch size of {batch_size}, shuffel set to {shuffle} "
-                "and images rescaled to dimension {dim}.\n"
+                "with batch size of {batch_size}, shuffle set to {shuffle} "
+                "and images rescaled to dimension {dim}"
+                "and then cropped to {crop_dim}.\n" if self.crop_dim else ".\n"
                 "The training was done for {epochs} epochs using the {optimizer} optimizer "
                 "and {loss} loss.\nA total of {label_count} labels/pathologies were included "
                 "in the training and encoded using the '{u_enc}' method.\n"
@@ -384,6 +395,7 @@ class Benchmark:
                          batch_size=bench_dict["batch_size"],
                          shuffle=bench_dict["shuffle"],
                          dim=bench_dict["dim"],
+                         crop_dim=bench_dict["crop_dim"],
                          epochs=bench_dict["epochs"],
                          optimizer=bench_dict["optimizer"],
                          loss=bench_dict["loss"],
