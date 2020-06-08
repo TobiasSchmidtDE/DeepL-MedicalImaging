@@ -173,7 +173,7 @@ class Benchmark:
                  optimizer=Adam(), loss='binary_crossentropy', metrics=None,
                  train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
-                 shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), crop_dim=None,
+                 shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), crop_dim=None, crop_template=None,
                  n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
                  path_column="Path", path_column_prefix="",):
         """
@@ -234,6 +234,8 @@ class Benchmark:
                     See docs of src.datasets.generator.ImageDataGenerator
             crop_dim (int): (default None)
                     See docs of src.datasets.generator.ImageDataGenerator
+            crop_template (dict): (default None)
+                    See docs of src.datasets.generator.ImageDataGenerator
             n_channels (int): (default 3)
                     See docs of src.datasets.generator.ImageDataGenerator
             unc_value (int/str): (default -1)
@@ -267,6 +269,7 @@ class Benchmark:
         self.batch_size = batch_size
         self.dim = dim
         self.crop_dim = crop_dim
+        self.crop_template = crop_template
         self.n_channels = n_channels
         self.nan_replacement = nan_replacement
         self.unc_value = unc_value
@@ -307,7 +310,8 @@ class Benchmark:
                                            unc_value=self.unc_value,
                                            u_enc=self.u_enc,
                                            dim=self.dim,
-                                           crop_dim=self.crop_dim)
+                                           crop_dim=self.crop_dim,
+                                           crop_template=self.crop_template)
 
         self.valgen = ImageDataGenerator(dataset=validation_labels,
                                          dataset_folder=self.dataset_folder,
@@ -322,7 +326,8 @@ class Benchmark:
                                          unc_value=self.unc_value,
                                          u_enc=self.u_enc,
                                          dim=self.dim,
-                                         crop_dim=self.crop_dim)
+                                         crop_dim=self.crop_dim,
+                                         crop_template=self.crop_template)
 
         self.testgen = ImageDataGenerator(dataset=test_labels,
                                           dataset_folder=self.dataset_folder,
@@ -337,7 +342,8 @@ class Benchmark:
                                           unc_value=self.unc_value,
                                           u_enc=self.u_enc,
                                           dim=self.dim,
-                                          crop_dim=self.crop_dim)
+                                          crop_dim=self.crop_dim,
+                                          crop_template=self.crop_template)
 
     def as_dict(self):
         """
@@ -363,6 +369,7 @@ class Benchmark:
             "batch_size": self.batch_size,
             "dim": self.dim,
             "crop_dim": self.crop_dim,
+            "crop_tempalte": self.crop_tempalte,
             "n_channels": self.n_channels,
             "nan_replacement": self.nan_replacement,
             "unc_value": self.unc_value,

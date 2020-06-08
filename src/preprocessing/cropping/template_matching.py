@@ -9,7 +9,7 @@ load_dotenv(find_dotenv())
 DATASET_FOLDER = Path(os.environ.get('CHEXPERT_DEV_DATASET_DIRECTORY'))
 
 DEFAULT_TEMPLATE = {
-    'path': 'CheXpert-v1.0-small/train/patient00165/study2/view1_frontal.jpg',
+    'path': 'src/preprocessing/cropping/templates/chexpert-frontal.jpg',
     'x': (30, 300),
     'y': (30, 300),
     'dim': (320, 327)
@@ -25,6 +25,13 @@ class TemplateMatcher():
 
          Parameters:
             template (dict): A dict containing the path and crop for the template image
+                             path: the path to the template image
+                             x (tuple): a tuple containing the start and end of the crop on the
+                                        x-axis
+                             y (tuple): a tuple containing the start and end of the crop on the
+                                        y-axis
+                             dim: the original dimension of the image, or the dimension on which
+                                  the crop should be applied
             matching_method: The method that is used to match the template to an image.
                              Valid matching methods are listed here:
                              https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_template_matching/py_template_matching.html#template-matching-in-opencv
@@ -35,7 +42,7 @@ class TemplateMatcher():
             template = DEFAULT_TEMPLATE
 
         # load template image in the same way as it is loaded in the generator
-        img_path = str(DATASET_FOLDER / template['path'])
+        img_path = template['path']
         # the image is converted to a float32 dtype since template matching does not work
         # with float64
         template_img = resize(image=cv2.imread(img_path, cv2.IMREAD_GRAYSCALE),
@@ -49,7 +56,7 @@ class TemplateMatcher():
         self.matching_method = matching_method
         self.size = size
 
-    def match(self, img):
+    def crop(self, img):
         """
          Matches the given image to the template and returns the cropped image
 
