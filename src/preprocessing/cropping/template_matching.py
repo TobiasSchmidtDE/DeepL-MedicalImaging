@@ -9,10 +9,18 @@ load_dotenv(find_dotenv())
 DATASET_FOLDER = Path(os.environ.get('CHEXPERT_DEV_DATASET_DIRECTORY'))
 
 DEFAULT_TEMPLATE = {
-    'path': 'src/preprocessing/cropping/templates/chexpert-frontal.jpg',
-    'x': (30, 300),
-    'y': (30, 300),
-    'dim': (320, 327)
+    'default':      {
+        'path': 'src/preprocessing/cropping/templates/chexpert-frontal.jpg',
+        'x': (30, 300),
+        'y': (30, 300),
+        'dim': (320, 327)
+    },
+    'lateral': {
+        'path': 'src/preprocessing/cropping/templates/chexpert-lateral.jpg',
+        'x': (30, 300),
+        'y': (20, 290),
+        'dim': (349, 320)
+    }
 }
 
 
@@ -41,22 +49,26 @@ class TemplateMatcher():
         if not template:
             template = DEFAULT_TEMPLATE
 
-        # load template image in the same way as it is loaded in the generator
-        img_path = template['path']
-        # the image is converted to a float32 dtype since template matching does not work
-        # with float64
-        template_img = resize(image=cv2.imread(img_path, cv2.IMREAD_GRAYSCALE),
-                              output_shape=template['dim'], order=1).astype('float32')
+        self.template = {}
+        for template_type in ['default', 'lateral']:
 
-        x1, x2 = template['x']
-        y1, y2 = template['y']
-        template_img = template_img[x1:x2, y1:y2]
-        self.template = template_img.copy()
+            # load template image in the same way as it is loaded in the generator
+            temp = template[template_type]
+            img_path = temp['path']
+            # the image is converted to a float32 dtype since template matching does not work
+            # with float64
+            template_img = resize(image=cv2.imread(img_path, cv2.IMREAD_GRAYSCALE),
+                                  output_shape=temp['dim'], order=1).astype('float32')
+
+            x1, x2 = temp['x']
+            y1, y2 = temp['y']
+            template_img = template_img[x1:x2, y1:y2]
+            self.template[template_type] = template_img.copy()
 
         self.matching_method = matching_method
         self.size = size
 
-    def crop(self, img):
+    def crop(self, img, template_type='default'):
         """
          Matches the given image to the template and returns the cropped image
 
@@ -67,7 +79,8 @@ class TemplateMatcher():
         """
         w, h = self.size
 
-        res = cv2.matchTemplate(img, self.template, self.matching_method)
+        template = self.template[template_type]
+        res = cv2.matchTemplate(img, template, self.matching_method)
         min_max = cv2.minMaxLoc(res)
         top_left = min_max[3]
 
