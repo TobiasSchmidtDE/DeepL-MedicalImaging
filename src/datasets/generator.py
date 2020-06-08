@@ -70,7 +70,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
             crop_dim (int): dimension to which the images will be cropped, after the initial resize
                             specified in `dim`
             crop_tempalte (dict): a custom template for the crop
-                                  see src.preprocessing.cropping.template_matching.TemplateMatcher                                    
+                                  see src.preprocessing.cropping.template_matching.TemplateMatcher
 
         Returns:
             generator (DataGenerator): generator with the given specifications

@@ -173,8 +173,8 @@ class Benchmark:
                  optimizer=Adam(), loss='binary_crossentropy', metrics=None,
                  train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
-                 shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), crop_dim=None, crop_template=None,
-                 n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
+                 shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), crop_dim=None,
+                 crop_template=None, n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
                  path_column="Path", path_column_prefix="",):
         """
         Instaniates a benchmark that can be provided as basis of an
@@ -369,7 +369,7 @@ class Benchmark:
             "batch_size": self.batch_size,
             "dim": self.dim,
             "crop_dim": self.crop_dim,
-            "crop_tempalte": self.crop_tempalte,
+            "crop_tempalte": self.crop_template,
             "n_channels": self.n_channels,
             "nan_replacement": self.nan_replacement,
             "unc_value": self.unc_value,
