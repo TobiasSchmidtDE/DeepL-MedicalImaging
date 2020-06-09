@@ -87,10 +87,18 @@ for batch_name, batch_size in BATCH_SIZES.items():
         CHEXPERT_BENCHMARKS["WBCE" + key_suffix] = Chexpert_Benchmark("Chexpert Weighted BCE "+name_suffix,
                                                                       epochs= epoch_size,
                                                                       batch_size=batch_size,
+                                                                      loss= tf.keras.losses.BinaryCrossentropy(),
+                                                                      metrics = METRICS,
+                                                                      single_class_metrics = SINGLE_CLASS_METRICS,
+                                                                      use_class_weights = True)
+        
+        CHEXPERT_BENCHMARKS["CWBCE" + key_suffix] = Chexpert_Benchmark("Chexpert Custom Weighted BCE "+name_suffix,
+                                                                      epochs= epoch_size,
+                                                                      batch_size=batch_size,
                                                                       metrics = METRICS,
                                                                       single_class_metrics = SINGLE_CLASS_METRICS)
-        traingen = CHEXPERT_BENCHMARKS["WBCE" + key_suffix].traingen
-        CHEXPERT_BENCHMARKS["WBCE" + key_suffix].loss = WeightedBinaryCrossentropy(*compute_class_weight(traingen))  
+        CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].loss = WeightedBinaryCrossentropy(CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].positive_weights,
+                                                                                    CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].negative_weights) 
         
         CHESTXRAY14_BENCHMARKS["BCE" + key_suffix] = Chestxray14_Benchmark("Chestxray NIH 14 BCE "+name_suffix,
                                                                       epochs= epoch_size,
@@ -103,7 +111,14 @@ for batch_name, batch_size in BATCH_SIZES.items():
                                                                       epochs= epoch_size,
                                                                       batch_size=batch_size,
                                                                       metrics = METRICS,
+                                                                      single_class_metrics = SINGLE_CLASS_METRICS,
+                                                                      use_class_weights = True)
+        
+        CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix] = Chestxray14_Benchmark("Chestxray NIH 14 Custom Weighted BCE "+name_suffix,
+                                                                      epochs= epoch_size,
+                                                                      batch_size=batch_size,
+                                                                      metrics = METRICS,
                                                                       single_class_metrics = SINGLE_CLASS_METRICS)
-        traingen = CHESTXRAY14_BENCHMARKS["WBCE" + key_suffix].traingen
-        CHESTXRAY14_BENCHMARKS["WBCE" + key_suffix].loss = WeightedBinaryCrossentropy(*compute_class_weight(traingen))  
+        CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].loss = WeightedBinaryCrossentropy(CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].positive_weights,
+                                                                                       CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].negative_weights)   
 

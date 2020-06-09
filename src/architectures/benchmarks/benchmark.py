@@ -10,6 +10,7 @@ from src.datasets.generator import ImageDataGenerator
 from src.utils.save_model import save_model, model_set
 from src.preprocessing.split.train_test_split import train_test_split
 from src.metrics.metrics import SingleClassMetric
+from src.metrics.losses import compute_class_weight
 
 class Experiment:
     def __init__(self, benchmark, model, model_name=None, model_version='1'):
@@ -120,6 +121,7 @@ class Experiment:
                                            validation_data=valgen,
                                            validation_steps=len(valgen),
                                            epochs=self.benchmark.epochs,
+                                           class_weight = self.benchmark.class_weights,
                                            callbacks=[tensorboard_callback,
                                                       early_stopping_callback,
                                                       reduce_lr_callback,
@@ -192,7 +194,7 @@ class Benchmark:
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
                  shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), n_channels=3,
                  nan_replacement=0, unc_value=-1, u_enc='uzeroes', path_column="Path",
-                 path_column_prefix="",):
+                 path_column_prefix="", use_class_weights=False):
         """
         Instaniates a benchmark that can be provided as basis of an
         src.architecures.benchmark.Experiment. Provides these experiments with the same
@@ -287,6 +289,8 @@ class Benchmark:
         self.unc_value = unc_value
         self.u_enc = u_enc
         self.drop_last = drop_last
+        self.use_class_weights = use_class_weights
+        self.class_weights = None
         
         if self.single_class_metrics is not None:
             for base_metric in self.single_class_metrics:
@@ -353,6 +357,11 @@ class Benchmark:
                                           nan_replacement=self.nan_replacement,
                                           unc_value=self.unc_value,
                                           u_enc=self.u_enc)
+           
+        self.positive_weights, self.negative_weights = compute_class_weight(self.traingen)     
+        if self.use_class_weights:
+            self.class_weights = {i:float(self.positive_weights[i]) for i in range(len(self.positive_weights))}
+            
 
     def as_dict(self):
         """
@@ -369,6 +378,9 @@ class Benchmark:
             "epochs": self.epochs,
             "optimizer": self.optimizer.__class__.__name__,
             "loss": self.loss if isinstance(self.loss, str) else self.loss.name,
+            "use_class_weights": self.use_class_weights,
+            "positive_weights": [float(i) for i in self.positive_weights.numpy()] ,
+            "negative_weights": [float(i) for i in self.negative_weights.numpy()],
             "metrics": metrics,
             "label_columns": self.label_columns,
             "path_column": self.path_column,

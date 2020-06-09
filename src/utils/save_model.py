@@ -57,9 +57,10 @@ def save_model(model, history, name, filename, description, version='1', upload=
     try:
         with open(log_file, 'r') as f:
             data = json.load(f)
-    except ValueError:
+    except ValueError as error:
         print("WARNING: {log_file} could not be read as json and will be overwritten".format(
             log_file=log_file))
+        print(error)
 
     # add experiments property to dict if the file was empty
     if not data or not 'experiments' in data:
