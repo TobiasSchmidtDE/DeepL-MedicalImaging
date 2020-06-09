@@ -31,3 +31,28 @@ class F2Score(tf.keras.metrics.Metric):
     def reset_states(self):
         self.precision_metric.reset_states()
         self.recall_metric.reset_states()
+
+class SingleClassMetric(tf.keras.metrics.Metric):
+    def __init__(self, base_metric, class_id, class_name=None, dtype=None, **vargs):
+        name = base_metric.name + "_"+str(class_id if class_name is None else class_name)
+        super(SingleClassMetric, self).__init__(name=name, dtype=dtype, **vargs)
+        # initalize a fresh instance of the metric. Otherwise the same base_metric instance might be shared between different single_class_metrics and interfere with each other
+        self.base_metric = base_metric.__class__(name=base_metric.name)
+        self.class_id = class_id
+
+    def update_state(self, y_true, y_pred, sample_weight=None):  # pylint: disable=W:279
+        
+        #class_num = y_pred.shape[-1]
+        #sample_weight = tf.one_hot(self.class_id, class_num)
+        #print("sample_weight", sample_weight)
+        #print("y_true", y_true)
+        #print("y_pred", y_pred)
+        #print()
+        self.base_metric.update_state(
+            y_true, y_pred, sample_weight=sample_weight)
+
+    def result(self):
+        return self.base_metric.result()
+
+    def reset_states(self):
+        self.base_metric.reset_states()

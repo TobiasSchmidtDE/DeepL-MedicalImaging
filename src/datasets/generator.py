@@ -5,7 +5,7 @@ import tensorflow as tf
 import cv2
 from skimage.transform import resize
 from src.datasets.u_encoding import uencode
-
+from PIL import Image
 
 class ImageDataGenerator(tf.keras.utils.Sequence):
     """
@@ -190,10 +190,12 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         Returns a numpy array of the gray scale image
 
         """
-        img = resize(image=cv2.imread(str(Path(path)), cv2.IMREAD_GRAYSCALE),
-                     output_shape=self.dim, order=1)
-
-        return np.array(img) if self.n_channels == 1 else np.stack((img,) * self.n_channels, axis=2)
+        if self.n_channels != 3:
+            raise NotImplementedError ("n chnnale smust be 3")
+            
+        img = Image.open(str(Path(path))).resize(self.dim).convert(mode="RGB")
+        
+        return  np.asarray(img)# if self.n_channels == 1 else np.stack((img,) * self.n_channels, axis=2)
 
     def __getitem__(self, batch_index):
         """

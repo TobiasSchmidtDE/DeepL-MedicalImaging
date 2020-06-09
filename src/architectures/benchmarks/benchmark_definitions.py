@@ -16,6 +16,10 @@ METRICS = [tf.keras.metrics.AUC(multi_label=True, name="auc"),
            F2Score(name="f2_score"),
            tf.keras.metrics.BinaryAccuracy(name="binary_accuracy")
           ]
+SINGLE_CLASS_METRICS=[
+    #tf.keras.metrics.BinaryAccuracy(name="accuracy")
+    #tf.keras.metrics.AUC(name="auc")
+]
 
 CHEXPERT_COLUMNS = ['No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity', 'Lung Lesion',
                        'Edema', 'Consolidation', 'Pneumonia', 'Atelectasis', 'Pneumothorax',
@@ -29,6 +33,7 @@ CHESTXRAY14_COLUMNS = ['Edema', 'Atelectasis', 'Pneumonia',
 
 class Chexpert_Benchmark(Benchmark):
     def __init__(self, name, train_labels="train.csv", split_group='patient_id', path_column="Path", **kwargs):
+        
         super(Chexpert_Benchmark, self).__init__(Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY")),
                                                   CHEXPERT_COLUMNS,
                                                   name,
@@ -76,12 +81,14 @@ for batch_name, batch_size in BATCH_SIZES.items():
                                                                       epochs= epoch_size,
                                                                       batch_size=batch_size,
                                                                       loss= tf.keras.losses.BinaryCrossentropy(),
-                                                                      metrics = METRICS)
+                                                                      metrics = METRICS,
+                                                                      single_class_metrics = SINGLE_CLASS_METRICS)
         
         CHEXPERT_BENCHMARKS["WBCE" + key_suffix] = Chexpert_Benchmark("Chexpert Weighted BCE "+name_suffix,
                                                                       epochs= epoch_size,
                                                                       batch_size=batch_size,
-                                                                      metrics = METRICS)
+                                                                      metrics = METRICS,
+                                                                      single_class_metrics = SINGLE_CLASS_METRICS)
         traingen = CHEXPERT_BENCHMARKS["WBCE" + key_suffix].traingen
         CHEXPERT_BENCHMARKS["WBCE" + key_suffix].loss = WeightedBinaryCrossentropy(*compute_class_weight(traingen))  
         
@@ -89,12 +96,14 @@ for batch_name, batch_size in BATCH_SIZES.items():
                                                                       epochs= epoch_size,
                                                                       batch_size=batch_size,
                                                                       loss= tf.keras.losses.BinaryCrossentropy(),
-                                                                      metrics = METRICS)
+                                                                      metrics = METRICS,
+                                                                      single_class_metrics = SINGLE_CLASS_METRICS)
         
         CHESTXRAY14_BENCHMARKS["WBCE" + key_suffix] = Chestxray14_Benchmark("Chestxray NIH 14 Weighted BCE "+name_suffix,
                                                                       epochs= epoch_size,
                                                                       batch_size=batch_size,
-                                                                      metrics = METRICS)
+                                                                      metrics = METRICS,
+                                                                      single_class_metrics = SINGLE_CLASS_METRICS)
         traingen = CHESTXRAY14_BENCHMARKS["WBCE" + key_suffix].traingen
         CHESTXRAY14_BENCHMARKS["WBCE" + key_suffix].loss = WeightedBinaryCrossentropy(*compute_class_weight(traingen))  
 
