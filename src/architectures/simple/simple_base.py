@@ -2,7 +2,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 
 
-def SimpleBaseArchitecture(base_model_fn, num_classes):
+def SimpleBaseArchitecture(base_model_fn, num_classes, name=None, train_last_layer_only=False):
     """
     Instantiates a customized version of a predifined keras architecture that uses
     the specified keras architecture and adds a dense layer as the last layer.
@@ -11,7 +11,12 @@ def SimpleBaseArchitecture(base_model_fn, num_classes):
         base_model_fn :
             Any function from tf.keras.applications that returns a valid model
             and can be intitialized with the weights of imagenet.
-        num_classes (int): number of classes predicted by the model
+        num_classes (int):
+            number of classes predicted by the model
+        name (str): (default None)
+            name of the model for logging purposes
+        train_last_layer_only (bool): (default False)
+            Set to true if only the very last layer should be trained
     """
     try:
         base_model = base_model_fn(include_top=False, weights='imagenet')
@@ -24,9 +29,11 @@ def SimpleBaseArchitecture(base_model_fn, num_classes):
     x = GlobalAveragePooling2D()(x)
     x = Dense(1024, activation='relu')(x)
 
-    for layer in base_model.layers:
-        layer.trainable = False
+    if train_last_layer_only:
+        for layer in base_model.layers:
+            layer.trainable = False
 
     prediction_layer = Dense(num_classes, activation='sigmoid')(x)
-
-    return Model(inputs=base_model.input, outputs=prediction_layer)
+    model = Model(inputs=base_model.input, outputs=prediction_layer)
+    model.simple_name = name if name is not None else base_model_fn.__name__
+    return model

@@ -2,8 +2,7 @@
 from pathlib import Path
 import numpy as np
 import tensorflow as tf
-import cv2
-from skimage.transform import resize
+from PIL import Image
 from src.datasets.u_encoding import uencode
 
 
@@ -160,7 +159,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
         # enforce uncertainty encoding strategy
         labels = uencode(self.u_enc, labels, unc_value=self.unc_value)
-        return np.array(labels, dtype=int)
+        return np.array(labels, dtype=float)
 
     def data_generation(self, sample_ids):
         """
@@ -190,10 +189,14 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         Returns a numpy array of the gray scale image
 
         """
-        img = resize(image=cv2.imread(str(Path(path)), cv2.IMREAD_GRAYSCALE),
-                     output_shape=self.dim, order=1)
+        img = Image.open(str(Path(path))).resize(self.dim)
+        if self.n_channels == 3:
+            img = img.convert(mode="RGB")
+        elif self.n_channels != 1:
+            raise NotImplementedError(
+                "n_channels is only supported for values from set {1,3}")
 
-        return np.array(img) if self.n_channels == 1 else np.stack((img,) * self.n_channels, axis=2)
+        return np.asarray(img)
 
     def __getitem__(self, batch_index):
         """
