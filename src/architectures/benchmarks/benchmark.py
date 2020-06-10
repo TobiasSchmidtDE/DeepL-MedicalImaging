@@ -12,6 +12,7 @@ from src.preprocessing.split.train_test_split import train_test_split
 from src.metrics.metrics import SingleClassMetric
 from src.metrics.losses import compute_class_weight
 
+
 class Experiment:
     def __init__(self, benchmark, model, model_name=None, model_version='1'):
         """
@@ -25,6 +26,8 @@ class Experiment:
                     An valid keras model instance to be trained.
             model_name (str):
                     Name of the model to be used for documentation/logging.
+                    If none the name will be derived from the simple_name attribute
+                    of the provided model instance
             model_version (str): (default "1")
                     The version number of the model
         Returns:
@@ -39,10 +42,11 @@ class Experiment:
         self.model_version = model_version
         self.model_filename = None
         self.model_id = None
-        
+
         if self.model_name is None:
-            self.model_name = self.model.simple_name + datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-            self.model_simple_name = self.model.simple_name 
+            self.model_name = self.model.simple_name + \
+                datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+            self.model_simple_name = self.model.simple_name
 
         self.model_description = ("Trained {model_name} architecture using the "
                                   "'{benchmark_name}' benchmark. "
@@ -113,7 +117,7 @@ class Experiment:
                                                                   min_delta=0.0001,
                                                                   cooldown=1,
                                                                   min_lr=0,)
-        
+
         terminate_on_nan_callback = tf.keras.callbacks.TerminateOnNaN()
 
         self.train_result = self.model.fit(x=traingen,
@@ -121,7 +125,7 @@ class Experiment:
                                            validation_data=valgen,
                                            validation_steps=len(valgen),
                                            epochs=self.benchmark.epochs,
-                                           class_weight = self.benchmark.class_weights,
+                                           class_weight=self.benchmark.class_weights,
                                            callbacks=[tensorboard_callback,
                                                       early_stopping_callback,
                                                       reduce_lr_callback,
@@ -174,7 +178,7 @@ class Experiment:
                                    self.model_filename,
                                    self.model_description,
                                    version=self.model_version,
-                                   upload = upload)
+                                   upload=upload)
 
         model_set(self.model_id, 'benchmark',
                   self.benchmark.as_dict())
@@ -189,8 +193,8 @@ class Experiment:
 
 class Benchmark:
     def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
-                 optimizer=Adam(), loss='binary_crossentropy',  single_class_metrics=None, metrics=None,
-                 train_labels="train.csv", test_labels=None, split_test_size=0.2,
+                 optimizer=Adam(), loss='binary_crossentropy', single_class_metrics=None,
+                 metrics=None, train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
                  shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), n_channels=3,
                  nan_replacement=0, unc_value=-1, u_enc='uzeroes', path_column="Path",
@@ -222,6 +226,14 @@ class Benchmark:
             metrics (list tf.keras.metrics.Metric): (default [tf.keras.metrics.AUC()])
                     A list of metrics to be evaluated after each epoch. List can contain
                     Either the name or an instance of a valid keras metrics.
+
+            single_class_metrics (list tf.keras.metrics.Metric): (default None)
+                    A list of metrics that should be evaluated on each class/pathology individually.
+
+             use_class_weights (bool): (default false)
+                    Whether the model trainig (.fit) should be supplied with class_weight factor.
+                    Class_weights will be automatically calculated based on the distriubtion of
+                    labels to counteract any imbalances in the training data.
 
             train_labels (str): (default "train.csv")
                     The name of the CSV file containing the labels and features
@@ -274,7 +286,8 @@ class Benchmark:
         self.optimizer = optimizer
         self.loss = loss
         self.dataset_name = dataset_name
-        self.single_class_metrics = single_class_metrics[:] # use [:] to make a copy by value instead of reference
+        # use [:] to make a copy by value instead of reference
+        self.single_class_metrics = single_class_metrics[:]
         self.metrics = metrics[:]
         self.dataset_folder = dataset_folder
         self.models_dir = models_dir
@@ -291,13 +304,16 @@ class Benchmark:
         self.drop_last = drop_last
         self.use_class_weights = use_class_weights
         self.class_weights = None
-        
+
+        # for each metric in single_class instantiate a metric for each individual pathology
         if self.single_class_metrics is not None:
             for base_metric in self.single_class_metrics:
-                for class_id in range(len(label_columns)):
-                    class_name = label_columns[class_id].lower().replace(" ", "_")
-                    self.metrics += [SingleClassMetric(base_metric, class_id, class_name=class_name)]
-        
+                for class_id in iter(range(len(label_columns))):
+                    class_name = label_columns[class_id].lower().replace(
+                        " ", "_")
+                    self.metrics += [SingleClassMetric(
+                        base_metric, class_id, class_name=class_name)]
+
         if self.dataset_name is None:
             self.dataset_name = dataset_folder.parent.name + "_" + dataset_folder.name
 
@@ -357,11 +373,12 @@ class Benchmark:
                                           nan_replacement=self.nan_replacement,
                                           unc_value=self.unc_value,
                                           u_enc=self.u_enc)
-           
-        self.positive_weights, self.negative_weights = compute_class_weight(self.traingen)     
+
+        self.positive_weights, self.negative_weights = compute_class_weight(
+            self.traingen)
         if self.use_class_weights:
-            self.class_weights = {i:float(self.positive_weights[i]) for i in range(len(self.positive_weights))}
-            
+            self.class_weights = {
+                i: float(self.positive_weights[i]) for i in range(len(self.positive_weights))}
 
     def as_dict(self):
         """
@@ -369,7 +386,8 @@ class Benchmark:
         """
 
         metrics = [name for name in self.metrics if isinstance(name, str)]
-        metrics += [metric.name for metric in self.metrics if not isinstance(metric, str)]
+        metrics += [
+            metric.name for metric in self.metrics if not isinstance(metric, str)]
         return {
             "benchmark_name": self.name,
             "dataset_name": self.dataset_name,
@@ -379,7 +397,7 @@ class Benchmark:
             "optimizer": self.optimizer.__class__.__name__,
             "loss": self.loss if isinstance(self.loss, str) else self.loss.name,
             "use_class_weights": self.use_class_weights,
-            "positive_weights": [float(i) for i in self.positive_weights.numpy()] ,
+            "positive_weights": [float(i) for i in self.positive_weights.numpy()],
             "negative_weights": [float(i) for i in self.negative_weights.numpy()],
             "metrics": metrics,
             "label_columns": self.label_columns,
@@ -428,4 +446,3 @@ class Benchmark:
                          valid_num_samples=bench_dict["valid_num_samples"],
                          test_num_samples=bench_dict["test_num_samples"],
                          )
-

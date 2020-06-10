@@ -28,11 +28,11 @@ def SimpleBaseArchitecture(base_model_fn, num_classes, name=None, train_last_lay
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = Dense(1024, activation='relu')(x)
-    
+
     if train_last_layer_only:
         for layer in base_model.layers:
             layer.trainable = False
-    
+
     prediction_layer = Dense(num_classes, activation='sigmoid')(x)
     model = Model(inputs=base_model.input, outputs=prediction_layer)
     model.simple_name = name if name is not None else base_model_fn.__name__

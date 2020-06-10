@@ -2,10 +2,9 @@
 from pathlib import Path
 import numpy as np
 import tensorflow as tf
-import cv2
-from skimage.transform import resize
 from src.datasets.u_encoding import uencode
 from PIL import Image
+
 
 class ImageDataGenerator(tf.keras.utils.Sequence):
     """
@@ -190,12 +189,14 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         Returns a numpy array of the gray scale image
 
         """
-        if self.n_channels != 3:
-            raise NotImplementedError ("n chnnale smust be 3")
-            
-        img = Image.open(str(Path(path))).resize(self.dim).convert(mode="RGB")
-        
-        return  np.asarray(img)# if self.n_channels == 1 else np.stack((img,) * self.n_channels, axis=2)
+        img = Image.open(str(Path(path))).resize(self.dim)
+        if self.n_channels == 3:
+            img = img.convert(mode="RGB")
+        elif self.n_channels != 1:
+            raise NotImplementedError(
+                "n_channels is only supported for values from set {1,3}")
+
+        return np.asarray(img)
 
     def __getitem__(self, batch_index):
         """
