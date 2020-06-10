@@ -2,8 +2,8 @@
 from pathlib import Path
 import numpy as np
 import tensorflow as tf
-from src.datasets.u_encoding import uencode
 from PIL import Image
+from src.datasets.u_encoding import uencode
 
 
 class ImageDataGenerator(tf.keras.utils.Sequence):

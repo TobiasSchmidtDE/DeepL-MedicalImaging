@@ -153,6 +153,12 @@ for batch_name, batch_size in BATCH_SIZES.items():
                                   batch_size=batch_size,
                                   metrics=METRICS,
                                   single_class_metrics=SINGLE_CLASS_METRICS)
+
+        # otherweise we get pylint line-too-long in next assignment
+        positive_weights, negative_weights = \
+            CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].positive_weights, \
+            CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].negative_weights
+
         CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].loss =  \
-            WeightedBinaryCrossentropy(CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].positive_weights,  # pylint: disable=c0301
-                                       CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].negative_weights)  # pylint: disable=c0301
+            WeightedBinaryCrossentropy(positive_weights,
+                                       negative_weights)
