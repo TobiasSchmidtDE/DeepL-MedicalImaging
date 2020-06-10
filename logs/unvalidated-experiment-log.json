@@ -2,8 +2,8 @@
     "experiments": [
         {
             "id": "9540a918-a699-11ea-a7d0-0242ac110005",
-            "name": "Guendel19_Chexpert_WBCE_32",
-            "filename": "Guendel19_Chexpert_WBCE_32_20200604-192835.h5",
+            "name": "Guendel19_Chexpert_CWBCE_32",
+            "filename": "Guendel19_Chexpert_CWBCE_32_20200604-192835.h5",
             "version": "1",
             "history": {
                 "loss": [
@@ -163,7 +163,7 @@
                     0.0010000000474974513
                 ]
             },
-            "description": "Trained Guendel19_Chexpert_WBCE_32 architecture using the 'Chexpert Weighted BCE Dev Epochs and Medium Batches' benchmark. The benchmark was initialized for the chexpert_full dataset with batch size of 32, shuffel set to True and images rescaled to dimension (256, 256).\nThe training was done for 10 epochs using the Adam optimizer and weighted_binary_crossentropy loss.\nA total of 14 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 143398 number of sample, the validation set 35646, and the test set 44370. ",
+            "description": "Trained Guendel19 architecture using the 'Chexpert CWBCE E20 B32' benchmark. The benchmark was initialized for the chexpert_full dataset with batch size of 32, shuffel set to True and images rescaled to dimension (256, 256).\nThe training was done for 10 epochs using the Adam optimizer and weighted_binary_crossentropy loss.\nA total of 14 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 143398 number of sample, the validation set 35646, and the test set 44370. ",
             "test": {
                 "loss": 1.3039888143539429,
                 "AUC": 0.7536254525184631,
@@ -174,7 +174,7 @@
             },
             "classification_report": "                            precision    recall  f1-score   support\n\n                No Finding       0.10      0.38      0.15      4383\nEnlarged Cardiomediastinum       0.05      0.46      0.09      2137\n              Cardiomegaly       0.12      0.33      0.18      5454\n              Lung Opacity       0.47      0.40      0.43     21069\n               Lung Lesion       0.04      0.22      0.07      1931\n                     Edema       0.24      0.24      0.24     10439\n             Consolidation       0.07      0.25      0.11      3030\n                 Pneumonia       0.03      0.11      0.05      1256\n               Atelectasis       0.14      0.37      0.21      6421\n              Pneumothorax       0.09      0.20      0.12      3816\n          Pleural Effusion       0.37      0.40      0.39     16713\n             Pleural Other       0.02      0.17      0.03       745\n                  Fracture       0.04      0.17      0.06      1726\n           Support Devices       0.52      0.44      0.48     23022\n\n                 micro avg       0.20      0.36      0.26    102142\n                 macro avg       0.16      0.30      0.19    102142\n              weighted avg       0.33      0.36      0.33    102142\n               samples avg       0.19      0.34      0.22    102142\n",
             "benchmark": {
-                "benchmark_name": "Chexpert Weighted BCE Dev Epochs and Medium Batches",
+                "benchmark_name": "Chexpert CWBCE E20 B32",
                 "dataset_name": "chexpert_full",
                 "dataset_folder": "data/chexpert/full",
                 "models_dir": "models",
@@ -224,7 +224,7 @@
         },
         {
             "id": "d0c6ec2c-a9f5-11ea-bfa3-0242ac110005",
-            "name": "DenseNet1212020-06-08-22-50-50",
+            "name": "DenseNet121_CWBCE_E20_B32",
             "filename": "DenseNet1212020-06-08-22-50-50_20200609-020622.h5",
             "version": "1",
             "history": {
@@ -398,7 +398,7 @@
                     0.0002500000118743628
                 ]
             },
-            "description": "Trained DenseNet121 architecture using the 'Chexpert Weighted BCE Quick Training Epochs and Medium Batches' benchmark. The benchmark was initialized for the chexpert_full dataset with batch size of 32, shuffel set to True and images rescaled to dimension (256, 256).\nThe training was done for 20 epochs using the Adam optimizer and weighted_binary_crossentropy loss.\nA total of 14 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 141807 number of sample, the validation set 36980, and the test set 44627. ",
+            "description": "Trained DenseNet121 architecture using the 'CWBCE_E20_B32' benchmark. The benchmark was initialized for the chexpert_full dataset with batch size of 32, shuffel set to True and images rescaled to dimension (256, 256).\nThe training was done for 20 epochs using the Adam optimizer and weighted_binary_crossentropy loss.\nA total of 14 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 141807 number of sample, the validation set 36980, and the test set 44627. ",
             "test": {
                 "loss": 1.3472518920898438,
                 "auc": 0.7710159420967102,
@@ -409,7 +409,7 @@
             },
             "classification_report": "                            precision    recall  f1-score   support\n\n                No Finding       0.10      0.27      0.14      4330\nEnlarged Cardiomediastinum       0.05      0.30      0.08      2113\n              Cardiomegaly       0.12      0.25      0.16      5240\n              Lung Opacity       0.47      0.55      0.51     21148\n               Lung Lesion       0.04      0.22      0.07      1917\n                     Edema       0.23      0.37      0.28     10309\n             Consolidation       0.07      0.44      0.12      3019\n                 Pneumonia       0.03      0.21      0.05      1198\n               Atelectasis       0.15      0.47      0.22      6573\n              Pneumothorax       0.08      0.23      0.12      3889\n          Pleural Effusion       0.39      0.46      0.42     17361\n             Pleural Other       0.02      0.11      0.03       705\n                  Fracture       0.04      0.21      0.07      1850\n           Support Devices       0.51      0.55      0.53     23041\n\n                 micro avg       0.22      0.44      0.29    102693\n                 macro avg       0.16      0.33      0.20    102693\n              weighted avg       0.33      0.44      0.37    102693\n               samples avg       0.21      0.41      0.26    102693\n",
             "benchmark": {
-                "benchmark_name": "Chexpert Weighted BCE Quick Training Epochs and Medium Batches",
+                "benchmark_name": "CWBCE_E20_B32",
                 "dataset_name": "chexpert_full",
                 "dataset_folder": "data/chexpert/full",
                 "models_dir": "models",
@@ -459,7 +459,7 @@
         },
         {
             "id": "8be14976-aa87-11ea-8036-0242ac110005",
-            "name": "DenseNet1212020-06-09-15-02-56",
+            "name": "DenseNet121_Chexpert_BCE_E20_B32",
             "filename": "DenseNet1212020-06-09-15-02-56_20200609-192933.h5",
             "version": "1",
             "history": {
@@ -620,7 +620,7 @@
                     0.0002500000118743628
                 ]
             },
-            "description": "Trained DenseNet121 architecture using the 'Chexpert BCE Quick Training Epochs and Medium Batches' benchmark. The benchmark was initialized for the chexpert_full dataset with batch size of 32, shuffel set to True and images rescaled to dimension (256, 256).\nThe training was done for 20 epochs using the Adam optimizer and binary_crossentropy loss.\nA total of 14 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 142376 number of sample, the validation set 36704, and the test set 44334. ",
+            "description": "Trained DenseNet121 architecture using the 'Chexpert_BCE_E20_B32' benchmark. The benchmark was initialized for the chexpert_full dataset with batch size of 32, shuffel set to True and images rescaled to dimension (256, 256).\nThe training was done for 20 epochs using the Adam optimizer and binary_crossentropy loss.\nA total of 14 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 142376 number of sample, the validation set 36704, and the test set 44334. ",
             "test": {
                 "loss": 0.29399368166923523,
                 "auc": 0.7812870144844055,
@@ -631,7 +631,7 @@
             },
             "classification_report": "                            precision    recall  f1-score   support\n\n                No Finding       0.09      0.08      0.08      4408\nEnlarged Cardiomediastinum       0.04      0.00      0.00      2204\n              Cardiomegaly       0.10      0.09      0.10      5347\n              Lung Opacity       0.48      0.54      0.51     21081\n               Lung Lesion       0.03      0.00      0.01      1772\n                     Edema       0.24      0.14      0.18     10541\n             Consolidation       0.07      0.01      0.01      2874\n                 Pneumonia       0.19      0.00      0.01      1148\n               Atelectasis       0.16      0.00      0.01      6700\n              Pneumothorax       0.09      0.04      0.06      4021\n          Pleural Effusion       0.39      0.40      0.39     17264\n             Pleural Other       0.00      0.00      0.00       726\n                  Fracture       0.06      0.01      0.01      1832\n           Support Devices       0.52      0.55      0.54     23135\n\n                 micro avg       0.40      0.33      0.36    103053\n                 macro avg       0.18      0.13      0.14    103053\n              weighted avg       0.34      0.33      0.32    103053\n               samples avg       0.35      0.30      0.29    103053\n",
             "benchmark": {
-                "benchmark_name": "Chexpert BCE Quick Training Epochs and Medium Batches",
+                "benchmark_name": "Chexpert_BCE_E20_B32",
                 "dataset_name": "chexpert_full",
                 "dataset_folder": "data/chexpert/full",
                 "models_dir": "models",
@@ -714,7 +714,7 @@
         },
         {
             "id": "fdce93d8-aab2-11ea-8441-0242ac110005",
-            "name": "DenseNet1212020-06-09-21-21-48",
+            "name": "DenseNet121_Chexpert_WBCE_E20_B32",
             "filename": "DenseNet1212020-06-09-21-21-48_20200610-004032.h5",
             "version": "1",
             "history": {
@@ -888,7 +888,7 @@
                     0.0001250000059371814
                 ]
             },
-            "description": "Trained DenseNet121 architecture using the 'Chexpert Weighted BCE Quick Training Epochs and Medium Batches' benchmark. The benchmark was initialized for the chexpert_full dataset with batch size of 32, shuffel set to True and images rescaled to dimension (256, 256).\nThe training was done for 20 epochs using the Adam optimizer and binary_crossentropy loss.\nA total of 14 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 143410 number of sample, the validation set 35635, and the test set 44369. ",
+            "description": "Trained DenseNet121 architecture using the 'Chexpert_WBCE_E20_B32' benchmark. The benchmark was initialized for the chexpert_full dataset with batch size of 32, shuffel set to True and images rescaled to dimension (256, 256).\nThe training was done for 20 epochs using the Adam optimizer and binary_crossentropy loss with class weights.\nA total of 14 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 143410 number of sample, the validation set 35635, and the test set 44369. ",
             "test": {
                 "loss": 0.3142490088939667,
                 "auc": 0.7549559473991394,
@@ -899,7 +899,7 @@
             },
             "classification_report": "                            precision    recall  f1-score   support\n\n                No Finding       0.11      0.10      0.10      4574\nEnlarged Cardiomediastinum       0.06      0.04      0.05      2022\n              Cardiomegaly       0.13      0.14      0.13      5522\n              Lung Opacity       0.46      0.18      0.26     20674\n               Lung Lesion       0.04      0.01      0.02      1709\n                     Edema       0.24      0.18      0.21     10348\n             Consolidation       0.06      0.01      0.01      2922\n                 Pneumonia       0.03      0.00      0.00      1215\n               Atelectasis       0.13      0.01      0.02      6714\n              Pneumothorax       0.08      0.04      0.05      3652\n          Pleural Effusion       0.39      0.37      0.38     17290\n             Pleural Other       0.02      0.00      0.01       694\n                  Fracture       0.04      0.01      0.01      1726\n           Support Devices       0.51      0.52      0.52     23077\n\n                 micro avg       0.36      0.25      0.29    102139\n                 macro avg       0.16      0.12      0.13    102139\n              weighted avg       0.33      0.25      0.27    102139\n               samples avg       0.28      0.23      0.23    102139\n",
             "benchmark": {
-                "benchmark_name": "Chexpert Weighted BCE Quick Training Epochs and Medium Batches",
+                "benchmark_name": "Chexpert_WBCE_E20_B32",
                 "dataset_name": "chexpert_full",
                 "dataset_folder": "data/chexpert/full",
                 "models_dir": "models",
