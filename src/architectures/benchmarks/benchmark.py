@@ -427,6 +427,10 @@ class Benchmark:
         metrics = [name for name in self.metrics if isinstance(name, str)]
         metrics += [
             metric.name for metric in self.metrics if not isinstance(metric, str)]
+        crop_dims = None
+        if self.crop:
+            crop_dims = [template["crop_dim"] for t_name,
+                         template in self.traingen.template_matcher.templates.items()]
         return {
             "benchmark_name": self.name,
             "dataset_name": self.dataset_name,
@@ -445,8 +449,8 @@ class Benchmark:
             "shuffle": self.shuffle,
             "batch_size": self.batch_size,
             "dim": self.dim,
-            "crop_dim": self.crop_dim,
-            "crop_tempalte": self.crop_template,
+            "crop": self.crop,
+            "crop_dims": crop_dims,
             "n_channels": self.n_channels,
             "nan_replacement": self.nan_replacement,
             "unc_value": self.unc_value,
