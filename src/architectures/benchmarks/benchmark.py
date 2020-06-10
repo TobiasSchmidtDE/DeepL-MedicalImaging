@@ -265,8 +265,6 @@ class Benchmark:
                     See docs of src.datasets.generator.ImageDataGenerator
             dim (int): (default 256x256)
                     See docs of src.datasets.generator.ImageDataGenerator
-            crop_dim (int): (default None)
-                    See docs of src.datasets.generator.ImageDataGenerator
             crop_template (dict): (default None)
                     See docs of src.datasets.generator.ImageDataGenerator
             n_channels (int): (default 3)
@@ -471,8 +469,7 @@ class Benchmark:
         bench_dict = self.as_dict()
         return ("The benchmark was initialized for the {dataset_name} dataset "
                 "with batch size of {batch_size}, shuffle set to {shuffle} "
-                "and images rescaled to dimension {dim}"
-                "and then cropped to {crop_dim}.\n" if self.crop_dim else ".\n"
+                "and images rescaled to dimension {dim}.\n"
                 "The training was done for {epochs} epochs using the {optimizer} optimizer "
                 "and {loss} loss.\nA total of {label_count} labels/pathologies were included "
                 "in the training and encoded using the '{u_enc}' method.\n"
