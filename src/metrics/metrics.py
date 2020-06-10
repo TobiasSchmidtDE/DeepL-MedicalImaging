@@ -48,7 +48,10 @@ class SingleClassMetric(tf.keras.metrics.Metric):
 
     def update_state(self, y_true, y_pred, sample_weight=None):  # pylint: disable=W:279
         class_num = y_pred.shape[-1]
-        sample_weight = tf.one_hot(self.class_id, class_num)
+        sample_weight = tf.one_hot(self.class_id,
+                                   class_num,
+                                   on_value=1.0,
+                                   off_value=0.0)
         self.base_metric.update_state(
             y_true, y_pred, sample_weight=sample_weight)
 
