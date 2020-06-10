@@ -1,15 +1,12 @@
-import os
-from pathlib import Path
+import numpy as np
+from PIL import Image
 from dotenv import load_dotenv, find_dotenv
 import cv2
-from skimage.transform import resize
 
 load_dotenv(find_dotenv())
 
-DATASET_FOLDER = Path(os.environ.get('CHEXPERT_DEV_DATASET_DIRECTORY'))
-
 DEFAULT_TEMPLATE = {
-    'default':      {
+    'frontal':      {
         'path': 'src/preprocessing/cropping/templates/chexpert-frontal.jpg',
         'x': (30, 300),
         'y': (30, 300),
@@ -27,12 +24,12 @@ DEFAULT_TEMPLATE = {
 class TemplateMatcher():
     """ Crops an image to a given size using a template """
 
-    def __init__(self, template=None, matching_method=cv2.TM_CCORR_NORMED, size=(256, 256)):
+    def __init__(self, template_conf=None, matching_method=cv2.TM_CCORR_NORMED):
         """
          Initializes the template matches with a template, a size and a matching method
 
          Parameters:
-            template (dict): A dict containing the path and crop for the template image
+            template_conf (dict): A dict containing the path and crop for the template image
                              path: the path to the template image
                              x (tuple): a tuple containing the start and end of the crop on the
                                         x-axis
@@ -43,32 +40,31 @@ class TemplateMatcher():
             matching_method: The method that is used to match the template to an image.
                              Valid matching methods are listed here:
                              https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_template_matching/py_template_matching.html#template-matching-in-opencv
-            size (tuple): A tuple containing the size of the image to return
         """
 
-        if not template:
-            template = DEFAULT_TEMPLATE
+        if not template_conf:
+            template_conf = DEFAULT_TEMPLATE
 
-        self.template = {}
-        for template_type in ['default', 'lateral']:
+        self.templates = {}
+        for template_type in template_conf.keys():
+            self.templates[template_type] = template_conf[template_type]
 
             # load template image in the same way as it is loaded in the generator
-            temp = template[template_type]
-            img_path = temp['path']
+            img_path = self.templates[template_type]['path']
             # the image is converted to a float32 dtype since template matching does not work
             # with float64
-            template_img = resize(image=cv2.imread(img_path, cv2.IMREAD_GRAYSCALE),
-                                  output_shape=temp['dim'], order=1).astype('float32')
+            template_img = np.array(Image.open(img_path)
+                                    .resize(self.templates[template_type]['dim'])).astype('float32')
 
-            x1, x2 = temp['x']
-            y1, y2 = temp['y']
+            x1, x2 = self.templates[template_type]['x']
+            y1, y2 = self.templates[template_type]['y']
             template_img = template_img[x1:x2, y1:y2]
-            self.template[template_type] = template_img.copy()
+            self.templates[template_type]["img"] = template_img.copy()
+            self.templates[template_type]["crop_dim"] = (x2-x1, y2-y1)
 
         self.matching_method = matching_method
-        self.size = size
 
-    def crop(self, img, template_type='default'):
+    def crop(self, img, template_type='frontal'):
         """
          Matches the given image to the template and returns the cropped image
 
@@ -77,10 +73,11 @@ class TemplateMatcher():
          Returns:
             crop_img (np.array): The cropped image
         """
-        w, h = self.size
+        w, h = self.templates[template_type]["crop_dim"]
 
-        template = self.template[template_type]
-        res = cv2.matchTemplate(img, template, self.matching_method)
+        res = cv2.matchTemplate(img,
+                                self.templates[template_type]["img"],
+                                self.matching_method)
         min_max = cv2.minMaxLoc(res)
         top_left = min_max[3]
 

@@ -106,5 +106,5 @@ def densenet(classes=14):
     x = tf.keras.layers.Dense(classes, activation='sigmoid', name='fc')(x)
 
     model = tf.keras.models.Model(img_input, x, name='densenet')
-
+    model.simple_name = "guendel"
     return model
