@@ -162,7 +162,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         self.template_matcher = None
         if crop:
             self.template_matcher = TemplateMatcher(
-                template_conf=crop_template)
+                template_conf=crop_template, size=dim)
 
         self.on_epoch_end()
 
@@ -246,9 +246,14 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
             img = img.convert(mode="L")
 
         if self.template_matcher is not None:
+            # resize image to dim + 10%
+            size = (int(self.dim[0] * 1.1), int(self.dim[1] * 1.1))
+            img = img.resize(size)
             img = np.array(img).astype(np.float32)
+
+            # crop image to correct dim
             img = self.template_matcher.crop(img, template_type)
-            img = Image.fromarray(img).resize(self.dim)
+            img = Image.fromarray(img)
         else:
             img = img.resize(self.dim)
 

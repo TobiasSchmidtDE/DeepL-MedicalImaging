@@ -24,7 +24,7 @@ DEFAULT_TEMPLATE = {
 class TemplateMatcher():
     """ Crops an image to a given size using a template """
 
-    def __init__(self, template_conf=None, matching_method=cv2.TM_CCORR_NORMED):
+    def __init__(self, template_conf=None, matching_method=cv2.TM_CCORR_NORMED, size=(256, 256)):
         """
          Initializes the template matches with a template, a size and a matching method
 
@@ -60,8 +60,8 @@ class TemplateMatcher():
             y1, y2 = self.templates[template_type]['y']
             template_img = template_img[x1:x2, y1:y2]
             self.templates[template_type]["img"] = template_img.copy()
-            self.templates[template_type]["crop_dim"] = (x2-x1, y2-y1)
 
+        self.size = size
         self.matching_method = matching_method
 
     def crop(self, img, template_type='frontal'):
@@ -73,7 +73,7 @@ class TemplateMatcher():
          Returns:
             crop_img (np.array): The cropped image
         """
-        w, h = self.templates[template_type]["crop_dim"]
+        w, h = self.size
 
         res = cv2.matchTemplate(img,
                                 self.templates[template_type]["img"],
