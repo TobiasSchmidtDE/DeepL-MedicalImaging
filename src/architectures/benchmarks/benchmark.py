@@ -425,10 +425,6 @@ class Benchmark:
         metrics = [name for name in self.metrics if isinstance(name, str)]
         metrics += [
             metric.name for metric in self.metrics if not isinstance(metric, str)]
-        crop_dims = None
-        if self.crop:
-            crop_dims = [template["crop_dim"] for t_name,
-                         template in self.traingen.template_matcher.templates.items()]
         return {
             "benchmark_name": self.name,
             "dataset_name": self.dataset_name,
@@ -448,7 +444,6 @@ class Benchmark:
             "batch_size": self.batch_size,
             "dim": self.dim,
             "crop": self.crop,
-            "crop_dims": crop_dims,
             "n_channels": self.n_channels,
             "nan_replacement": self.nan_replacement,
             "unc_value": self.unc_value,
@@ -469,7 +464,9 @@ class Benchmark:
         bench_dict = self.as_dict()
         return ("The benchmark was initialized for the {dataset_name} dataset "
                 "with batch size of {batch_size}, shuffle set to {shuffle} "
-                "and images rescaled to dimension {dim}.\n"
+                "and images rescaled " +
+                ("and cropped" if self.crop else "")
+                + "to dimension {dim}.\n"
                 "The training was done for {epochs} epochs using the {optimizer} optimizer "
                 "and {loss} loss.\nA total of {label_count} labels/pathologies were included "
                 "in the training and encoded using the '{u_enc}' method.\n"
@@ -480,7 +477,6 @@ class Benchmark:
                          batch_size=bench_dict["batch_size"],
                          shuffle=bench_dict["shuffle"],
                          dim=bench_dict["dim"],
-                         crop_dim=bench_dict["crop_dim"],
                          epochs=bench_dict["epochs"],
                          optimizer=bench_dict["optimizer"],
                          loss=bench_dict["loss"],
