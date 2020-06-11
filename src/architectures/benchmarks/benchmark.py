@@ -44,13 +44,12 @@ class Experiment:
         self.model_id = None
 
         if self.model_name is None:
-            self.model_name = self.model.simple_name + \
-                datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-            self.model_simple_name = self.model.simple_name
+            self.model_name = self.model.simple_name.replace(" ", "_") + \
+                self.benchmark.name.replace(" ", "_")
 
         self.model_description = ("Trained {model_name} architecture using the "
                                   "'{benchmark_name}' benchmark. "
-                                  ).format(model_name=self.model_simple_name,
+                                  ).format(model_name=self.model.simple_name,
                                            benchmark_name=benchmark.name)
         self.model_description += benchmark.summary()
 
