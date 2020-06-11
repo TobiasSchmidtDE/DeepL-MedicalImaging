@@ -7,7 +7,7 @@ from tensorflow.python.framework import constant_op
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import clip_ops
 from tensorflow.python.keras import backend_config
-import keras.backend.tensorflow_backend as K
+import tensorflow.keras.backend.tensorflow_backend as K
 
 
 class WeightedBinaryCrossentropy(Loss):
