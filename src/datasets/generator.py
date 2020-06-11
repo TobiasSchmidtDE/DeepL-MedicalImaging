@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 from PIL import Image
 from src.datasets.u_encoding import uencode
+from src.preprocessing.cropping.template_matching import TemplateMatcher
 
 
 class ImageDataGenerator(tf.keras.utils.Sequence):
@@ -14,7 +15,9 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
     def __init__(self, dataset, dataset_folder, label_columns, path_column="Path",
                  path_column_prefix="", shuffle=True, drop_last=False, batch_size=64,
-                 dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes'
+                 dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
+                 crop=False, crop_template=None, view_pos_column="Frontal/Lateral",
+                 view_pos_frontal="Frontal", view_pos_lateral="Lateral"
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
                  ):
@@ -23,47 +26,82 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         to the data.
 
         Parameters:
-            dataset (pd.dataframe): A pandas daframe with labels and features (paths to images)
-                                    for each data sample.
-                                    Must contain a column with the paths to the images (relative
-                                    to the dataset_folder).
-                                    Must contain all columns defined as labels (in label_columns)
+            dataset (pd.dataframe):
+                A pandas daframe with labels and features (paths to images) for each data sample.
+                Must contain a column with the paths to the images (relative to the dataset_folder).
+                Must contain all columns defined as labels (in label_columns)
 
-            dataset_folder (Pathlib Path): path to the root of the dataset folder
-            label_columns (list): names of columns of pathologies we want to use as labels
-                        Valid values in label columns are:
-                                0 for mentioned as confidently not present,
-                                1 for mentioned as confidently present,
-                                nan not mentioned,
-                                'unc_value' for mentioned as uncertainly present.
+            dataset_folder (Pathlib Path):
+                Path to the root of the dataset folder
 
-            path_column (str): name of the column that contains the relative path from
-                            the dataset_folder root directory to each image. (default "Path")
+            label_columns (list):
+                Names of columns of pathologies we want to use as labels.
+                Valid values in label columns are:
+                            0 for mentioned as confidently not present,
+                            1 for mentioned as confidently present,
+                            nan not mentioned,
+                            'unc_value' for mentioned as uncertainly present.
 
-            path_column_prefix (str): prefix that should be applied to the values of path_column.
-                                      This is intendet to be used for cases, where the paths are
-                                      not relative to the dataset_folder, but to a subfolder
-                                      within the dataset_folder. (default "")
+            path_column (str): (default "Path")
+                Name of the column that contains the relative path from
+                the dataset_folder root directory to each image.
 
-            shuffle (bool): whether to shuffle the data between batches (default True)
-            drop_last (bool): wheter to drop the last incomplete batch,
-                              if the dataset size is not divisible by the batch size.
-                              If False and the size of dataset is not divisible by the batch
-                              size, then the last batch will be smaller. (default False)
+            path_column_prefix (str): (default "")
+                Prefix that should be applied to the values of path_column.
+                This is intendet to be used for cases, where the paths are
+                not relative to the dataset_folder, but to a subfolder
+                within the dataset_folder.
 
-            batch_size (int): batch size (default 64)
-            dim (int): dimension that all images will be resized to (default 256x256)
+            shuffle (bool): (default True)
+                Whether to shuffle the data between batches
 
-            n_channels (int): number of channels the image will be converted to (default 3)
-                            Note: Every image on disk (source) is expected to be a gray scale image.
-                            This parameter only controls the number of channels of the image
-                            produced by the generator.
+            drop_last (bool): (default False)
+                Wheter to drop the last incomplete batch,
+                if the dataset size is not divisible by the batch size.
+                If False and the size of dataset is not divisible by the batch
+                size, then the last batch will be smaller.
 
-            unc_value (int/str): Value used to indicate uncertainty of pathologies (default -1)
-            nan_replacement (int): Value that nan values are replaced with (default 0)
-                                Must be a valid value for label columns.
-            u_enc (string): style of encoding for uncertainty (default)
-                            (values: uzeros, uones, umulticlass)
+            batch_size (int): (default 64)
+                The number of samples per mini-batch.
+
+            dim (int): (default 256x256)
+                The dimension that all images will be rescaled to. If cropping is enabled,
+                the rescaling is applied only after the image was cropped.
+
+            n_channels (int): (default 3)
+                Number of channels the image will be converted to.
+                Note: Every image on disk (source) is expected to be a gray scale image.
+                This parameter only controls the number of channels of the image
+                produced by the generator.
+
+            unc_value (int/str): (default -1)
+                Value used to indicate uncertainty of pathologies
+
+            nan_replacement (int): (default 0)
+                Value that nan values are replaced with.
+                Must be a valid value for label columns.
+
+            u_enc (string): (default 'uzeros')
+                style of encoding for uncertainty
+                valid values: (uzeros, uones, umulticlass)
+
+            crop (bool): (default False)
+                Wether to crop images or not. Optional template may be supplied.
+                Default templates are choosen when crop is True and crop_tempalte is None.
+
+            crop_tempalte (dict): (default None)
+                A custom template for the crop.
+                See src.preprocessing.cropping.template_matching.TemplateMatcher
+
+            view_pos_column (str): (default "Frontal/Lateral")
+                If crop is True, the name of the column that provides
+                the view position must be supplied.
+            view_pos_frontal (str): (default "Frontal")
+                If crop is True, the value that mark a sample as
+                frontal xray in the view_pos_column must be provided.
+            view_pos_lateral (str): (default "Lateral")
+                If crop is True, the value that mark a sample as
+                lateral xray in the view_pos_column must be provided.
 
         Returns:
             generator (DataGenerator): generator with the given specifications
@@ -118,6 +156,13 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         self.unc_value = unc_value
         self.u_enc = u_enc
         self.drop_last = drop_last
+        self.view_pos_column = view_pos_column
+        self.view_pos_frontal = view_pos_frontal
+        self.view_pos_lateral = view_pos_lateral
+        self.template_matcher = None
+        if crop:
+            self.template_matcher = TemplateMatcher(
+                template_conf=crop_template, size=dim)
 
         self.on_epoch_end()
 
@@ -172,16 +217,22 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         Returns:
             Tupel with list of images and list of labels
         """
-
         img_paths = self.dataset.iloc[sample_ids][self.path_column].to_numpy()
+
         img_paths = str(self.dataset_folder) + "/" + \
             self.path_column_prefix + img_paths
 
-        images = [self.load_image(img_path) for img_path in img_paths]
+        img_template_type = (self.dataset.iloc[sample_ids][self.view_pos_column]
+                             .replace({self.view_pos_frontal: "frontal",
+                                       self.view_pos_lateral: "lateral"})
+                             .to_numpy())
+
+        images = [self.load_image(*args)
+                  for args in zip(img_paths, img_template_type)]
 
         return np.array(images), self.label_generation(sample_ids)
 
-    def load_image(self, path):
+    def load_image(self, path, template_type):
         """
         Paramter:
             path: the path to the image. Either absolut or relative to repositories root directory.
@@ -189,7 +240,23 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         Returns a numpy array of the gray scale image
 
         """
-        img = Image.open(str(Path(path))).resize(self.dim)
+        img = Image.open(str(Path(path)))
+
+        if img.mode != "L":
+            img = img.convert(mode="L")
+
+        if self.template_matcher is not None:
+            # resize image to dim + 10%
+            size = (int(self.dim[0] * 1.1), int(self.dim[1] * 1.1))
+            img = img.resize(size)
+            img = np.array(img).astype(np.float32)
+
+            # crop image to correct dim
+            img = self.template_matcher.crop(img, template_type)
+            img = Image.fromarray(img)
+        else:
+            img = img.resize(self.dim)
+
         if self.n_channels == 3:
             img = img.convert(mode="RGB")
         elif self.n_channels != 1:

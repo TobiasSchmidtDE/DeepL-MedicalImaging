@@ -68,7 +68,9 @@ class Chexpert_Benchmark(Benchmark):
 
 class Chestxray14_Benchmark(Benchmark):
     def __init__(self, name, train_labels="meta/data/labels.csv", split_group='Patient ID',
-                 path_column="Image Index", path_column_prefix="images/", **kwargs):
+                 path_column="Image Index", path_column_prefix="images/",
+                 view_pos_column="View Position", view_pos_frontal="PA", view_pos_lateral="AP",
+                 ** kwargs):
         super().__init__(Path(os.environ.get("CHESTXRAY14_DATASET_DIRECTORY")),
                          CHESTXRAY14_COLUMNS,
                          name,
@@ -76,6 +78,9 @@ class Chestxray14_Benchmark(Benchmark):
                          split_group=split_group,
                          path_column=path_column,
                          path_column_prefix=path_column_prefix,
+                         view_pos_column=view_pos_column,
+                         view_pos_lateral=view_pos_lateral,
+                         view_pos_frontal=view_pos_frontal,
                          **kwargs)
 
 
@@ -97,66 +102,83 @@ EPOCH_SIZES = {
 }
 
 
+CROP = {
+    "C0": False,
+    "C1": True
+}
+
+
 for batch_name, batch_size in BATCH_SIZES.items():
     for epoch_name, epoch_size in EPOCH_SIZES.items():
-        key_suffix = "_E{epoch_size}_B{batch_size}".format(
-            epoch_size=epoch_size, batch_size=batch_size)
+        for crop_name, crop_val in CROP.items():
+            key_suffix = "_E{epoch_size}_B{batch_size}_{crop_name}".format(
+                epoch_size=epoch_size, batch_size=batch_size, crop_name=crop_name)
 
-        CHEXPERT_BENCHMARKS["BCE" + key_suffix] = \
-            Chexpert_Benchmark("Chexpert_BCE_"+key_suffix,
-                               epochs=epoch_size,
-                               batch_size=batch_size,
-                               loss=tf.keras.losses.BinaryCrossentropy(),
-                               metrics=METRICS,
-                               single_class_metrics=SINGLE_CLASS_METRICS)
+            CHEXPERT_BENCHMARKS["BCE" + key_suffix] = \
+                Chexpert_Benchmark("Chexpert_BCE_"+key_suffix,
+                                   epochs=epoch_size,
+                                   batch_size=batch_size,
+                                   loss=tf.keras.losses.BinaryCrossentropy(),
+                                   metrics=METRICS,
+                                   single_class_metrics=SINGLE_CLASS_METRICS,
+                                   crop=crop_val)
 
-        CHEXPERT_BENCHMARKS["WBCE" + key_suffix] =  \
-            Chexpert_Benchmark("Chexpert_WBCE "+key_suffix,
-                               epochs=epoch_size,
-                               batch_size=batch_size,
-                               loss=tf.keras.losses.BinaryCrossentropy(),
-                               metrics=METRICS,
-                               single_class_metrics=SINGLE_CLASS_METRICS,
-                               use_class_weights=True)
+            CHEXPERT_BENCHMARKS["WBCE" + key_suffix] =  \
+                Chexpert_Benchmark("Chexpert_WBCE "+key_suffix,
+                                   epochs=epoch_size,
+                                   batch_size=batch_size,
+                                   loss=tf.keras.losses.BinaryCrossentropy(),
+                                   metrics=METRICS,
+                                   single_class_metrics=SINGLE_CLASS_METRICS,
+                                   use_class_weights=True,
+                                   crop=crop_val)
 
-        CHEXPERT_BENCHMARKS["CWBCE" + key_suffix] =  \
-            Chexpert_Benchmark("Chexpert_CWBCE "+key_suffix,
-                               epochs=epoch_size,
-                               batch_size=batch_size,
-                               metrics=METRICS,
-                               single_class_metrics=SINGLE_CLASS_METRICS)
-        CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].loss =  \
-            WeightedBinaryCrossentropy(CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].positive_weights,
-                                       CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].negative_weights)
+            CHEXPERT_BENCHMARKS["CWBCE" + key_suffix] =  \
+                Chexpert_Benchmark("Chexpert_CWBCE "+key_suffix,
+                                   epochs=epoch_size,
+                                   batch_size=batch_size,
+                                   metrics=METRICS,
+                                   single_class_metrics=SINGLE_CLASS_METRICS,
+                                   crop=crop_val)
+            # otherweise we get pylint line-too-long in next assignment
+            positive_weights, negative_weights = \
+                CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].positive_weights, \
+                CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].negative_weights
+            CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].loss =  \
+                WeightedBinaryCrossentropy(positive_weights,
+                                           negative_weights)
 
-        CHESTXRAY14_BENCHMARKS["BCE" + key_suffix] =  \
-            Chestxray14_Benchmark("Chestxray_BCE "+key_suffix,
-                                  epochs=epoch_size,
-                                  batch_size=batch_size,
-                                  loss=tf.keras.losses.BinaryCrossentropy(),
-                                  metrics=METRICS,
-                                  single_class_metrics=SINGLE_CLASS_METRICS)
+            CHESTXRAY14_BENCHMARKS["BCE" + key_suffix] =  \
+                Chestxray14_Benchmark("Chestxray_BCE "+key_suffix,
+                                      epochs=epoch_size,
+                                      batch_size=batch_size,
+                                      loss=tf.keras.losses.BinaryCrossentropy(),
+                                      metrics=METRICS,
+                                      single_class_metrics=SINGLE_CLASS_METRICS,
+                                      crop=crop_val)
 
-        CHESTXRAY14_BENCHMARKS["WBCE" + key_suffix] =  \
-            Chestxray14_Benchmark("Chestxray_WBCE"+key_suffix,
-                                  epochs=epoch_size,
-                                  batch_size=batch_size,
-                                  metrics=METRICS,
-                                  single_class_metrics=SINGLE_CLASS_METRICS,
-                                  use_class_weights=True)
+            CHESTXRAY14_BENCHMARKS["WBCE" + key_suffix] =  \
+                Chestxray14_Benchmark("Chestxray_WBCE"+key_suffix,
+                                      epochs=epoch_size,
+                                      batch_size=batch_size,
+                                      metrics=METRICS,
+                                      single_class_metrics=SINGLE_CLASS_METRICS,
+                                      use_class_weights=True,
+                                      crop=crop_val)
 
-        CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix] =  \
-            Chestxray14_Benchmark("Chestxray_CWBCE"+key_suffix,
-                                  epochs=epoch_size,
-                                  batch_size=batch_size,
-                                  metrics=METRICS,
-                                  single_class_metrics=SINGLE_CLASS_METRICS)
+            CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix] =  \
+                Chestxray14_Benchmark("Chestxray_CWBCE"+key_suffix,
+                                      epochs=epoch_size,
+                                      batch_size=batch_size,
+                                      metrics=METRICS,
+                                      single_class_metrics=SINGLE_CLASS_METRICS,
+                                      crop=crop_val)
 
-        # otherweise we get pylint line-too-long in next assignment
-        positive_weights, negative_weights = \
-            CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].positive_weights, \
-            CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].negative_weights
+            # otherweise we get pylint line-too-long in next assignment
+            positive_weights, negative_weights = \
+                CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].positive_weights, \
+                CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].negative_weights
 
-        CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].loss =  \
-            WeightedBinaryCrossentropy(positive_weights,
-                                       negative_weights)
+            CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].loss =  \
+                WeightedBinaryCrossentropy(positive_weights,
+                                           negative_weights)

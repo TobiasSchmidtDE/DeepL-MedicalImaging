@@ -44,13 +44,12 @@ class Experiment:
         self.model_id = None
 
         if self.model_name is None:
-            self.model_name = self.model.simple_name + \
-                datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-            self.model_simple_name = self.model.simple_name
+            self.model_name = self.model.simple_name.replace(" ", "_") + \
+                self.benchmark.name.replace(" ", "_")
 
         self.model_description = ("Trained {model_name} architecture using the "
                                   "'{benchmark_name}' benchmark. "
-                                  ).format(model_name=self.model_simple_name,
+                                  ).format(model_name=self.model.simple_name,
                                            benchmark_name=benchmark.name)
         self.model_description += benchmark.summary()
 
@@ -196,9 +195,11 @@ class Benchmark:
                  optimizer=Adam(), loss='binary_crossentropy', single_class_metrics=None,
                  metrics=None, train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
-                 shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), n_channels=3,
-                 nan_replacement=0, unc_value=-1, u_enc='uzeroes', path_column="Path",
-                 path_column_prefix="", use_class_weights=False):
+                 shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), crop=False,
+                 crop_template=None, view_pos_column="Frontal/Lateral", view_pos_frontal="Frontal",
+                 view_pos_lateral="Lateral", n_channels=3, nan_replacement=0, unc_value=-1,
+                 u_enc='uzeroes', path_column="Path", path_column_prefix="",
+                 use_class_weights=False):
         """
         Instaniates a benchmark that can be provided as basis of an
         src.architecures.benchmark.Experiment. Provides these experiments with the same
@@ -230,7 +231,7 @@ class Benchmark:
             single_class_metrics (list tf.keras.metrics.Metric): (default None)
                     A list of metrics that should be evaluated on each class/pathology individually.
 
-             use_class_weights (bool): (default false)
+            use_class_weights (bool): (default false)
                     Whether the model trainig (.fit) should be supplied with class_weight factor.
                     Class_weights will be automatically calculated based on the distriubtion of
                     labels to counteract any imbalances in the training data.
@@ -263,6 +264,8 @@ class Benchmark:
                     See docs of src.datasets.generator.ImageDataGenerator
             dim (int): (default 256x256)
                     See docs of src.datasets.generator.ImageDataGenerator
+            crop_template (dict): (default None)
+                    See docs of src.datasets.generator.ImageDataGenerator
             n_channels (int): (default 3)
                     See docs of src.datasets.generator.ImageDataGenerator
             unc_value (int/str): (default -1)
@@ -274,6 +277,16 @@ class Benchmark:
             path_column (str): (default "Path")
                     See docs of src.datasets.generator.ImageDataGenerator
             path_column_prefix (str): (default "")
+                    See docs of src.datasets.generator.ImageDataGenerator
+            crop (bool): (default False)
+                    See docs of src.datasets.generator.ImageDataGenerator
+            crop_tempalte (dict): (default None)
+                    See docs of src.datasets.generator.ImageDataGenerator
+            view_pos_column (str): (default "Frontal/Lateral")
+                    See docs of src.datasets.generator.ImageDataGenerator
+            view_pos_frontal (str): (default "Frontal")
+                    See docs of src.datasets.generator.ImageDataGenerator
+            view_pos_lateral (str): (default "Lateral")
                     See docs of src.datasets.generator.ImageDataGenerator
 
         Returns:
@@ -297,6 +310,11 @@ class Benchmark:
         self.shuffle = shuffle
         self.batch_size = batch_size
         self.dim = dim
+        self.crop = crop
+        self.view_pos_column = view_pos_column
+        self.view_pos_frontal = view_pos_frontal
+        self.view_pos_lateral = view_pos_lateral
+        self.crop_template = crop_template
         self.n_channels = n_channels
         self.nan_replacement = nan_replacement
         self.unc_value = unc_value
@@ -346,7 +364,13 @@ class Benchmark:
                                            n_channels=self.n_channels,
                                            nan_replacement=self.nan_replacement,
                                            unc_value=self.unc_value,
-                                           u_enc=self.u_enc)
+                                           u_enc=self.u_enc,
+                                           dim=self.dim,
+                                           crop=self.crop,
+                                           view_pos_column=self.view_pos_column,
+                                           view_pos_lateral=self.view_pos_lateral,
+                                           view_pos_frontal=self.view_pos_frontal,
+                                           crop_template=self.crop_template)
 
         self.valgen = ImageDataGenerator(dataset=validation_labels,
                                          dataset_folder=self.dataset_folder,
@@ -359,7 +383,13 @@ class Benchmark:
                                          n_channels=self.n_channels,
                                          nan_replacement=self.nan_replacement,
                                          unc_value=self.unc_value,
-                                         u_enc=self.u_enc)
+                                         u_enc=self.u_enc,
+                                         dim=self.dim,
+                                         crop=self.crop,
+                                         view_pos_column=self.view_pos_column,
+                                         view_pos_lateral=self.view_pos_lateral,
+                                         view_pos_frontal=self.view_pos_frontal,
+                                         crop_template=self.crop_template)
 
         self.testgen = ImageDataGenerator(dataset=test_labels,
                                           dataset_folder=self.dataset_folder,
@@ -372,7 +402,13 @@ class Benchmark:
                                           n_channels=self.n_channels,
                                           nan_replacement=self.nan_replacement,
                                           unc_value=self.unc_value,
-                                          u_enc=self.u_enc)
+                                          u_enc=self.u_enc,
+                                          dim=self.dim,
+                                          crop=self.crop,
+                                          view_pos_column=self.view_pos_column,
+                                          view_pos_lateral=self.view_pos_lateral,
+                                          view_pos_frontal=self.view_pos_frontal,
+                                          crop_template=self.crop_template)
 
         self.positive_weights, self.negative_weights = compute_class_weight(
             self.traingen)
@@ -406,6 +442,7 @@ class Benchmark:
             "shuffle": self.shuffle,
             "batch_size": self.batch_size,
             "dim": self.dim,
+            "crop": self.crop,
             "n_channels": self.n_channels,
             "nan_replacement": self.nan_replacement,
             "unc_value": self.unc_value,
@@ -425,8 +462,10 @@ class Benchmark:
         """
         bench_dict = self.as_dict()
         return ("The benchmark was initialized for the {dataset_name} dataset "
-                "with batch size of {batch_size}, shuffel set to {shuffle} "
-                "and images rescaled to dimension {dim}.\n"
+                "with batch size of {batch_size}, shuffle set to {shuffle} "
+                "and images rescaled " +
+                ("and cropped" if self.crop else "")
+                + "to dimension {dim}.\n"
                 "The training was done for {epochs} epochs using the {optimizer} optimizer "
                 "and {loss} loss.\nA total of {label_count} labels/pathologies were included "
                 "in the training and encoded using the '{u_enc}' method.\n"
