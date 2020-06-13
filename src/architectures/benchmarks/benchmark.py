@@ -44,7 +44,7 @@ class Experiment:
         self.model_id = None
 
         if self.model_name is None:
-            self.model_name = self.model.simple_name.replace(" ", "_") + \
+            self.model_name = self.model.simple_name.replace(" ", "_") + "_" +\
                 self.benchmark.name.replace(" ", "_")
 
         self.model_description = ("Trained {model_name} architecture using the "
@@ -95,10 +95,10 @@ class Experiment:
 
         early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                                    min_delta=0,
-                                                                   patience=3,
+                                                                   patience=10,
                                                                    verbose=2,
                                                                    mode='auto',
-                                                                   restore_best_weights=False)
+                                                                   restore_best_weights=True)
 
         model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_filepath,
                                                                        monitor='val_loss',
@@ -199,7 +199,7 @@ class Benchmark:
                  crop_template=None, view_pos_column="Frontal/Lateral", view_pos_frontal="Frontal",
                  view_pos_lateral="Lateral", n_channels=3, nan_replacement=0, unc_value=-1,
                  u_enc='uzeroes', path_column="Path", path_column_prefix="",
-                 use_class_weights=False):
+                 use_class_weights=False, preprocess_input_fn=None):
         """
         Instaniates a benchmark that can be provided as basis of an
         src.architecures.benchmark.Experiment. Provides these experiments with the same
@@ -322,7 +322,9 @@ class Benchmark:
         self.drop_last = drop_last
         self.use_class_weights = use_class_weights
         self.class_weights = None
-
+        self.preprocess_input_fn = preprocess_input_fn
+        self.split_seed = split_seed
+        
         # for each metric in single_class instantiate a metric for each individual pathology
         if self.single_class_metrics is not None:
             for base_metric in self.single_class_metrics:
@@ -370,7 +372,8 @@ class Benchmark:
                                            view_pos_column=self.view_pos_column,
                                            view_pos_lateral=self.view_pos_lateral,
                                            view_pos_frontal=self.view_pos_frontal,
-                                           crop_template=self.crop_template)
+                                           crop_template=self.crop_template,
+                                           preprocess_input_fn  = self.preprocess_input_fn )
 
         self.valgen = ImageDataGenerator(dataset=validation_labels,
                                          dataset_folder=self.dataset_folder,
@@ -389,7 +392,8 @@ class Benchmark:
                                          view_pos_column=self.view_pos_column,
                                          view_pos_lateral=self.view_pos_lateral,
                                          view_pos_frontal=self.view_pos_frontal,
-                                         crop_template=self.crop_template)
+                                         crop_template=self.crop_template,
+                                         preprocess_input_fn  = self.preprocess_input_fn)
 
         self.testgen = ImageDataGenerator(dataset=test_labels,
                                           dataset_folder=self.dataset_folder,
@@ -408,7 +412,8 @@ class Benchmark:
                                           view_pos_column=self.view_pos_column,
                                           view_pos_lateral=self.view_pos_lateral,
                                           view_pos_frontal=self.view_pos_frontal,
-                                          crop_template=self.crop_template)
+                                          crop_template=self.crop_template,
+                                          preprocess_input_fn  = self.preprocess_input_fn)
 
         self.positive_weights, self.negative_weights = compute_class_weight(
             self.traingen)
@@ -451,6 +456,7 @@ class Benchmark:
             "train_num_samples": len(self.traingen.index),
             "valid_num_samples": len(self.valgen.index),
             "test_num_samples": len(self.testgen.index),
+            "split_seed": self.split_seed
         }
 
     def __str__(self):

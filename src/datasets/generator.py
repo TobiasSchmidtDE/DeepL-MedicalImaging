@@ -17,7 +17,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                  path_column_prefix="", shuffle=True, drop_last=False, batch_size=64,
                  dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
                  crop=False, crop_template=None, view_pos_column="Frontal/Lateral",
-                 view_pos_frontal="Frontal", view_pos_lateral="Lateral"
+                 view_pos_frontal="Frontal", view_pos_lateral="Lateral", preprocess_input_fn = None,
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
                  ):
@@ -103,6 +103,11 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                 If crop is True, the value that mark a sample as
                 lateral xray in the view_pos_column must be provided.
 
+            preprocess_input_fn (function): (default: None)
+                When using a pretrained model from tf.keras.application this can be 
+                used to provide the corresponding tf.application.*.preprocess_input function
+                which will be called for each image input.
+
         Returns:
             generator (DataGenerator): generator with the given specifications
         """
@@ -159,6 +164,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         self.view_pos_column = view_pos_column
         self.view_pos_frontal = view_pos_frontal
         self.view_pos_lateral = view_pos_lateral
+        self.preprocess_input_fn = preprocess_input_fn
         self.template_matcher = None
         if crop:
             self.template_matcher = TemplateMatcher(
@@ -227,10 +233,13 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                                        self.view_pos_lateral: "lateral"})
                              .to_numpy())
 
-        images = [self.load_image(*args)
-                  for args in zip(img_paths, img_template_type)]
+        images = np.array([self.load_image(*args)
+                  for args in zip(img_paths, img_template_type)])
 
-        return np.array(images), self.label_generation(sample_ids)
+        if self.preprocess_input_fn is not None:
+            images = self.preprocess_input_fn(images)
+            
+        return images, self.label_generation(sample_ids)
 
     def load_image(self, path, template_type):
         """
@@ -262,8 +271,8 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         elif self.n_channels != 1:
             raise NotImplementedError(
                 "n_channels is only supported for values from set {1,3}")
-
-        return np.asarray(img)
+        img_array = np.asarray(img)
+        return img_array
 
     def __getitem__(self, batch_index):
         """
