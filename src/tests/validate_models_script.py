@@ -34,7 +34,7 @@ def execute():
             return
 
         # create temporary directory
-        tempdir = basepath / 'temp'
+        tempdir = basepath.parent / 'temp'
         tempdir.mkdir(parents=True, exist_ok=True)
 
         # clone wiki repository
