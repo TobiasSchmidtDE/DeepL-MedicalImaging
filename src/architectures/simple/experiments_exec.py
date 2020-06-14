@@ -45,9 +45,9 @@ architectures = {
         "preprocess_input_fn":tf.keras.applications.inception_v3.preprocess_input,
         "model_fn": InceptionV3
     },
-    "ResNet152V2": {
-        "preprocess_input_fn":tf.keras.applications.resnet_v2.preprocess_input,
-        "model_fn": ResNet152V2
+    "DenseNet121": {
+        "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
+        "model_fn": DenseNet121
     },
 }
 
@@ -66,13 +66,13 @@ architectures = {
 }
 """
     
-loss_functions = ["BCE", "WBCE", "CWBCE"]
-crop_confs = ["C0"]
+loss_functions = ["WBCE", "CWBCE"]
+crop_confs = ["C1"]
 for architecture_name, architecture in architectures.items():
-    chexpert_benchmarks, _ = generate_benchmarks(batch_sizes = {"b": 32}, epoch_sizes = {"e": 30}, preprocess_input_fn = architecture["preprocess_input_fn"], split_seed = 6122156)
+    chexpert_benchmarks, _ = generate_benchmarks(batch_sizes = {"b": 32}, epoch_sizes = {"e": 20}, preprocess_input_fn = architecture["preprocess_input_fn"], split_seed = 6122156)
     for loss_function in loss_functions:
         for crop_conf in crop_confs:
-            benchmark_key = loss_function+"_E30_B32_" + crop_conf
+            benchmark_key = loss_function+"_E20_B32_" + crop_conf
             chexpert_exp = simple_architecture_experiment(chexpert_benchmarks[benchmark_key], architecture["model_fn"], CHEXPERT_COLUMNS)
             print("START TRAINING FOR", chexpert_exp.model_name)
             chexpert_exp.run()

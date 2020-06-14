@@ -95,7 +95,7 @@ class Experiment:
 
         early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                                    min_delta=0,
-                                                                   patience=10,
+                                                                   patience=5,
                                                                    verbose=2,
                                                                    mode='auto',
                                                                    restore_best_weights=True)
@@ -103,7 +103,7 @@ class Experiment:
         model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_filepath,
                                                                        monitor='val_loss',
                                                                        verbose=2,
-                                                                       save_best_only=False,
+                                                                       save_best_only=True,
                                                                        save_weights_only=False,
                                                                        mode='auto',
                                                                        save_freq='epoch')
@@ -114,7 +114,7 @@ class Experiment:
                                                                   verbose=0,
                                                                   mode='auto',
                                                                   min_delta=0.0001,
-                                                                  cooldown=1,
+                                                                  cooldown=0,
                                                                   min_lr=0,)
 
         terminate_on_nan_callback = tf.keras.callbacks.TerminateOnNaN()
@@ -128,7 +128,7 @@ class Experiment:
                                            callbacks=[tensorboard_callback,
                                                       early_stopping_callback,
                                                       reduce_lr_callback,
-                                                      model_checkpoint_callback,
+                                                      #model_checkpoint_callback,
                                                       terminate_on_nan_callback])
         return self.train_result
 
