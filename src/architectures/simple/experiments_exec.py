@@ -71,6 +71,9 @@ crop_confs = ["C1"]
 for architecture_name, architecture in architectures.items():
     chexpert_benchmarks, _ = generate_benchmarks(batch_sizes = {"b": 32}, epoch_sizes = {"e": 20}, preprocess_input_fn = architecture["preprocess_input_fn"], split_seed = 6122156)
     for loss_function in loss_functions:
+        if loss_function == "WBCE" and architecture_name == "InceptionV3":
+            continue # skip this conf
+            
         for crop_conf in crop_confs:
             benchmark_key = loss_function+"_E20_B32_" + crop_conf
             chexpert_exp = simple_architecture_experiment(chexpert_benchmarks[benchmark_key], architecture["model_fn"], CHEXPERT_COLUMNS)
