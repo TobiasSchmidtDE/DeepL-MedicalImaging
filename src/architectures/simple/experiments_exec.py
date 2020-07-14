@@ -66,10 +66,10 @@ architectures = {
 }
 """
     
-loss_functions = ["WBCE", "CWBCE"]
+loss_functions = ["CWBCE"]
 crop_confs = ["C1"]
 for architecture_name, architecture in architectures.items():
-    chexpert_benchmarks, _ = generate_benchmarks(batch_sizes = {"b": 32}, epoch_sizes = {"e": 20}, preprocess_input_fn = architecture["preprocess_input_fn"], split_seed = 6122156)
+    chexpert_benchmarks, _ = generate_benchmarks(batch_sizes = {"b": 32}, epoch_sizes = {"e": 12}, preprocess_input_fn = architecture["preprocess_input_fn"], split_seed = 6122156)
     for loss_function in loss_functions:
         if loss_function == "WBCE" and architecture_name == "InceptionV3":
             continue # skip this conf

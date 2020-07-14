@@ -54,11 +54,13 @@ CHESTXRAY14_COLUMNS = ['Edema',
 
 
 class Chexpert_Benchmark(Benchmark):
-    def __init__(self, name, train_labels="train.csv",
+    def __init__(self, name, classes=None, train_labels="train.csv",
                  split_group='patient_id', path_column="Path", **kwargs):
-
+        
+        if classes is None:
+            classes = CHEXPERT_COLUMNS
         super().__init__(Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY")),
-                         CHEXPERT_COLUMNS,
+                         classes,
                          name,
                          train_labels=train_labels,
                          split_group=split_group,
@@ -67,12 +69,14 @@ class Chexpert_Benchmark(Benchmark):
 
 
 class Chestxray14_Benchmark(Benchmark):
-    def __init__(self, name, train_labels="meta/data/labels.csv", split_group='Patient ID',
+    def __init__(self, name, classes=None, train_labels="meta/data/labels.csv", split_group='Patient ID',
                  path_column="Image Index", path_column_prefix="images/",
                  view_pos_column="View Position", view_pos_frontal="PA", view_pos_lateral="AP",
                  ** kwargs):
+        if classes is None:
+            classes = CHESTXRAY14_COLUMNS
         super().__init__(Path(os.environ.get("CHESTXRAY14_DATASET_DIRECTORY")),
-                         CHESTXRAY14_COLUMNS,
+                         classes,
                          name,
                          train_labels=train_labels,
                          split_group=split_group,
@@ -86,7 +90,7 @@ class Chestxray14_Benchmark(Benchmark):
 
 
 
-def generate_benchmarks (batch_sizes = None, epoch_sizes = None, crop = None, **kwargs):
+def generate_benchmarks (classes=None, batch_sizes = None, epoch_sizes = None, crop = None, **kwargs):
     
     CHEXPERT_BENCHMARKS = {}
     CHESTXRAY14_BENCHMARKS = {}
@@ -105,10 +109,10 @@ def generate_benchmarks (batch_sizes = None, epoch_sizes = None, crop = None, **
     if EPOCH_SIZES is None:
         EPOCH_SIZES = {
             "Quick Dev": 3,
-            "Dev": 10,
-            "Quick Training": 20,
-            "Training": 50,
-            "Full Training": 100,
+            "Dev": 5,
+            "Quick Training": 12,
+            "Training": 20,
+            "Long Training": 50,
         }
 
 
@@ -123,9 +127,14 @@ def generate_benchmarks (batch_sizes = None, epoch_sizes = None, crop = None, **
             for crop_name, crop_val in CROP.items():
                 key_suffix = "_E{epoch_size}_B{batch_size}_{crop_name}".format(
                     epoch_size=epoch_size, batch_size=batch_size, crop_name=crop_name)
-
-                CHEXPERT_BENCHMARKS["BCE" + key_suffix] = \
-                    Chexpert_Benchmark("Chexpert_BCE"+key_suffix,
+        
+                if classes is not None:
+                    key_suffix += "_N" + str(len(classes))
+                
+                try:
+                    CHEXPERT_BENCHMARKS["BCE" + key_suffix] = \
+                        Chexpert_Benchmark("Chexpert_BCE"+key_suffix,
+                                       classes=classes,
                                        epochs=epoch_size,
                                        batch_size=batch_size,
                                        loss=tf.keras.losses.BinaryCrossentropy(),
@@ -133,9 +142,14 @@ def generate_benchmarks (batch_sizes = None, epoch_sizes = None, crop = None, **
                                        single_class_metrics=SINGLE_CLASS_METRICS,
                                        crop=crop_val,
                                        **kwargs)
+                except ValueError as err:
+                    print("Chexpert_BCE"+key_suffix + " could not be created")
+                    print(err)
 
-                CHEXPERT_BENCHMARKS["WBCE" + key_suffix] =  \
-                    Chexpert_Benchmark("Chexpert_WBCE"+key_suffix,
+                try:
+                    CHEXPERT_BENCHMARKS["WBCE" + key_suffix] =  \
+                        Chexpert_Benchmark("Chexpert_WBCE"+key_suffix,
+                                       classes=classes,
                                        epochs=epoch_size,
                                        batch_size=batch_size,
                                        loss=tf.keras.losses.BinaryCrossentropy(),
@@ -144,25 +158,35 @@ def generate_benchmarks (batch_sizes = None, epoch_sizes = None, crop = None, **
                                        use_class_weights=True,
                                        crop=crop_val,
                                        **kwargs)
+                except ValueError as err:
+                    print("Chexpert_WBCE"+key_suffix + " could not be created")
+                    print(err)
 
-                CHEXPERT_BENCHMARKS["CWBCE" + key_suffix] =  \
-                    Chexpert_Benchmark("Chexpert_CWBCE"+key_suffix,
+                try:
+                    CHEXPERT_BENCHMARKS["CWBCE" + key_suffix] =  \
+                        Chexpert_Benchmark("Chexpert_CWBCE"+key_suffix,
+                                       classes=classes,
                                        epochs=epoch_size,
                                        batch_size=batch_size,
                                        metrics=METRICS,
                                        single_class_metrics=SINGLE_CLASS_METRICS,
                                        crop=crop_val,
                                        **kwargs)
-                # otherweise we get pylint line-too-long in next assignment
-                positive_weights, negative_weights = \
-                    CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].positive_weights, \
-                    CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].negative_weights
-                CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].loss =  \
-                    WeightedBinaryCrossentropy(positive_weights,
+                    # otherweise we get pylint line-too-long in next assignment
+                    positive_weights, negative_weights = \
+                        CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].positive_weights, \
+                        CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].negative_weights
+                    CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].loss =  \
+                        WeightedBinaryCrossentropy(positive_weights,
                                                negative_weights)
-
-                CHESTXRAY14_BENCHMARKS["BCE" + key_suffix] =  \
-                    Chestxray14_Benchmark("Chestxray_BCE"+key_suffix,
+                except ValueError as err:
+                    print("Chexpert_CWBCE"+key_suffix + " could not be created")
+                    print(err)
+        
+                try:
+                    CHESTXRAY14_BENCHMARKS["BCE" + key_suffix] =  \
+                        Chestxray14_Benchmark("Chestxray_BCE"+key_suffix,
+                                          classes=classes,
                                           epochs=epoch_size,
                                           batch_size=batch_size,
                                           loss=tf.keras.losses.BinaryCrossentropy(),
@@ -170,9 +194,14 @@ def generate_benchmarks (batch_sizes = None, epoch_sizes = None, crop = None, **
                                           single_class_metrics=SINGLE_CLASS_METRICS,
                                           crop=crop_val,
                                           **kwargs)
+                except ValueError as err:
+                    print("Chexpert_WBCE"+key_suffix + " could not be created")
+                    print(err)
 
-                CHESTXRAY14_BENCHMARKS["WBCE" + key_suffix] =  \
-                    Chestxray14_Benchmark("Chestxray_WBCE"+key_suffix,
+                try:
+                    CHESTXRAY14_BENCHMARKS["WBCE" + key_suffix] =  \
+                        Chestxray14_Benchmark("Chestxray_WBCE"+key_suffix,
+                                          classes=classes,
                                           epochs=epoch_size,
                                           batch_size=batch_size,
                                           metrics=METRICS,
@@ -180,9 +209,14 @@ def generate_benchmarks (batch_sizes = None, epoch_sizes = None, crop = None, **
                                           use_class_weights=True,
                                           crop=crop_val,
                                           **kwargs)
+                except ValueError as err:
+                    print("Chexpert_WBCE"+key_suffix + " could not be created")
+                    print(err)
 
-                CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix] =  \
-                    Chestxray14_Benchmark("Chestxray_CWBCE"+key_suffix,
+                try:
+                    CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix] =  \
+                        Chestxray14_Benchmark("Chestxray_CWBCE"+key_suffix,
+                                          classes=classes,
                                           epochs=epoch_size,
                                           batch_size=batch_size,
                                           metrics=METRICS,
@@ -190,14 +224,17 @@ def generate_benchmarks (batch_sizes = None, epoch_sizes = None, crop = None, **
                                           crop=crop_val,
                                           **kwargs)
 
-                # otherweise we get pylint line-too-long in next assignment
-                positive_weights, negative_weights = \
-                    CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].positive_weights, \
-                    CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].negative_weights
+                    # otherweise we get pylint line-too-long in next assignment
+                    positive_weights, negative_weights = \
+                        CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].positive_weights, \
+                        CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].negative_weights
 
-                CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].loss =  \
-                    WeightedBinaryCrossentropy(positive_weights,
-                                               negative_weights)
+                    CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix].loss =  \
+                        WeightedBinaryCrossentropy(positive_weights,
+                                                   negative_weights)
+                except ValueError as err:
+                    print("Chexpert_WBCE"+key_suffix + " could not be created")
+                    print(err)
 
     return CHEXPERT_BENCHMARKS, CHESTXRAY14_BENCHMARKS 
 

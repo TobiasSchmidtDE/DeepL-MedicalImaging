@@ -3,7 +3,7 @@
 
 PASS_HASH="sha1:bbea9cdc2680:5b7c455593d9ed710a81c0fa4e5af3e91e941237"
 HOST_IP=0.0.0.0
-ROOT_DIR=/srv/idp1/idp-radio-1
+ROOT_DIR=/srv/idp-radio-1
 LOG_DIR=$ROOT_DIR/nohup/
 
 echo $LOG_DIR
