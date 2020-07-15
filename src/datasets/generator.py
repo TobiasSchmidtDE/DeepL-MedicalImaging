@@ -17,7 +17,8 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                  path_column_prefix="", shuffle=True, drop_last=False, batch_size=64,
                  dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
                  crop=False, crop_template=None, view_pos_column="Frontal/Lateral",
-                 view_pos_frontal="Frontal", view_pos_lateral="Lateral", preprocess_input_fn = None,
+                 view_pos_frontal="Frontal", view_pos_lateral="Lateral",
+                 preprocess_input_fn=None,
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
                  ):
@@ -234,11 +235,11 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                              .to_numpy())
 
         images = np.array([self.load_image(*args)
-                  for args in zip(img_paths, img_template_type)])
+                           for args in zip(img_paths, img_template_type)])
 
         if self.preprocess_input_fn is not None:
             images = self.preprocess_input_fn(images)
-            
+
         return images, self.label_generation(sample_ids)
 
     def load_image(self, path, template_type):

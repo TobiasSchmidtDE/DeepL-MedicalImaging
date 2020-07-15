@@ -128,7 +128,7 @@ class Experiment:
                                            callbacks=[tensorboard_callback,
                                                       early_stopping_callback,
                                                       reduce_lr_callback,
-                                                      #model_checkpoint_callback,
+                                                      # model_checkpoint_callback,
                                                       terminate_on_nan_callback])
         return self.train_result
 
@@ -192,7 +192,7 @@ class Experiment:
 
 class Benchmark:
     def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
-                 optimizer=Adam(), loss='binary_crossentropy', single_class_metrics=None,
+                 optimizer=Adam(), loss='binary_crossentropy', single_class_metrics=[],
                  metrics=None, train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
                  shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), crop=False,
@@ -324,7 +324,7 @@ class Benchmark:
         self.class_weights = None
         self.preprocess_input_fn = preprocess_input_fn
         self.split_seed = split_seed
-        
+
         # for each metric in single_class instantiate a metric for each individual pathology
         if self.single_class_metrics is not None:
             for base_metric in self.single_class_metrics:
@@ -373,7 +373,7 @@ class Benchmark:
                                            view_pos_lateral=self.view_pos_lateral,
                                            view_pos_frontal=self.view_pos_frontal,
                                            crop_template=self.crop_template,
-                                           preprocess_input_fn  = self.preprocess_input_fn )
+                                           preprocess_input_fn=self.preprocess_input_fn)
 
         self.valgen = ImageDataGenerator(dataset=validation_labels,
                                          dataset_folder=self.dataset_folder,
@@ -393,7 +393,7 @@ class Benchmark:
                                          view_pos_lateral=self.view_pos_lateral,
                                          view_pos_frontal=self.view_pos_frontal,
                                          crop_template=self.crop_template,
-                                         preprocess_input_fn  = self.preprocess_input_fn)
+                                         preprocess_input_fn=self.preprocess_input_fn)
 
         self.testgen = ImageDataGenerator(dataset=test_labels,
                                           dataset_folder=self.dataset_folder,
@@ -413,7 +413,7 @@ class Benchmark:
                                           view_pos_lateral=self.view_pos_lateral,
                                           view_pos_frontal=self.view_pos_frontal,
                                           crop_template=self.crop_template,
-                                          preprocess_input_fn  = self.preprocess_input_fn)
+                                          preprocess_input_fn=self.preprocess_input_fn)
 
         self.positive_weights, self.negative_weights = compute_class_weight(
             self.traingen)
