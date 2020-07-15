@@ -54,12 +54,12 @@ CHESTXRAY14_COLUMNS = ['Edema',
 
 
 class Chexpert_Benchmark(Benchmark):
-    def __init__(self, name, classes=None, train_labels="train.csv",
+    def __init__(self, name, path = Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY")), classes=None, train_labels="train.csv",
                  split_group='patient_id', path_column="Path", **kwargs):
         
         if classes is None:
             classes = CHEXPERT_COLUMNS
-        super().__init__(Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY")),
+        super().__init__(path,
                          classes,
                          name,
                          train_labels=train_labels,
@@ -69,13 +69,13 @@ class Chexpert_Benchmark(Benchmark):
 
 
 class Chestxray14_Benchmark(Benchmark):
-    def __init__(self, name, classes=None, train_labels="meta/data/labels.csv", split_group='Patient ID',
+    def __init__(self, name, path = Path(os.environ.get("CHESTXRAY14_DATASET_DIRECTORY")), classes=None, train_labels="meta/data/labels.csv", split_group='Patient ID',
                  path_column="Image Index", path_column_prefix="images/",
                  view_pos_column="View Position", view_pos_frontal="PA", view_pos_lateral="AP",
                  ** kwargs):
         if classes is None:
             classes = CHESTXRAY14_COLUMNS
-        super().__init__(Path(os.environ.get("CHESTXRAY14_DATASET_DIRECTORY")),
+        super().__init__(path,
                          classes,
                          name,
                          train_labels=train_labels,
@@ -195,8 +195,11 @@ def generate_benchmarks (classes=None, batch_sizes = None, epoch_sizes = None, c
                                           crop=crop_val,
                                           **kwargs)
                 except ValueError as err:
-                    print("Chexpert_WBCE"+key_suffix + " could not be created")
-                    print(err)
+                    print("Chestxray_BCE"+key_suffix + " could not be created")
+                    #print(err)
+                except FileNotFoundError as err:
+                    print("Chestxray_BCE"+key_suffix + " could not be created")
+                    #print(err)
 
                 try:
                     CHESTXRAY14_BENCHMARKS["WBCE" + key_suffix] =  \
@@ -211,7 +214,10 @@ def generate_benchmarks (classes=None, batch_sizes = None, epoch_sizes = None, c
                                           **kwargs)
                 except ValueError as err:
                     print("Chexpert_WBCE"+key_suffix + " could not be created")
-                    print(err)
+                    #print(err)
+                except FileNotFoundError as err:
+                    print("Chexpert_WBCE"+key_suffix + " could not be created")
+                    #print(err)
 
                 try:
                     CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix] =  \
@@ -233,8 +239,12 @@ def generate_benchmarks (classes=None, batch_sizes = None, epoch_sizes = None, c
                         WeightedBinaryCrossentropy(positive_weights,
                                                    negative_weights)
                 except ValueError as err:
-                    print("Chexpert_WBCE"+key_suffix + " could not be created")
+                    print("Chestxray_CWBCE"+key_suffix + " could not be created")
                     print(err)
+                except FileNotFoundError as err:
+                    print("Chestxray_CWBCE"+key_suffix + " could not be created")
+                    print(err)
+                    
 
     return CHEXPERT_BENCHMARKS, CHESTXRAY14_BENCHMARKS 
 

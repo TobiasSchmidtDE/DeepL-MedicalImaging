@@ -18,7 +18,7 @@ from pathlib import Path
 # Run this before loading other dependencies, otherwise they might occupy memory on gpu 0 by default and it will stay that way
 
 # Specify which GPU(s) to use
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # Or 2, 3, etc. other than 0
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # Or 2, 3, etc. other than 0
 
 config = tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)
 config.gpu_options.allow_growth = True
@@ -65,17 +65,42 @@ architectures = {
     "model_fn": NASNetLarge
 }
 """
-    
+reduced_columns = ['Enlarged Cardiomediastinum',
+                    'Cardiomegaly',
+                    'Lung Opacity',
+                    'Lung Lesion',
+                    'Edema',
+                    'Consolidation',
+                    'Pneumonia',
+                    'Atelectasis',
+                    'Pneumothorax',
+                    'Pleural Effusion',
+                    'Pleural Other',
+                    'Fracture']
+
 loss_functions = ["CWBCE"]
 crop_confs = ["C1"]
 for architecture_name, architecture in architectures.items():
-    chexpert_benchmarks, _ = generate_benchmarks(batch_sizes = {"b": 32}, epoch_sizes = {"e": 12}, preprocess_input_fn = architecture["preprocess_input_fn"], split_seed = 6122156)
+    chexpert_benchmarks, _ = generate_benchmarks(path = Path(os.environ.get("CHEXPERT_FULL_PREPROCESSED_DATASET_DIRECTORY")),
+                                                 classes=reduced_columns,
+                                                 batch_sizes = {"b": 32},
+                                                 epoch_sizes = {"e": 12},
+                                                 crop = {"C1": False},
+                                                 split_seed = 6122156, 
+                                                 preprocess_input_fn = architecture["preprocess_input_fn"])
     for loss_function in loss_functions:
-        if loss_function == "WBCE" and architecture_name == "InceptionV3":
-            continue # skip this conf
-            
         for crop_conf in crop_confs:
-            benchmark_key = loss_function+"_E20_B32_" + crop_conf
-            chexpert_exp = simple_architecture_experiment(chexpert_benchmarks[benchmark_key], architecture["model_fn"], CHEXPERT_COLUMNS)
-            print("START TRAINING FOR", chexpert_exp.model_name)
-            chexpert_exp.run()
+            benchmark_key = list(filter(lambda k: "_"+loss_function in "_"+k and crop_conf in k, list(chexpert_benchmarks.keys())))
+            if len(benchmark_key) > 0:
+                benchmark_key = benchmark_key[0]
+                print("Found benchmark {benchmark} for crop {crop_conf} and loss function {loss_function}".format(benchmark=benchmark_key,
+                                                                                                                  crop_conf = crop_conf,
+                                                                                                                  loss_function=loss_function))
+                
+                chexpert_exp = simple_architecture_experiment(chexpert_benchmarks[benchmark_key], architecture["model_fn"], reduced_columns)
+                print("START TRAINING FOR", chexpert_exp.model_name)
+                chexpert_exp.run()
+            else:
+                print("Warning! Could not find benchmark for crop {crop_conf} and loss function {loss_function}".format(crop_conf = crop_conf,
+                                                                                                                  loss_function=loss_function))
+                
