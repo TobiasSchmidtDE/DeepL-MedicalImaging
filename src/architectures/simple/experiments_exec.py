@@ -83,6 +83,8 @@ crop_confs = ["C1"]
 for architecture_name, architecture in architectures.items():
     chexpert_benchmarks, _ = generate_benchmarks(path = Path(os.environ.get("CHEXPERT_FULL_PREPROCESSED_DATASET_DIRECTORY")),
                                                  classes=reduced_columns,
+                                                 train_labels = "nofinding_train.csv",
+                                                 #nan_replacement = float("NaN"),
                                                  batch_sizes = {"b": 32},
                                                  epoch_sizes = {"e": 12},
                                                  crop = {"C1": False},

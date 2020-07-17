@@ -7,7 +7,6 @@ from tensorflow.python.framework import constant_op
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import clip_ops
 from tensorflow.python.keras import backend_config
-from tensorflow.keras import backend as K
 
 
 class WeightedBinaryCrossentropy(Loss):
@@ -23,6 +22,8 @@ class WeightedBinaryCrossentropy(Loss):
         self.epsilon = backend_config.epsilon
 
     def call(self, y_true, y_pred):
+        print("y_true", y_true)
+        print("y_pred", y_pred)
         assert self.positive_class_weights.dtype == self.negative_class_weights.dtype, \
             "positive and negative class weights must have the same dtype"
         assert y_pred.shape[-1] == len(self.positive_class_weights), \
@@ -44,7 +45,9 @@ class WeightedBinaryCrossentropy(Loss):
         bce = bce_pos * self.positive_class_weights + \
             bce_neg * self.negative_class_weights
 
-        return K.mean(-bce)
+        # takes the mean in a save way to allow y_true to contain nan values
+        # that may be propagated through to the bce and are then disregarded here
+        return tf.reduce_mean(tf.boolean_mask(-bce, tf.math.is_finite(bce)))
 
 
 def compute_class_weight(datagenerator):
