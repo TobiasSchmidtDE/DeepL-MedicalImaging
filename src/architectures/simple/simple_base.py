@@ -36,4 +36,5 @@ def SimpleBaseArchitecture(base_model_fn, num_classes, name=None, train_last_lay
     prediction_layer = Dense(num_classes, activation='sigmoid')(x)
     model = Model(inputs=base_model.input, outputs=prediction_layer)
     model.simple_name = name if name is not None else base_model_fn.__name__
+    model.simple_name += "_small" if train_last_layer_only else ""
     return model

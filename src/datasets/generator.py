@@ -206,12 +206,15 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
         labels = self.dataset.iloc[sample_ids][self.label_columns].to_numpy()
 
-        # replace nan values
-        labels[np.isnan(labels)] = self.nan_replacement
 
         # enforce uncertainty encoding strategy
         labels = uencode(self.u_enc, labels, unc_value=self.unc_value)
-        return np.array(labels, dtype=float)
+        
+        # replace nan values
+        labels[np.isnan(labels)] = self.nan_replacement
+        
+        return np.array(labels, dtype=np.float32)
+    
 
     def data_generation(self, sample_ids):
         """
@@ -240,7 +243,10 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         if self.preprocess_input_fn is not None:
             images = self.preprocess_input_fn(images)
 
-        return images, self.label_generation(sample_ids)
+        labels = self.label_generation(sample_ids)
+            
+            
+        return images, labels
 
     def load_image(self, path, template_type):
         """
