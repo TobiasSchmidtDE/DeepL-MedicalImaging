@@ -12,22 +12,25 @@ CHEXPERT_PREPROCESSED_DATASET_DIRECTORY = Path(
 
 # load labels
 CHEXPERT_DIR = Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY"))
-labels = pd.read_csv(Path(CHEXPERT_DIR) / "train.csv")[:10]
+labels = pd.read_csv(Path(CHEXPERT_DIR) / "train.csv")
 
 # set params
 dim = (256, 256)
 template_matcher = TemplateMatcher(size=dim)
 
-
+m = int(labels.shape[0]/1000)
 # iterate through dataset and save preprocessed images
 for i, row in labels.iterrows():
-    if i % 1000 == 0:
-        print("Preprocessing {i} of {l}".format(i=i, l=labels.shape[0]))
+    if i % m == 0:
+        print("Preprocessing {p}% {i} of {l}".format(p=i/labels.shape[0], i=i, l=labels.shape[0]))
 
     # load image
     path = row['Path']
     img = Image.open(str(CHEXPERT_DIR / path))
-
+    
+    if img.mode != "L":
+        print(img.mode)
+        img = img.convert(mode="L")
     # resize image to dim + 10%
     size = (int(dim[0] * 1.1), int(dim[1] * 1.1))
     img = img.resize(size)
@@ -38,13 +41,13 @@ for i, row in labels.iterrows():
     img = template_matcher.crop(img, template_type)
     img = Image.fromarray(img)
 
-    # convert to rbg in order to save it as JPEG
-    img = img.convert(mode="RGB")
-
     folderpath = '/'.join(path.split('/')[:-1])
     folderpath = CHEXPERT_PREPROCESSED_DATASET_DIRECTORY / folderpath
     folderpath.mkdir(parents=True, exist_ok=True)
-
+    
+    if img.mode != "L":
+        img = img.convert(mode="L")
+        
     img.save(CHEXPERT_PREPROCESSED_DATASET_DIRECTORY / path)
 
 print("Preprocessing done. Copying labels file")

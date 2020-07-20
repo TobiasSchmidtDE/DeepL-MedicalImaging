@@ -18,7 +18,7 @@ from pathlib import Path
 # Run this before loading other dependencies, otherwise they might occupy memory on gpu 0 by default and it will stay that way
 
 # Specify which GPU(s) to use
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # Or 2, 3, etc. other than 0
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # Or 2, 3, etc. other than 0
 
 config = tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)
 config.gpu_options.allow_growth = True
@@ -63,7 +63,24 @@ run_configs = [
                     'Pneumothorax',
                     'Pleural Effusion',
                     'Pleural Other',
-                    'Fracture'],
+                    'Fracture',
+                    'Support Devices'],
+        "epochs": 10,
+        "loss_functions": ["CWBCE", "WBCE"],
+        "crop_confs":  ["C1"]
+    },
+    {
+        "architectures" : {
+            "InceptionV3": {
+                "preprocess_input_fn":tf.keras.applications.inception_v3.preprocess_input,
+                "model_fn": InceptionV3
+            },
+            "DenseNet121": {
+                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
+                "model_fn": DenseNet121
+            },
+        },
+        "columns": CHEXPERT_COLUMNS,
         "epochs": 4,
         "loss_functions": ["CWBCE", "WBCE"],
         "crop_confs":  ["C1"]
@@ -189,13 +206,13 @@ for run_conf in run_configs:
     epoch_sizes = run_conf["epochs"]
     train_last_layer_only = run_conf["train_last_layer_only"] if "train_last_layer_only" in run_conf.keys() else False
     for architecture_name, architecture in architectures.items():
-        chexpert_benchmarks, _ = generate_benchmarks(path = Path(os.environ.get("CHEXPERT_FULL_DATASET_DIRECTORY")),
+        chexpert_benchmarks, _ = generate_benchmarks(path = Path(os.environ.get("CHEXPERT_FULL_PREPROCESSED_DATASET_DIRECTORY")),
                                                      classes=run_conf["columns"],
                                                      #train_labels = "nofinding_train.csv",
                                                      #nan_replacement = float("NaN"),
                                                      batch_sizes = {"b": 32},
                                                      epoch_sizes = {"e": epoch_sizes},
-                                                     crop = {"C1": True},
+                                                     crop = {"C1": False},
                                                      split_seed = 6122156, 
                                                      preprocess_input_fn = architecture["preprocess_input_fn"])
 
