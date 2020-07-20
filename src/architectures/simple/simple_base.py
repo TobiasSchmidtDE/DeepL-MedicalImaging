@@ -20,7 +20,8 @@ def SimpleBaseArchitecture(base_model_fn, num_classes, name=None, train_last_lay
     """
     try:
         base_model = base_model_fn(include_top=False, weights='imagenet')
-    except TypeError:
+    except Exception as err:
+        print(err)
         ValueError(
             "You must provide a function from tf.keras.applications " +
             "that instantiates a model architecure")
