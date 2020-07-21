@@ -343,6 +343,178 @@
                 "test_num_samples": 44932,
                 "split_seed": 6122156
             }
+        },
+        {
+            "id": "b46c5d4e-cb58-11ea-b1f6-0242ac110007",
+            "name": "DenseNet121_Chexpert_BCE_E5_B32_C1_N5_CTCOMP",
+            "filename": "DenseNet121_Chexpert_BCE_E5_B32_C1_N5_CTCOMP_20200721-134723.h5",
+            "version": "1",
+            "history": {
+                "loss": [
+                    0.38031184673309326,
+                    0.36729463934898376,
+                    0.3612382411956787,
+                    0.3573491871356964,
+                    0.3548066318035126
+                ],
+                "auc": [
+                    0.645105242729187,
+                    0.679347574710846,
+                    0.6984744071960449,
+                    0.7112101912498474,
+                    0.7197690010070801
+                ],
+                "precision": [
+                    0.5814375281333923,
+                    0.603382408618927,
+                    0.6133154034614563,
+                    0.6193357706069946,
+                    0.6244479417800903
+                ],
+                "recall": [
+                    0.3713389039039612,
+                    0.401775985956192,
+                    0.4194689989089966,
+                    0.424428790807724,
+                    0.43112772703170776
+                ],
+                "f2_score": [
+                    0.40026557445526123,
+                    0.43054747581481934,
+                    0.44777393341064453,
+                    0.45293694734573364,
+                    0.4595838785171509
+                ],
+                "binary_accuracy": [
+                    0.82988440990448,
+                    0.8366309404373169,
+                    0.8399131298065186,
+                    0.8415340185165405,
+                    0.8431107997894287
+                ],
+                "learning rate": [
+                    0.0005000000237487257,
+                    0.0005000000237487257,
+                    0.0005000000237487257,
+                    0.0005000000237487257,
+                    0.0005000000237487257
+                ],
+                "val_loss": [
+                    0.4255017638206482,
+                    0.46075505018234253,
+                    0.37542030215263367,
+                    0.3840896785259247,
+                    0.400444895029068
+                ],
+                "val_auc": [
+                    0.6241893768310547,
+                    0.6125164031982422,
+                    0.6948229670524597,
+                    0.6834835410118103,
+                    0.6595048308372498
+                ],
+                "val_precision": [
+                    0.608341634273529,
+                    0.48212331533432007,
+                    0.5527950525283813,
+                    0.5290406942367554,
+                    0.6583005785942078
+                ],
+                "val_recall": [
+                    0.0894985944032669,
+                    0.5023667812347412,
+                    0.5513090491294861,
+                    0.5562633275985718,
+                    0.1908198446035385
+                ],
+                "val_f2_score": [
+                    0.10790453851222992,
+                    0.4981832206249237,
+                    0.5516055822372437,
+                    0.5505968928337097,
+                    0.22240763902664185
+                ],
+                "val_binary_accuracy": [
+                    0.8167416453361511,
+                    0.8036558628082275,
+                    0.8306407928466797,
+                    0.822273850440979,
+                    0.8280699253082275
+                ],
+                "lr": [
+                    0.0005000000237487257,
+                    0.0005000000237487257,
+                    0.0005000000237487257,
+                    0.0005000000237487257,
+                    0.0005000000237487257
+                ]
+            },
+            "description": "Trained DenseNet121 architecture using the 'Chexpert_BCE_E5_B32_C1_N5_CTCOMP' benchmark. The benchmark was initialized for the chexpert_preprocessed-256-crop dataset with batch size of 32, shuffle set to True and images rescaled to dimension (256, 256).\nThe training was done for 5 epochs using the Adam optimizer and binary_crossentropy loss.\nA total of 5 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 142320 number of sample, the validation set 36162, and the test set 44932. ",
+            "test": {
+                "loss": 0.40162837505340576,
+                "auc": 0.6654490232467651,
+                "precision": 0.6579886674880981,
+                "recall": 0.18874025344848633,
+                "f2_score": 0.22013890743255615,
+                "binary_accuracy": 0.8261523246765137
+            },
+            "classification_report": "               precision    recall  f1-score   support\n\n        Edema       0.21      0.01      0.01     10461\n  Atelectasis       0.00      0.00      0.00      6912\n    Pneumonia       0.00      0.00      0.00      1225\n Lung Opacity       0.47      0.27      0.34     21324\nConsolidation       0.00      0.00      0.00      3063\n\n    micro avg       0.47      0.13      0.21     42985\n    macro avg       0.14      0.05      0.07     42985\n weighted avg       0.29      0.13      0.17     42985\n  samples avg       0.13      0.10      0.11     42985\n",
+            "benchmark": {
+                "benchmark_name": "Chexpert_BCE_E5_B32_C1_N5_CTCOMP",
+                "dataset_name": "chexpert_preprocessed-256-crop",
+                "dataset_folder": "data/chexpert/preprocessed-256-crop",
+                "models_dir": "models",
+                "epochs": 5,
+                "optimizer": "Adam",
+                "loss": "binary_crossentropy",
+                "use_class_weights": false,
+                "positive_weights": [
+                    4.292341709136963,
+                    6.671855449676514,
+                    37.4287223815918,
+                    2.120016574859619,
+                    15.154845237731934
+                ],
+                "negative_weights": [
+                    1.3037351369857788,
+                    1.1763091087341309,
+                    1.0274509191513062,
+                    1.8928438425064087,
+                    1.0706472396850586
+                ],
+                "metrics": [
+                    "auc",
+                    "precision",
+                    "recall",
+                    "f2_score",
+                    "binary_accuracy"
+                ],
+                "label_columns": [
+                    "Edema",
+                    "Atelectasis",
+                    "Pneumonia",
+                    "Lung Opacity",
+                    "Consolidation"
+                ],
+                "path_column": "Path",
+                "path_column_prefix": "",
+                "shuffle": true,
+                "batch_size": 32,
+                "dim": [
+                    256,
+                    256
+                ],
+                "crop": false,
+                "n_channels": 3,
+                "nan_replacement": 0,
+                "unc_value": -1,
+                "u_enc": "uzeroes",
+                "drop_last": true,
+                "train_num_samples": 142320,
+                "valid_num_samples": 36162,
+                "test_num_samples": 44932,
+                "split_seed": 6122156
+            }
         }
     ]
 }

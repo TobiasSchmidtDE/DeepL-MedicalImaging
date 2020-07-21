@@ -51,7 +51,7 @@ run_configs = [
         "epochs": 10,
         "nan_replacement": 0,
         "name_suffix": "_Masked_NoNan",
-        "loss_functions": ["CWBCE", "WBCE"],
+        "loss_functions": ["CWBCE"],
         "crop_confs":  ["C1"]
     },
     
@@ -197,7 +197,7 @@ for run_conf in run_configs:
                                                                                                                           loss_function=loss_function))
                         
                         chexpert_exp = simple_architecture_experiment(chexpert_benchmarks[benchmark_key], architecture["model_fn"], run_conf["columns"], train_last_layer_only=train_last_layer_only)
-                        print("START TRAINING FOR", chexpert_exp.cmodel_name)
+                        print("START TRAINING FOR", chexpert_exp.model_name)
                         
                         print(chexpert_exp.benchmark.as_dict())
                         
