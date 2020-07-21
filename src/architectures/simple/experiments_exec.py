@@ -30,45 +30,12 @@ from src.architectures.simple.simple_base import SimpleBaseArchitecture
 from src.architectures.adv.guendel19 import densenet
 
 from src.architectures.benchmarks.benchmark import Benchmark, Experiment
-from src.architectures.benchmarks.benchmark_definitions import generate_benchmarks, CHEXPERT_COLUMNS
+from src.architectures.benchmarks.benchmark_definitions import generate_benchmarks,simple_architecture_experiment, CHEXPERT_COLUMNS
 from src.metrics.metrics import F2Score
 from src.metrics.losses import WeightedBinaryCrossentropy, compute_class_weight
 
-def simple_architecture_experiment(benchmark, base_model_fn, classes, train_last_layer_only=False ):
-    model = SimpleBaseArchitecture(base_model_fn, len(classes), train_last_layer_only = train_last_layer_only)
-    experiment = Experiment(benchmark, model)
-    return experiment
-
 run_configs = [
    
-    {
-        "architectures" :{
-            "InceptionV3": {
-                "preprocess_input_fn":tf.keras.applications.inception_v3.preprocess_input,
-                "model_fn": InceptionV3
-            },
-            "DenseNet121": {
-                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
-                "model_fn": DenseNet121
-            },
-        },
-        "columns": ['Enlarged Cardiomediastinum',
-                    'Cardiomegaly',
-                    'Lung Opacity',
-                    'Lung Lesion',
-                    'Edema',
-                    'Consolidation',
-                    'Pneumonia',
-                    'Atelectasis',
-                    'Pneumothorax',
-                    'Pleural Effusion',
-                    'Pleural Other',
-                    'Fracture',
-                    'Support Devices'],
-        "epochs": 10,
-        "loss_functions": ["CWBCE", "WBCE"],
-        "crop_confs":  ["C1"]
-    },
     {
         "architectures" : {
             "InceptionV3": {
@@ -81,7 +48,9 @@ run_configs = [
             },
         },
         "columns": CHEXPERT_COLUMNS,
-        "epochs": 4,
+        "epochs": 10,
+        "nan_replacement": 0,
+        "name_suffix": "_Masked_NoNan",
         "loss_functions": ["CWBCE", "WBCE"],
         "crop_confs":  ["C1"]
     },
@@ -206,20 +175,20 @@ for run_conf in run_configs:
     epoch_sizes = run_conf["epochs"]
     train_last_layer_only = run_conf["train_last_layer_only"] if "train_last_layer_only" in run_conf.keys() else False
     for architecture_name, architecture in architectures.items():
-        chexpert_benchmarks, _ = generate_benchmarks(path = Path(os.environ.get("CHEXPERT_FULL_PREPROCESSED_DATASET_DIRECTORY")),
+        for loss_function in loss_functions:
+            for crop_conf in crop_confs:
+                try:
+                    chexpert_benchmarks, _ = generate_benchmarks(path = Path(os.environ.get("CHEXPERT_FULL_PREPROCESSED_DATASET_DIRECTORY")),
+                                                     name_suffix=run_conf["name_suffix"],
                                                      classes=run_conf["columns"],
                                                      #train_labels = "nofinding_train.csv",
-                                                     #nan_replacement = float("NaN"),
+                                                     nan_replacement = run_conf["nan_replacement"], #float("NaN"),
                                                      batch_sizes = {"b": 32},
                                                      epoch_sizes = {"e": epoch_sizes},
                                                      crop = {"C1": False},
                                                      split_seed = 6122156, 
                                                      preprocess_input_fn = architecture["preprocess_input_fn"])
-
-
-        for loss_function in loss_functions:
-            for crop_conf in crop_confs:
-                try:
+                    
                     benchmark_key = list(filter(lambda k: "_"+loss_function in "_"+k and crop_conf in k, list(chexpert_benchmarks.keys())))
                     if len(benchmark_key) > 0:
                         benchmark_key = benchmark_key[0]
@@ -228,7 +197,7 @@ for run_conf in run_configs:
                                                                                                                           loss_function=loss_function))
                         
                         chexpert_exp = simple_architecture_experiment(chexpert_benchmarks[benchmark_key], architecture["model_fn"], run_conf["columns"], train_last_layer_only=train_last_layer_only)
-                        print("START TRAINING FOR", chexpert_exp.model_name)
+                        print("START TRAINING FOR", chexpert_exp.cmodel_name)
                         
                         print(chexpert_exp.benchmark.as_dict())
                         

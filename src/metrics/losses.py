@@ -41,22 +41,22 @@ class WeightedBinaryCrossentropy(Loss):
 
         # Create a mask for which labels are provided and which are not (e.g. NaN)
         # where 0 means no label (-1) and 1 means a label was provided (0 or 1)
-        #mask = tf.cast(tf.math.greater_equal(y_true, 0), y_true.dtype.base_dtype)
+        mask = tf.cast(tf.math.greater_equal(y_true, 0), y_true.dtype.base_dtype)
                 
         # Compute cross entropy from probabilities.
         bce_pos = y_true * math_ops.log(y_pred + epsilon_)
         bce_neg = (1 - y_true) * math_ops.log(1 - y_pred + epsilon_)
         
         # removes all nans of bce_pos and bce_neg
-        #bce_pos = tf.math.multiply_no_nan(bce_pos, mask)
-        #bce_neg = tf.math.multiply_no_nan(bce_neg, mask)
+        bce_pos = tf.math.multiply_no_nan(bce_pos, mask)
+        bce_neg = tf.math.multiply_no_nan(bce_neg, mask)
         
         bce = bce_pos * self.positive_class_weights + \
             bce_neg * self.negative_class_weights
 
         # caclulate mean, but only weighted by the number of classes
-        # return tf.reduce_sum(-bce) / tf.reduce_sum(mask)
-        return K.mean(-bce)
+        return tf.reduce_sum(-bce) / tf.reduce_sum(mask)
+        #return K.mean(-bce)
 
     
 

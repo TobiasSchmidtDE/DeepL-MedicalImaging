@@ -52,8 +52,8 @@ CHESTXRAY14_COLUMNS = ['Edema',
                        'Hernia',
                        'Emphysema',
                        'Pneumothorax']
-def simple_architecture_experiment(benchmark, base_model_fn, classes ):
-    model = SimpleBaseArchitecture(base_model_fn, len(classes))
+def simple_architecture_experiment(benchmark, base_model_fn, classes, train_last_layer_only=False ):
+    model = SimpleBaseArchitecture(base_model_fn, len(classes), train_last_layer_only = train_last_layer_only)
     experiment = Experiment(benchmark, model)
     return experiment
 
@@ -92,7 +92,7 @@ class Chestxray14_Benchmark(Benchmark):
                          **kwargs)
 
 
-def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=None, **kwargs):
+def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=None, name_suffix="", **kwargs):
 
     CHEXPERT_BENCHMARKS = {}
     CHESTXRAY14_BENCHMARKS = {}
@@ -131,7 +131,9 @@ def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=N
 
                 if classes is not None:
                     key_suffix += "_N" + str(len(classes))
-
+                
+                key_suffix += name_suffix
+                
                 try:
                     CHEXPERT_BENCHMARKS["BCE" + key_suffix] = \
                         Chexpert_Benchmark("Chexpert_BCE"+key_suffix,
