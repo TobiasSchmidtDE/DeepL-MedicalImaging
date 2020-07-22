@@ -49,9 +49,35 @@ run_configs = [
         },
         "columns": CHEXPERT_COLUMNS,
         "epochs": 10,
+        "nan_replacement": -1,
+        "name_suffix": "_Masked",
+        "loss_functions": ["WBCE", "CWBCE"],
+        "crop_confs":  ["C1"]
+    },
+    {
+        "architectures" : {
+            "DenseNet121": {
+                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
+                "model_fn": DenseNet121
+            },
+        },
+        "columns": ['Enlarged Cardiomediastinum',
+                    'Cardiomegaly',
+                    'Lung Opacity',
+                    'Lung Lesion',
+                    'Edema',
+                    'Consolidation',
+                    'Pneumonia',
+                    'Atelectasis',
+                    'Pneumothorax',
+                    'Pleural Effusion',
+                    'Pleural Other',
+                    'Fracture',
+                    'Support Devices'],
+        "epochs": 10,
         "nan_replacement": 0,
-        "name_suffix": "_Masked_NoNan",
-        "loss_functions": ["CWBCE"],
+        "name_suffix": "",
+        "loss_functions": ["WBCE"],
         "crop_confs":  ["C1"]
     },
     
@@ -59,7 +85,32 @@ run_configs = [
 
 
 """
-
+{
+        "architectures" : {
+            "DenseNet121": {
+                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
+                "model_fn": DenseNet121
+            },
+        },
+        "columns": ['Enlarged Cardiomediastinum',
+                    'Cardiomegaly',
+                    'Lung Opacity',
+                    'Lung Lesion',
+                    'Edema',
+                    'Consolidation',
+                    'Pneumonia',
+                    'Atelectasis',
+                    'Pneumothorax',
+                    'Pleural Effusion',
+                    'Pleural Other',
+                    'Fracture',
+                    'Support Devices'],
+        "epochs": 10,
+        "nan_replacement": 0,
+        "name_suffix": "",
+        "loss_functions": ["WBCE"],
+        "crop_confs":  ["C1"]
+    },
 
     {
         "architectures" : {
