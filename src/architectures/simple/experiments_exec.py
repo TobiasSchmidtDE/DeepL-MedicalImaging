@@ -33,28 +33,9 @@ from src.architectures.benchmarks.benchmark import Benchmark, Experiment
 from src.architectures.benchmarks.benchmark_definitions import generate_benchmarks,simple_architecture_experiment, CHEXPERT_COLUMNS
 from src.metrics.metrics import F2Score
 from src.metrics.losses import WeightedBinaryCrossentropy, compute_class_weight
-
 run_configs = [
    
-    {
-        "architectures" : {
-            "InceptionV3": {
-                "preprocess_input_fn":tf.keras.applications.inception_v3.preprocess_input,
-                "model_fn": InceptionV3
-            },
-            "DenseNet121": {
-                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
-                "model_fn": DenseNet121
-            },
-        },
-        "columns": CHEXPERT_COLUMNS,
-        "epochs": 10,
-        "nan_replacement": -1,
-        "name_suffix": "_Masked",
-        "loss_functions": ["WBCE", "CWBCE"],
-        "crop_confs":  ["C1"]
-    },
-    {
+   {
         "architectures" : {
             "DenseNet121": {
                 "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
@@ -72,8 +53,7 @@ run_configs = [
                     'Pneumothorax',
                     'Pleural Effusion',
                     'Pleural Other',
-                    'Fracture',
-                    'Support Devices'],
+                    'Fracture'],
         "epochs": 10,
         "nan_replacement": 0,
         "name_suffix": "",
