@@ -8,14 +8,14 @@ from src.preprocessing.cropping.template_matching import TemplateMatcher
 
 # set directory to save preprocessed files
 CHEXPERT_PREPROCESSED_DATASET_DIRECTORY = Path(
-    './data/chexpert/preprocessed-256-crop/')
+    './data/chexpert/preprocessed-320-crop/')
 
 # load labels
 CHEXPERT_DIR = Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY"))
 labels = pd.read_csv(Path(CHEXPERT_DIR) / "train.csv")
 
 # set params
-dim = (256, 256)
+dim = (320, 320)
 template_matcher = TemplateMatcher(size=dim)
 
 m = int(labels.shape[0]/1000)

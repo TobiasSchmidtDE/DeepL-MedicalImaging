@@ -2,24 +2,28 @@ import os
 from pathlib import Path
 import tensorflow as tf
 from dotenv import load_dotenv, find_dotenv
+import math
 
 from src.architectures.benchmarks.benchmark import Benchmark, Experiment
-from src.metrics.metrics import F2Score
+from src.metrics.metrics import F2Score, NaNWrapper
 from src.metrics.losses import WeightedBinaryCrossentropy
 from src.architectures.simple.simple_base import SimpleBaseArchitecture
 
 
 load_dotenv(find_dotenv())
 
-METRICS = [tf.keras.metrics.AUC(multi_label=True, name="auc"),
-           tf.keras.metrics.Precision(name="precision"),
-           tf.keras.metrics.Recall(name="recall"),
-           F2Score(name="f2_score"),
-           tf.keras.metrics.BinaryAccuracy(name="binary_accuracy")
+METRICS = [NaNWrapper(tf.keras.metrics.AUC(multi_label=True, name="auc")),
+           NaNWrapper(tf.keras.metrics.Precision(name="precision")),
+           NaNWrapper(tf.keras.metrics.Recall(name="recall")),
+           NaNWrapper(F2Score(name="f2_score")),
+           NaNWrapper(tf.keras.metrics.BinaryAccuracy(name="binary_accuracy"))
            ]
 SINGLE_CLASS_METRICS = [
-    # tf.keras.metrics.BinaryAccuracy(name="accuracy")
-    # tf.keras.metrics.AUC(name="auc")
+    tf.keras.metrics.BinaryAccuracy(name="accuracy"),
+    tf.keras.metrics.AUC(name="auc"),
+    tf.keras.metrics.Precision(name="precision"),
+    tf.keras.metrics.Recall(name="recall"),
+    F2Score(name="f2_score"),
 ]
 
 CHEXPERT_COLUMNS = ['No Finding',

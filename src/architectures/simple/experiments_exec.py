@@ -2,6 +2,9 @@ import os
 import datetime
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
+import traceback
+import sys
+
 
 basepath = Path(os.getcwd())
 # make sure your working directory is the repository root.
@@ -11,17 +14,17 @@ load_dotenv(find_dotenv())
 
 print(os.getcwd())
 
-import os 
 import tensorflow as tf
 from pathlib import Path
 
 # Run this before loading other dependencies, otherwise they might occupy memory on gpu 0 by default and it will stay that way
 
 # Specify which GPU(s) to use
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # Or 2, 3, etc. other than 0
+os.environ["CUDA_VISIBLE_DEVICES"] = "1,0"  # Or 2, 3, etc. other than 0
 
-config = tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)
-config.gpu_options.allow_growth = True
+config = tf.compat.v1.ConfigProto(device_count={'GPU': 2}, allow_soft_placement=True, log_device_placement=True)
+#config.gpu_options.allow_growth = True
+config.gpu_options.per_process_gpu_memory_fraction = 1.2
 tf.compat.v1.Session(config=config)
 
         
@@ -42,6 +45,26 @@ run_configs = [
                 "model_fn": DenseNet121
             },
         },
+        "columns": ['Cardiomegaly',
+                    'Edema',
+                    'Consolidation',
+                    'Atelectasis',
+                    'Pleural Effusion'],
+        "epochs": 9,
+        "batch_sizes": 32,
+        "nan_replacement": 0,
+        "dim":(320, 320),
+        "name_suffix": "_D320",
+        "loss_functions": ["BCE"],
+        "crop_confs":  ["C0"]
+    },
+    {
+        "architectures" : {
+            "DenseNet121": {
+                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
+                "model_fn": DenseNet121
+            },
+        },
         "columns": ['Enlarged Cardiomediastinum',
                     'Cardiomegaly',
                     'Lung Opacity',
@@ -54,119 +77,27 @@ run_configs = [
                     'Pleural Effusion',
                     'Pleural Other',
                     'Fracture'],
-        "epochs": 10,
+        "epochs": 9,
+        "batch_sizes": 32,
         "nan_replacement": 0,
-        "name_suffix": "",
-        "loss_functions": ["WBCE"],
-        "crop_confs":  ["C1"]
+        "dim":(320, 320),
+        "name_suffix": "_D320",
+        "loss_functions": ["CWBCE"],
+        "crop_confs":  ["C0"]
     },
-    
 ]
 
 
 """
-{
-        "architectures" : {
-            "DenseNet121": {
-                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
-                "model_fn": DenseNet121
-            },
-        },
-        "columns": ['Enlarged Cardiomediastinum',
-                    'Cardiomegaly',
-                    'Lung Opacity',
-                    'Lung Lesion',
-                    'Edema',
-                    'Consolidation',
-                    'Pneumonia',
-                    'Atelectasis',
-                    'Pneumothorax',
-                    'Pleural Effusion',
-                    'Pleural Other',
-                    'Fracture',
-                    'Support Devices'],
-        "epochs": 10,
-        "nan_replacement": 0,
-        "name_suffix": "",
-        "loss_functions": ["WBCE"],
-        "crop_confs":  ["C1"]
-    },
 
     {
         "architectures" : {
-            "InceptionV3": {
-                "preprocess_input_fn":tf.keras.applications.inception_v3.preprocess_input,
-                "model_fn": InceptionV3
-            },
-            "DenseNet121": {
-                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
-                "model_fn": DenseNet121
-            },
-        },
-        "columns": CHEXPERT_COLUMNS,
-        "epochs": 3,
-        "loss_functions": ["CWBCE"],
-        "crop_confs":  ["C1"]
-    },
-{
-        "architectures" : {
-            "InceptionV3": {
-                "preprocess_input_fn":tf.keras.applications.inception_v3.preprocess_input,
-                "model_fn": InceptionV3
-            },
-            "DenseNet121": {
-                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
-                "model_fn": DenseNet121
-            },
-        },
-        "columns": CHEXPERT_COLUMNS,
-        "epochs": 5,
-        "train_last_layer_only": True,
-        "loss_functions": ["CWBCE", "WBCE"],
-        "crop_confs":  ["C1"]
-    },
- {
-        "architectures" :{
-            "InceptionV3": {
-                "preprocess_input_fn":tf.keras.applications.inception_v3.preprocess_input,
-                "model_fn": InceptionV3
-            },
             "DenseNet121": {
                 "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
                 "model_fn": DenseNet121
             },
         },
         "columns": ['Enlarged Cardiomediastinum',
-                    'Cardiomegaly',
-                    'Lung Opacity',
-                    'Lung Lesion',
-                    'Edema',
-                    'Consolidation',
-                    'Pneumonia',
-                    'Atelectasis',
-                    'Pneumothorax',
-                    'Pleural Effusion',
-                    'Pleural Other',
-                    'Fracture',
-                    'Support Devices'],
-        "epochs": 5,
-        "loss_functions": ["CWBCE", "WBCE"],
-        "crop_confs":  ["C1"]
-    },
-    
-    {
-        "architectures" : {
-            "InceptionV3": {
-                "preprocess_input_fn":tf.keras.applications.inception_v3.preprocess_input,
-                "model_fn": InceptionV3
-            },
-            "DenseNet121": {
-                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
-                "model_fn": DenseNet121
-            },
-        },
-        "columns": ['No Finding',
-                    'Enlarged Cardiomediastinum',
                     'Cardiomegaly',
                     'Lung Opacity',
                     'Lung Lesion',
@@ -178,10 +109,40 @@ run_configs = [
                     'Pleural Effusion',
                     'Pleural Other',
                     'Fracture'],
-        "epochs": 6,
-        "loss_functions": ["CWBCE", "WBCE"],
-        "crop_confs":  ["C1"]
-    }
+        "epochs": 9,
+        "batch_sizes": 32,
+        "nan_replacement": 0,
+        "name_suffix": "_D320",
+        "loss_functions": ["CWBCE"],
+        "crop_confs":  ["C0"]
+    },
+    {
+        "architectures" : {
+            "DenseNet121": {
+                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
+                "model_fn": DenseNet121
+            },
+        },
+        "columns": ['Enlarged Cardiomediastinum',
+                    'Cardiomegaly',
+                    'Lung Opacity',
+                    'Lung Lesion',
+                    'Edema',
+                    'Consolidation',
+                    'Pneumonia',
+                    'Atelectasis',
+                    'Pneumothorax',
+                    'Pleural Effusion',
+                    'Pleural Other',
+                    'Fracture'],
+        "epochs": 9,
+        "batch_sizes": 32,
+        "nan_replacement": 0,
+        "name_suffix": "_D320",
+        "loss_functions": ["BCE"],
+        "crop_confs":  ["C0"]
+    },
+    
 
 "InceptionResNetV2": {
     "preprocess_input_fn":tf.keras.applications.inception_resnet_v2.preprocess_input,
@@ -209,14 +170,18 @@ for run_conf in run_configs:
         for loss_function in loss_functions:
             for crop_conf in crop_confs:
                 try:
-                    chexpert_benchmarks, _ = generate_benchmarks(path = Path(os.environ.get("CHEXPERT_FULL_PREPROCESSED_DATASET_DIRECTORY")),
+                    chexpert_benchmarks, _ = generate_benchmarks(
+                                                     #path = Path(os.environ.get("CHEXPERT_FULL_PREPROCESSED_DATASET_DIRECTORY")),
+                                                     path = Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY")),
                                                      name_suffix=run_conf["name_suffix"],
                                                      classes=run_conf["columns"],
-                                                     #train_labels = "nofinding_train.csv",
+                                                     train_labels = "nofinding_train.csv",
                                                      nan_replacement = run_conf["nan_replacement"], #float("NaN"),
-                                                     batch_sizes = {"b": 32},
+                                                     batch_sizes = {"b": run_conf["batch_sizes"]},
                                                      epoch_sizes = {"e": epoch_sizes},
-                                                     crop = {"C1": False},
+                                                     dim=run_conf["dim"],
+                                                     #crop = {"C1": False},
+                                                     #crop = {"C0": False},
                                                      split_seed = 6122156, 
                                                      preprocess_input_fn = architecture["preprocess_input_fn"])
                     
@@ -244,6 +209,8 @@ for run_conf in run_configs:
                 except Exception as err:
                     print ("Experiment failed...")
                     print(err)
+                    print(traceback.format_exc())
+                    print(sys.exc_info()[2])
                     
 
 print ("Final estim_run_time: ", estim_run_time / 60, " hours")

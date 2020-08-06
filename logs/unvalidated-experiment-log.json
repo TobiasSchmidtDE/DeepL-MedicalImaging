@@ -262,6 +262,3731 @@
                 "test_num_samples": 44932,
                 "split_seed": 6122156
             }
+        },
+        {
+            "id": "28289cf6-d370-11ea-ae5c-0242ac110007",
+            "name": "DenseNet121_Chexpert_BCE_E3_B32_C1_N12",
+            "filename": "DenseNet121_Chexpert_BCE_E3_B32_C1_N12_20200731-205525.h5",
+            "version": "1",
+            "history": {
+                "loss": [
+                    0.2945173978805542,
+                    0.2811465561389923,
+                    0.27600008249282837
+                ],
+                "auc": [
+                    0.6799021363258362,
+                    0.7239635586738586,
+                    0.740403950214386
+                ],
+                "precision": [
+                    0.6334941387176514,
+                    0.652705192565918,
+                    0.6603023409843445
+                ],
+                "recall": [
+                    0.38067930936813354,
+                    0.42038312554359436,
+                    0.4335629940032959
+                ],
+                "f2_score": [
+                    0.41369912028312683,
+                    0.4526027739048004,
+                    0.4655347466468811
+                ],
+                "binary_accuracy": [
+                    0.8821156620979309,
+                    0.8872098922729492,
+                    0.8891445398330688
+                ],
+                "accuracy_enlarged_cardiomediastinum": [
+                    0.9520111680030823,
+                    0.9521376490592957,
+                    0.9521306753158569
+                ],
+                "accuracy_cardiomegaly": [
+                    0.8836996555328369,
+                    0.8888435959815979,
+                    0.8916193246841431
+                ],
+                "accuracy_lung_opacity": [
+                    0.6366792321205139,
+                    0.6508530974388123,
+                    0.6567840576171875
+                ],
+                "accuracy_lung_lesion": [
+                    0.9585816264152527,
+                    0.9587010741233826,
+                    0.9587081074714661
+                ],
+                "accuracy_edema": [
+                    0.7846722602844238,
+                    0.7964217662811279,
+                    0.801186203956604
+                ],
+                "accuracy_consolidation": [
+                    0.9339301586151123,
+                    0.934021532535553,
+                    0.933993399143219
+                ],
+                "accuracy_pneumonia": [
+                    0.9732755422592163,
+                    0.9732895493507385,
+                    0.9732825756072998
+                ],
+                "accuracy_atelectasis": [
+                    0.8499199151992798,
+                    0.8501306772232056,
+                    0.8500534296035767
+                ],
+                "accuracy_pneumothorax": [
+                    0.9122231006622314,
+                    0.9144015908241272,
+                    0.9160810708999634
+                ],
+                "accuracy_pleural_effusion": [
+                    0.7563174366950989,
+                    0.7833370566368103,
+                    0.7915378212928772
+                ],
+                "accuracy_pleural_other": [
+                    0.984097421169281,
+                    0.9843223094940186,
+                    0.9843433499336243
+                ],
+                "accuracy_fracture": [
+                    0.9599800705909729,
+                    0.9600713849067688,
+                    0.9600292444229126
+                ],
+                "auc_enlarged_cardiomediastinum": [
+                    0.5424749851226807,
+                    0.597337543964386,
+                    0.6219433546066284
+                ],
+                "auc_cardiomegaly": [
+                    0.7778710722923279,
+                    0.8302216529846191,
+                    0.8441491723060608
+                ],
+                "auc_lung_opacity": [
+                    0.6841226816177368,
+                    0.7053763270378113,
+                    0.7129645347595215
+                ],
+                "auc_lung_lesion": [
+                    0.6435037851333618,
+                    0.6907917261123657,
+                    0.7156633734703064
+                ],
+                "auc_edema": [
+                    0.7870383858680725,
+                    0.8147967457771301,
+                    0.8248006701469421
+                ],
+                "auc_consolidation": [
+                    0.6482683420181274,
+                    0.6855006217956543,
+                    0.698689341545105
+                ],
+                "auc_pneumonia": [
+                    0.6073004007339478,
+                    0.6774654984474182,
+                    0.694753885269165
+                ],
+                "auc_atelectasis": [
+                    0.6209032535552979,
+                    0.6543266773223877,
+                    0.6676209568977356
+                ],
+                "auc_pneumothorax": [
+                    0.7149343490600586,
+                    0.7829323410987854,
+                    0.8068668246269226
+                ],
+                "auc_pleural_effusion": [
+                    0.8268287777900696,
+                    0.8567190766334534,
+                    0.8657923936843872
+                ],
+                "auc_pleural_other": [
+                    0.688155472278595,
+                    0.7359184622764587,
+                    0.7508695721626282
+                ],
+                "auc_fracture": [
+                    0.6174249053001404,
+                    0.6561760306358337,
+                    0.6807329654693604
+                ],
+                "precision_enlarged_cardiomediastinum": [
+                    0.0,
+                    0.0,
+                    0.5
+                ],
+                "precision_cardiomegaly": [
+                    0.5900865197181702,
+                    0.6147368550300598,
+                    0.6302412152290344
+                ],
+                "precision_lung_opacity": [
+                    0.6085860729217529,
+                    0.6205418705940247,
+                    0.6265907883644104
+                ],
+                "precision_lung_lesion": [
+                    0.05263157933950424,
+                    0.0,
+                    1.0
+                ],
+                "precision_edema": [
+                    0.5783793926239014,
+                    0.6060529351234436,
+                    0.6169127821922302
+                ],
+                "precision_consolidation": [
+                    0.06666667014360428,
+                    0.0,
+                    0.0
+                ],
+                "precision_pneumonia": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "precision_atelectasis": [
+                    0.1666666716337204,
+                    0.4444444477558136,
+                    0.37837839126586914
+                ],
+                "precision_pneumothorax": [
+                    0.5547550320625305,
+                    0.6000000238418579,
+                    0.6169655919075012
+                ],
+                "precision_pleural_effusion": [
+                    0.6898480653762817,
+                    0.7188053131103516,
+                    0.7275684475898743
+                ],
+                "precision_pleural_other": [
+                    0.0,
+                    0.0,
+                    0.625
+                ],
+                "precision_fracture": [
+                    0.0714285746216774,
+                    0.0,
+                    0.380952388048172
+                ],
+                "recall_enlarged_cardiomediastinum": [
+                    0.0,
+                    0.0,
+                    0.0004403993079904467
+                ],
+                "recall_cardiomegaly": [
+                    0.1305331587791443,
+                    0.2202494889497757,
+                    0.25462666153907776
+                ],
+                "recall_lung_opacity": [
+                    0.6439084410667419,
+                    0.6687523126602173,
+                    0.6740956902503967
+                ],
+                "recall_lung_lesion": [
+                    0.00017015484627336264,
+                    0.0,
+                    0.00017015484627336264
+                ],
+                "recall_edema": [
+                    0.27965617179870605,
+                    0.36058998107910156,
+                    0.3868428170681
+                ],
+                "recall_consolidation": [
+                    0.00010650761396391317,
+                    0.0,
+                    0.0
+                ],
+                "recall_pneumonia": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "recall_atelectasis": [
+                    0.00032819167245179415,
+                    0.0001875644811661914,
+                    0.0006563833449035883
+                ],
+                "recall_pneumothorax": [
+                    0.030635792762041092,
+                    0.09237746894359589,
+                    0.13136537373065948
+                ],
+                "recall_pleural_effusion": [
+                    0.6622501015663147,
+                    0.714484691619873,
+                    0.7295816540718079
+                ],
+                "recall_pleural_other": [
+                    0.0,
+                    0.0,
+                    0.0022421525791287422
+                ],
+                "recall_fracture": [
+                    0.00017596340330783278,
+                    0.0,
+                    0.0014077072264626622
+                ],
+                "f2_score_enlarged_cardiomediastinum": [
+                    0.0,
+                    0.0,
+                    0.0005503779393620789
+                ],
+                "f2_score_cardiomegaly": [
+                    0.15461580455303192,
+                    0.2526792287826538,
+                    0.2890847325325012
+                ],
+                "f2_score_lung_opacity": [
+                    0.636519730091095,
+                    0.6585201025009155,
+                    0.6640270352363586
+                ],
+                "f2_score_lung_lesion": [
+                    0.00021252177248243243,
+                    0.0,
+                    0.00021268450655043125
+                ],
+                "f2_score_edema": [
+                    0.3118714392185211,
+                    0.3923737406730652,
+                    0.4180220365524292
+                ],
+                "f2_score_consolidation": [
+                    0.00013308135385159403,
+                    0.0,
+                    0.0
+                ],
+                "f2_score_pneumonia": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "f2_score_atelectasis": [
+                    0.0004100377263966948,
+                    0.00023443088866770267,
+                    0.0008201234741136432
+                ],
+                "f2_score_pneumothorax": [
+                    0.037773244082927704,
+                    0.11119198799133301,
+                    0.15590769052505493
+                ],
+                "f2_score_pleural_effusion": [
+                    0.6675916314125061,
+                    0.7153446078300476,
+                    0.7291781902313232
+                ],
+                "f2_score_pleural_other": [
+                    0.0,
+                    0.0,
+                    0.002800179412588477
+                ],
+                "f2_score_fracture": [
+                    0.0002198188885813579,
+                    0.0,
+                    0.0017580100102350116
+                ],
+                "learning rate": [
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513
+                ],
+                "val_loss": [
+                    0.32380345463752747,
+                    0.28652986884117126,
+                    0.3026505410671234
+                ],
+                "val_auc": [
+                    0.6789446473121643,
+                    0.7269299626350403,
+                    0.7225424647331238
+                ],
+                "val_precision": [
+                    0.648757815361023,
+                    0.6078219413757324,
+                    0.6810418963432312
+                ],
+                "val_recall": [
+                    0.2823597192764282,
+                    0.517919659614563,
+                    0.2994757890701294
+                ],
+                "val_f2_score": [
+                    0.3183145523071289,
+                    0.5337077379226685,
+                    0.33726784586906433
+                ],
+                "val_binary_accuracy": [
+                    0.8779153227806091,
+                    0.8855252861976624,
+                    0.8820887207984924
+                ],
+                "val_accuracy_enlarged_cardiomediastinum": [
+                    0.9509955644607544,
+                    0.9509955644607544,
+                    0.9509955644607544
+                ],
+                "val_accuracy_cardiomegaly": [
+                    0.8796460032463074,
+                    0.8760508894920349,
+                    0.8866703510284424
+                ],
+                "val_accuracy_lung_opacity": [
+                    0.6181692481040955,
+                    0.6550608277320862,
+                    0.6110619306564331
+                ],
+                "val_accuracy_lung_lesion": [
+                    0.961061954498291,
+                    0.961061954498291,
+                    0.961061954498291
+                ],
+                "val_accuracy_edema": [
+                    0.7615597248077393,
+                    0.77826327085495,
+                    0.77668696641922
+                ],
+                "val_accuracy_consolidation": [
+                    0.9355641603469849,
+                    0.9355641603469849,
+                    0.9355641603469849
+                ],
+                "val_accuracy_pneumonia": [
+                    0.9720132946968079,
+                    0.9720132946968079,
+                    0.9720132946968079
+                ],
+                "val_accuracy_atelectasis": [
+                    0.8580752015113831,
+                    0.8580752015113831,
+                    0.8580752015113831
+                ],
+                "val_accuracy_pneumothorax": [
+                    0.8816094994544983,
+                    0.917975664138794,
+                    0.9108406901359558
+                ],
+                "val_accuracy_pleural_effusion": [
+                    0.7726770043373108,
+                    0.7776272296905518,
+                    0.7784845232963562
+                ],
+                "val_accuracy_pleural_other": [
+                    0.9849280714988708,
+                    0.9849280714988708,
+                    0.9849280714988708
+                ],
+                "val_accuracy_fracture": [
+                    0.9586836099624634,
+                    0.9586836099624634,
+                    0.9586836099624634
+                ],
+                "val_auc_enlarged_cardiomediastinum": [
+                    0.5357151627540588,
+                    0.6043312549591064,
+                    0.6073580980300903
+                ],
+                "val_auc_cardiomegaly": [
+                    0.772549033164978,
+                    0.8301851749420166,
+                    0.8247131705284119
+                ],
+                "val_auc_lung_opacity": [
+                    0.6959975957870483,
+                    0.7089865207672119,
+                    0.710455596446991
+                ],
+                "val_auc_lung_lesion": [
+                    0.6759523153305054,
+                    0.7225720882415771,
+                    0.7069570422172546
+                ],
+                "val_auc_edema": [
+                    0.7317025065422058,
+                    0.8211033344268799,
+                    0.7991287112236023
+                ],
+                "val_auc_consolidation": [
+                    0.6678342819213867,
+                    0.6947489380836487,
+                    0.690887451171875
+                ],
+                "val_auc_pneumonia": [
+                    0.6354753375053406,
+                    0.6682482361793518,
+                    0.6623526215553284
+                ],
+                "val_auc_atelectasis": [
+                    0.6192148327827454,
+                    0.6467553973197937,
+                    0.6414869427680969
+                ],
+                "val_auc_pneumothorax": [
+                    0.7170932292938232,
+                    0.7747801542282104,
+                    0.7862069606781006
+                ],
+                "val_auc_pleural_effusion": [
+                    0.8490243554115295,
+                    0.8649290800094604,
+                    0.8514434099197388
+                ],
+                "val_auc_pleural_other": [
+                    0.6692447066307068,
+                    0.7152775526046753,
+                    0.7289862632751465
+                ],
+                "val_auc_fracture": [
+                    0.577532172203064,
+                    0.6712425947189331,
+                    0.6605333685874939
+                ],
+                "val_precision_enlarged_cardiomediastinum": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_precision_cardiomegaly": [
+                    0.6135922074317932,
+                    0.4982370436191559,
+                    0.7171361446380615
+                ],
+                "val_precision_lung_opacity": [
+                    0.6604705452919006,
+                    0.6165571808815002,
+                    0.6997648477554321
+                ],
+                "val_precision_lung_lesion": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_precision_edema": [
+                    0.800000011920929,
+                    0.5310400724411011,
+                    0.6829913854598999
+                ],
+                "val_precision_consolidation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_precision_pneumonia": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_precision_atelectasis": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_precision_pneumothorax": [
+                    0.28481224179267883,
+                    0.5101832747459412,
+                    0.43230944871902466
+                ],
+                "val_precision_pleural_effusion": [
+                    0.7272439002990723,
+                    0.6698437929153442,
+                    0.6984116435050964
+                ],
+                "val_precision_pleural_other": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_precision_fracture": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_recall_enlarged_cardiomediastinum": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_recall_cardiomegaly": [
+                    0.07070933282375336,
+                    0.41105392575263977,
+                    0.1367502212524414
+                ],
+                "val_recall_lung_opacity": [
+                    0.39843475818634033,
+                    0.7181404232978821,
+                    0.312813937664032
+                ],
+                "val_recall_lung_lesion": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_recall_edema": [
+                    0.0009272136958315969,
+                    0.6047751307487488,
+                    0.11961057037115097
+                ],
+                "val_recall_consolidation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_recall_pneumonia": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_recall_atelectasis": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_recall_pneumothorax": [
+                    0.2870060205459595,
+                    0.1677829921245575,
+                    0.25452110171318054
+                ],
+                "val_recall_pleural_effusion": [
+                    0.6577344536781311,
+                    0.8358529806137085,
+                    0.74985671043396
+                ],
+                "val_recall_pleural_other": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_recall_fracture": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_f2_score_enlarged_cardiomediastinum": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_f2_score_cardiomegaly": [
+                    0.0859115943312645,
+                    0.42596113681793213,
+                    0.16315957903862
+                ],
+                "val_f2_score_lung_opacity": [
+                    0.4327746033668518,
+                    0.6952313184738159,
+                    0.3517112731933594
+                ],
+                "val_f2_score_lung_lesion": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_f2_score_edema": [
+                    0.0011586814653128386,
+                    0.5884342789649963,
+                    0.14324182271957397
+                ],
+                "val_f2_score_consolidation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_f2_score_pneumonia": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_f2_score_atelectasis": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_f2_score_pneumothorax": [
+                    0.28656455874443054,
+                    0.19379544258117676,
+                    0.27733179926872253
+                ],
+                "val_f2_score_pleural_effusion": [
+                    0.6705527305603027,
+                    0.7963791489601135,
+                    0.738970160484314
+                ],
+                "val_f2_score_pleural_other": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "val_f2_score_fracture": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "lr": [
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513
+                ]
+            },
+            "description": "Trained DenseNet121 architecture using the 'Chexpert_BCE_E3_B32_C1_N12' benchmark. The benchmark was initialized for the chexpert_preprocessed-256-crop dataset with batch size of 32, shuffle set to True and images rescaled to dimension (256, 256).\nThe training was done for 3 epochs using the Adam optimizer and binary_crossentropy loss.\nA total of 12 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 142320 number of sample, the validation set 36162, and the test set 44932. ",
+            "test": {
+                "loss": 0.3062105178833008,
+                "auc": 0.7229323983192444,
+                "precision": 0.6811800599098206,
+                "recall": 0.29407998919487,
+                "f2_score": 0.3317897915840149,
+                "binary_accuracy": 0.8802287578582764,
+                "accuracy_enlarged_cardiomediastinum": 0.9507255554199219,
+                "accuracy_cardiomegaly": 0.8905012011528015,
+                "accuracy_lung_opacity": 0.6067613363265991,
+                "accuracy_lung_lesion": 0.9576916098594666,
+                "accuracy_edema": 0.7808243632316589,
+                "accuracy_consolidation": 0.9318303465843201,
+                "accuracy_pneumonia": 0.9727365970611572,
+                "accuracy_atelectasis": 0.8461675643920898,
+                "accuracy_pneumothorax": 0.9101976156234741,
+                "accuracy_pleural_effusion": 0.7734131813049316,
+                "accuracy_pleural_other": 0.9833748936653137,
+                "accuracy_fracture": 0.9585373401641846,
+                "auc_enlarged_cardiomediastinum": 0.6274955868721008,
+                "auc_cardiomegaly": 0.827772855758667,
+                "auc_lung_opacity": 0.70615553855896,
+                "auc_lung_lesion": 0.6908576488494873,
+                "auc_edema": 0.7949528694152832,
+                "auc_consolidation": 0.7065780758857727,
+                "auc_pneumonia": 0.6720331907272339,
+                "auc_atelectasis": 0.6417831778526306,
+                "auc_pneumothorax": 0.7809439301490784,
+                "auc_pleural_effusion": 0.8473460078239441,
+                "auc_pleural_other": 0.7237358093261719,
+                "auc_fracture": 0.6555337309837341,
+                "precision_enlarged_cardiomediastinum": 0.0,
+                "precision_cardiomegaly": 0.6904277205467224,
+                "precision_lung_opacity": 0.6962310671806335,
+                "precision_lung_lesion": 0.0,
+                "precision_edema": 0.6720943450927734,
+                "precision_consolidation": 0.0,
+                "precision_pneumonia": 0.0,
+                "precision_atelectasis": 0.0,
+                "precision_pneumothorax": 0.4641586244106293,
+                "precision_pleural_effusion": 0.6966381072998047,
+                "precision_pleural_other": 0.0,
+                "precision_fracture": 0.0,
+                "recall_enlarged_cardiomediastinum": 0.0,
+                "recall_cardiomegaly": 0.12806951999664307,
+                "recall_lung_opacity": 0.30407053232192993,
+                "recall_lung_lesion": 0.0,
+                "recall_edema": 0.11442500352859497,
+                "recall_consolidation": 0.0,
+                "recall_pneumonia": 0.0,
+                "recall_atelectasis": 0.0,
+                "recall_pneumothorax": 0.23446327447891235,
+                "recall_pleural_effusion": 0.7499433755874634,
+                "recall_pleural_other": 0.0,
+                "recall_fracture": 0.0,
+                "f2_score_enlarged_cardiomediastinum": 0.0,
+                "f2_score_cardiomegaly": 0.1529921442270279,
+                "f2_score_lung_opacity": 0.34267351031303406,
+                "f2_score_lung_lesion": 0.0,
+                "f2_score_edema": 0.1371919810771942,
+                "f2_score_consolidation": 0.0,
+                "f2_score_pneumonia": 0.0,
+                "f2_score_atelectasis": 0.0,
+                "f2_score_pneumothorax": 0.26021772623062134,
+                "f2_score_pleural_effusion": 0.7386395335197449,
+                "f2_score_pleural_other": 0.0,
+                "f2_score_fracture": 0.0
+            },
+            "classification_report": "                            precision    recall  f1-score   support\n\nEnlarged Cardiomediastinum       0.00      0.00      0.00      2214\n              Cardiomegaly       0.12      0.02      0.04      5294\n              Lung Opacity       0.48      0.21      0.29     21324\n               Lung Lesion       0.00      0.00      0.00      1901\n                     Edema       0.24      0.04      0.07     10461\n             Consolidation       0.00      0.00      0.00      3063\n                 Pneumonia       0.00      0.00      0.00      1225\n               Atelectasis       0.00      0.00      0.00      6912\n              Pneumothorax       0.09      0.05      0.06      3894\n          Pleural Effusion       0.39      0.42      0.41     17656\n             Pleural Other       0.00      0.00      0.00       747\n                  Fracture       0.00      0.00      0.00      1863\n\n                 micro avg       0.38      0.17      0.23     76554\n                 macro avg       0.11      0.06      0.07     76554\n              weighted avg       0.27      0.17      0.19     76554\n               samples avg       0.20      0.14      0.15     76554\n",
+            "benchmark": {
+                "benchmark_name": "Chexpert_BCE_E3_B32_C1_N12",
+                "dataset_name": "chexpert_preprocessed-256-crop",
+                "dataset_folder": "data/chexpert/preprocessed-256-crop",
+                "models_dir": "models",
+                "epochs": 3,
+                "optimizer": "Adam",
+                "loss": "binary_crossentropy",
+                "use_class_weights": false,
+                "positive_weights": [
+                    20.890193939208984,
+                    8.25668716430664,
+                    2.119921922683716,
+                    24.21783447265625,
+                    4.291953086853027,
+                    15.158074378967285,
+                    37.438568115234375,
+                    6.671855449676514,
+                    11.325428009033203,
+                    2.607637643814087,
+                    63.78485107421875,
+                    25.04029655456543
+                ],
+                "negative_weights": [
+                    1.0502760410308838,
+                    1.1378039121627808,
+                    1.8929194211959839,
+                    1.0430703163146973,
+                    1.3037710189819336,
+                    1.0706310272216797,
+                    1.0274434089660645,
+                    1.1763091087341309,
+                    1.0968482494354248,
+                    1.6220307350158691,
+                    1.0159274339675903,
+                    1.04159677028656
+                ],
+                "metrics": [
+                    "auc",
+                    "precision",
+                    "recall",
+                    "f2_score",
+                    "binary_accuracy",
+                    "accuracy_enlarged_cardiomediastinum",
+                    "accuracy_cardiomegaly",
+                    "accuracy_lung_opacity",
+                    "accuracy_lung_lesion",
+                    "accuracy_edema",
+                    "accuracy_consolidation",
+                    "accuracy_pneumonia",
+                    "accuracy_atelectasis",
+                    "accuracy_pneumothorax",
+                    "accuracy_pleural_effusion",
+                    "accuracy_pleural_other",
+                    "accuracy_fracture",
+                    "auc_enlarged_cardiomediastinum",
+                    "auc_cardiomegaly",
+                    "auc_lung_opacity",
+                    "auc_lung_lesion",
+                    "auc_edema",
+                    "auc_consolidation",
+                    "auc_pneumonia",
+                    "auc_atelectasis",
+                    "auc_pneumothorax",
+                    "auc_pleural_effusion",
+                    "auc_pleural_other",
+                    "auc_fracture",
+                    "precision_enlarged_cardiomediastinum",
+                    "precision_cardiomegaly",
+                    "precision_lung_opacity",
+                    "precision_lung_lesion",
+                    "precision_edema",
+                    "precision_consolidation",
+                    "precision_pneumonia",
+                    "precision_atelectasis",
+                    "precision_pneumothorax",
+                    "precision_pleural_effusion",
+                    "precision_pleural_other",
+                    "precision_fracture",
+                    "recall_enlarged_cardiomediastinum",
+                    "recall_cardiomegaly",
+                    "recall_lung_opacity",
+                    "recall_lung_lesion",
+                    "recall_edema",
+                    "recall_consolidation",
+                    "recall_pneumonia",
+                    "recall_atelectasis",
+                    "recall_pneumothorax",
+                    "recall_pleural_effusion",
+                    "recall_pleural_other",
+                    "recall_fracture",
+                    "f2_score_enlarged_cardiomediastinum",
+                    "f2_score_cardiomegaly",
+                    "f2_score_lung_opacity",
+                    "f2_score_lung_lesion",
+                    "f2_score_edema",
+                    "f2_score_consolidation",
+                    "f2_score_pneumonia",
+                    "f2_score_atelectasis",
+                    "f2_score_pneumothorax",
+                    "f2_score_pleural_effusion",
+                    "f2_score_pleural_other",
+                    "f2_score_fracture"
+                ],
+                "label_columns": [
+                    "Enlarged Cardiomediastinum",
+                    "Cardiomegaly",
+                    "Lung Opacity",
+                    "Lung Lesion",
+                    "Edema",
+                    "Consolidation",
+                    "Pneumonia",
+                    "Atelectasis",
+                    "Pneumothorax",
+                    "Pleural Effusion",
+                    "Pleural Other",
+                    "Fracture"
+                ],
+                "path_column": "Path",
+                "path_column_prefix": "",
+                "shuffle": true,
+                "batch_size": 32,
+                "dim": [
+                    256,
+                    256
+                ],
+                "crop": false,
+                "n_channels": 3,
+                "nan_replacement": 0,
+                "unc_value": -1,
+                "u_enc": "uzeroes",
+                "drop_last": true,
+                "train_num_samples": 142320,
+                "valid_num_samples": 36162,
+                "test_num_samples": 44932,
+                "split_seed": 6122156
+            }
+        },
+        {
+            "id": "8a6c4dd4-d4ad-11ea-8da5-0242ac110004",
+            "name": "DenseNet121_Chexpert_CWBCE_E5_B32_C0_N12_D256_Masked_NoFinding",
+            "filename": "DenseNet121_Chexpert_CWBCE_E5_B32_C0_N12_D256_Masked_NoFinding_20200802-104720.h5",
+            "version": "1",
+            "history": {
+                "loss": [
+                    1.1400980949401855,
+                    1.0897248983383179,
+                    1.064443588256836,
+                    1.0473785400390625,
+                    1.0351979732513428
+                ],
+                "auc": [
+                    0.584868848323822,
+                    0.6165192723274231,
+                    0.6370304226875305,
+                    0.6496514081954956,
+                    0.659353494644165
+                ],
+                "precision": [
+                    0.17147965729236603,
+                    0.176235169172287,
+                    0.1817133128643036,
+                    0.18484222888946533,
+                    0.18809130787849426
+                ],
+                "recall": [
+                    0.7947125434875488,
+                    0.8168900609016418,
+                    0.8205533623695374,
+                    0.8254818320274353,
+                    0.8277952075004578
+                ],
+                "f2_score": [
+                    0.46019914746284485,
+                    0.47299855947494507,
+                    0.48179149627685547,
+                    0.4875349700450897,
+                    0.49267494678497314
+                ],
+                "binary_accuracy": [
+                    0.43202701210975647,
+                    0.43814969062805176,
+                    0.4559638500213623,
+                    0.46436595916748047,
+                    0.47412461042404175
+                ],
+                "accuracy_enlarged_cardiomediastinum": [
+                    0.32871881127357483,
+                    0.3150297999382019,
+                    0.3324010670185089,
+                    0.3381985127925873,
+                    0.3513745367527008
+                ],
+                "accuracy_cardiomegaly": [
+                    0.4468461871147156,
+                    0.5104494690895081,
+                    0.5691899061203003,
+                    0.5836589336395264,
+                    0.5980857610702515
+                ],
+                "accuracy_lung_opacity": [
+                    0.6244940161705017,
+                    0.6296238899230957,
+                    0.6348029375076294,
+                    0.635990560054779,
+                    0.6358640789985657
+                ],
+                "accuracy_lung_lesion": [
+                    0.27988672256469727,
+                    0.27843910455703735,
+                    0.2848268449306488,
+                    0.28980210423469543,
+                    0.29278165102005005
+                ],
+                "accuracy_edema": [
+                    0.5884795784950256,
+                    0.6101515293121338,
+                    0.629033625125885,
+                    0.6318796277046204,
+                    0.6380916833877563
+                ],
+                "accuracy_consolidation": [
+                    0.45874324440956116,
+                    0.455398291349411,
+                    0.4580194652080536,
+                    0.4691505432128906,
+                    0.4770561754703522
+                ],
+                "accuracy_pneumonia": [
+                    0.36354565620422363,
+                    0.3218461871147156,
+                    0.33772769570350647,
+                    0.3534686267375946,
+                    0.36919552087783813
+                ],
+                "accuracy_atelectasis": [
+                    0.397641658782959,
+                    0.36903390288352966,
+                    0.38391754031181335,
+                    0.3835661709308624,
+                    0.40029793977737427
+                ],
+                "accuracy_pneumothorax": [
+                    0.4636271595954895,
+                    0.529071569442749,
+                    0.5883671641349792,
+                    0.6111353039741516,
+                    0.6250773072242737
+                ],
+                "accuracy_pleural_effusion": [
+                    0.6819133758544922,
+                    0.7092702984809875,
+                    0.722228467464447,
+                    0.728967547416687,
+                    0.7338585257530212
+                ],
+                "accuracy_pleural_other": [
+                    0.30464357137680054,
+                    0.2975742220878601,
+                    0.31168484687805176,
+                    0.3289507031440735,
+                    0.35048907995224
+                ],
+                "accuracy_fracture": [
+                    0.24578367173671722,
+                    0.23190493881702423,
+                    0.21936839818954468,
+                    0.21762564778327942,
+                    0.21732348203659058
+                ],
+                "auc_enlarged_cardiomediastinum": [
+                    0.490249365568161,
+                    0.508947491645813,
+                    0.5251861214637756,
+                    0.5375869274139404,
+                    0.5451568961143494
+                ],
+                "auc_cardiomegaly": [
+                    0.6418617367744446,
+                    0.7188071608543396,
+                    0.75694739818573,
+                    0.7695142030715942,
+                    0.7795518040657043
+                ],
+                "auc_lung_opacity": [
+                    0.6748542189598083,
+                    0.683380663394928,
+                    0.6894363164901733,
+                    0.6929270029067993,
+                    0.6950592398643494
+                ],
+                "auc_lung_lesion": [
+                    0.4454386532306671,
+                    0.48990994691848755,
+                    0.5185713768005371,
+                    0.5350303649902344,
+                    0.5480839014053345
+                ],
+                "auc_edema": [
+                    0.7366303205490112,
+                    0.7598530650138855,
+                    0.7712900042533875,
+                    0.7770736217498779,
+                    0.7816688418388367
+                ],
+                "auc_consolidation": [
+                    0.6533892154693604,
+                    0.6686292886734009,
+                    0.675548791885376,
+                    0.6848899722099304,
+                    0.6904706358909607
+                ],
+                "auc_pneumonia": [
+                    0.526467502117157,
+                    0.5615090131759644,
+                    0.5978853106498718,
+                    0.6212833523750305,
+                    0.6376604437828064
+                ],
+                "auc_atelectasis": [
+                    0.5690984129905701,
+                    0.5670418739318848,
+                    0.5932263731956482,
+                    0.6051432490348816,
+                    0.6144925951957703
+                ],
+                "auc_pneumothorax": [
+                    0.6353291869163513,
+                    0.695801854133606,
+                    0.7230616211891174,
+                    0.7416372895240784,
+                    0.755396842956543
+                ],
+                "auc_pleural_effusion": [
+                    0.7799860835075378,
+                    0.8097191452980042,
+                    0.825839638710022,
+                    0.8364987969398499,
+                    0.8418734073638916
+                ],
+                "auc_pleural_other": [
+                    0.4794144034385681,
+                    0.5471919775009155,
+                    0.5778630375862122,
+                    0.6016688942909241,
+                    0.6213376522064209
+                ],
+                "auc_fracture": [
+                    0.38570716977119446,
+                    0.3874403238296509,
+                    0.3895089328289032,
+                    0.39256325364112854,
+                    0.4014900028705597
+                ],
+                "precision_enlarged_cardiomediastinum": [
+                    0.046988777816295624,
+                    0.04852299764752388,
+                    0.0490109845995903,
+                    0.05018843710422516,
+                    0.05091245099902153
+                ],
+                "precision_cardiomegaly": [
+                    0.1545584350824356,
+                    0.17605625092983246,
+                    0.19619739055633545,
+                    0.2024054080247879,
+                    0.20908865332603455
+                ],
+                "precision_lung_opacity": [
+                    0.5739243030548096,
+                    0.5767560005187988,
+                    0.5804636478424072,
+                    0.580856204032898,
+                    0.5805023312568665
+                ],
+                "precision_lung_lesion": [
+                    0.03740134835243225,
+                    0.039440881460905075,
+                    0.04084271192550659,
+                    0.04147518798708916,
+                    0.04238016530871391
+                ],
+                "precision_edema": [
+                    0.3417902886867523,
+                    0.3558903932571411,
+                    0.3684443235397339,
+                    0.37095433473587036,
+                    0.375845730304718
+                ],
+                "precision_consolidation": [
+                    0.09013671427965164,
+                    0.09202755242586136,
+                    0.09298916161060333,
+                    0.09486538916826248,
+                    0.09648153930902481
+                ],
+                "precision_pneumonia": [
+                    0.027808312326669693,
+                    0.02924986369907856,
+                    0.030677903443574905,
+                    0.03161774203181267,
+                    0.03244825080037117
+                ],
+                "precision_atelectasis": [
+                    0.1715349704027176,
+                    0.1711815595626831,
+                    0.17425760626792908,
+                    0.1747959852218628,
+                    0.17714406549930573
+                ],
+                "precision_pneumothorax": [
+                    0.11273884773254395,
+                    0.1293432116508484,
+                    0.14423567056655884,
+                    0.1528433859348297,
+                    0.1589457094669342
+                ],
+                "precision_pleural_effusion": [
+                    0.5556858777999878,
+                    0.5805577039718628,
+                    0.5932385921478271,
+                    0.5998377203941345,
+                    0.604421854019165
+                ],
+                "precision_pleural_other": [
+                    0.0148570965975523,
+                    0.01601608470082283,
+                    0.01689765602350235,
+                    0.017596855759620667,
+                    0.018594423308968544
+                ],
+                "precision_fracture": [
+                    0.0339990109205246,
+                    0.03430050611495972,
+                    0.035190150141716,
+                    0.0353747233748436,
+                    0.03551684319972992
+                ],
+                "recall_enlarged_cardiomediastinum": [
+                    0.675524890422821,
+                    0.7152084708213806,
+                    0.7034644484519958,
+                    0.7156071066856384,
+                    0.711496114730835
+                ],
+                "recall_cardiomegaly": [
+                    0.7980272769927979,
+                    0.8265839219093323,
+                    0.8255496621131897,
+                    0.8291550874710083,
+                    0.8331882953643799
+                ],
+                "recall_lung_opacity": [
+                    0.7918187379837036,
+                    0.8070940971374512,
+                    0.8145808577537537,
+                    0.8200521469116211,
+                    0.8222298622131348
+                ],
+                "recall_lung_lesion": [
+                    0.6644546389579773,
+                    0.7052918076515198,
+                    0.725710391998291,
+                    0.7325165867805481,
+                    0.7466394305229187
+                ],
+                "recall_edema": [
+                    0.8276631832122803,
+                    0.8313376307487488,
+                    0.8293720483779907,
+                    0.8339114785194397,
+                    0.8378329277038574
+                ],
+                "recall_consolidation": [
+                    0.7920971512794495,
+                    0.8182786703109741,
+                    0.8242437243461609,
+                    0.8248136043548584,
+                    0.8279020190238953
+                ],
+                "recall_pneumonia": [
+                    0.6721915006637573,
+                    0.7574960589408875,
+                    0.7778947353363037,
+                    0.7830089330673218,
+                    0.784793496131897
+                ],
+                "recall_atelectasis": [
+                    0.7882695198059082,
+                    0.8354821801185608,
+                    0.8319658637046814,
+                    0.8365997672080994,
+                    0.8233777284622192
+                ],
+                "recall_pneumothorax": [
+                    0.7385215163230896,
+                    0.7559481263160706,
+                    0.7422409653663635,
+                    0.7491247653961182,
+                    0.7562664151191711
+                ],
+                "recall_pleural_effusion": [
+                    0.8507027626037598,
+                    0.8713898062705994,
+                    0.876910388469696,
+                    0.8807337880134583,
+                    0.8853089809417725
+                ],
+                "recall_pleural_other": [
+                    0.6638278961181641,
+                    0.7247871160507202,
+                    0.7503361701965332,
+                    0.7627802491188049,
+                    0.7818671464920044
+                ],
+                "recall_fracture": [
+                    0.6525871157646179,
+                    0.6714763045310974,
+                    0.7020939588546753,
+                    0.7078493237495422,
+                    0.7110680937767029
+                ],
+                "f2_score_enlarged_cardiomediastinum": [
+                    0.1838032752275467,
+                    0.1908283531665802,
+                    0.1916462779045105,
+                    0.19596649706363678,
+                    0.19791385531425476
+                ],
+                "f2_score_cardiomegaly": [
+                    0.43544885516166687,
+                    0.4753214418888092,
+                    0.5029086470603943,
+                    0.5120449662208557,
+                    0.5217303037643433
+                ],
+                "f2_score_lung_opacity": [
+                    0.7359379529953003,
+                    0.7473968267440796,
+                    0.753777027130127,
+                    0.7576520442962646,
+                    0.7590172290802002
+                ],
+                "f2_score_lung_lesion": [
+                    0.1526392251253128,
+                    0.16115613281726837,
+                    0.16668882966041565,
+                    0.16908212006092072,
+                    0.1726919710636139
+                ],
+                "f2_score_edema": [
+                    0.6444417238235474,
+                    0.6560494899749756,
+                    0.6633904576301575,
+                    0.6673409938812256,
+                    0.6725051403045654
+                ],
+                "f2_score_consolidation": [
+                    0.3097098469734192,
+                    0.31736719608306885,
+                    0.3203716278076172,
+                    0.32486870884895325,
+                    0.3290303349494934
+                ],
+                "f2_score_pneumonia": [
+                    0.1192999929189682,
+                    0.12668250501155853,
+                    0.13248951733112335,
+                    0.13610510528087616,
+                    0.13921688497066498
+                ],
+                "f2_score_atelectasis": [
+                    0.45854222774505615,
+                    0.47039324045181274,
+                    0.474090039730072,
+                    0.47609004378318787,
+                    0.47604721784591675
+                ],
+                "f2_score_pneumothorax": [
+                    0.3499860167503357,
+                    0.3839438855648041,
+                    0.40577226877212524,
+                    0.4207971692085266,
+                    0.4317566454410553
+                ],
+                "f2_score_pleural_effusion": [
+                    0.7690446972846985,
+                    0.7920352220535278,
+                    0.8003672361373901,
+                    0.8053106069564819,
+                    0.810022234916687
+                ],
+                "f2_score_pleural_other": [
+                    0.068181611597538,
+                    0.0735769271850586,
+                    0.07750646024942398,
+                    0.08055121451616287,
+                    0.08489609509706497
+                ],
+                "f2_score_fracture": [
+                    0.14067836105823517,
+                    0.14240506291389465,
+                    0.14656616747379303,
+                    0.14740701019763947,
+                    0.1480122208595276
+                ],
+                "learning rate": [
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513
+                ],
+                "val_loss": [
+                    1.1220908164978027,
+                    1.1251158714294434,
+                    1.1015405654907227,
+                    1.1231070756912231,
+                    1.354836344718933
+                ],
+                "val_auc": [
+                    0.6044699549674988,
+                    0.6233913898468018,
+                    0.6375763416290283,
+                    0.6529214382171631,
+                    0.6162371039390564
+                ],
+                "val_precision": [
+                    0.17743775248527527,
+                    0.1831672042608261,
+                    0.18864697217941284,
+                    0.18570800125598907,
+                    0.15420931577682495
+                ],
+                "val_recall": [
+                    0.7925102114677429,
+                    0.7277507781982422,
+                    0.7304083704948425,
+                    0.8608614206314087,
+                    0.7096350193023682
+                ],
+                "val_f2_score": [
+                    0.4680319130420685,
+                    0.45637595653533936,
+                    0.46393826603889465,
+                    0.4984395503997803,
+                    0.41249388456344604
+                ],
+                "val_binary_accuracy": [
+                    0.45564618706703186,
+                    0.5066604018211365,
+                    0.5216240286827087,
+                    0.45112234354019165,
+                    0.4134657084941864
+                ],
+                "val_accuracy_enlarged_cardiomediastinum": [
+                    0.2720962464809418,
+                    0.2788163721561432,
+                    0.35793694853782654,
+                    0.23503871262073517,
+                    0.19610066711902618
+                ],
+                "val_accuracy_cardiomegaly": [
+                    0.35058075189590454,
+                    0.48183074593544006,
+                    0.6033738851547241,
+                    0.41120022535324097,
+                    0.8714048862457275
+                ],
+                "val_accuracy_lung_opacity": [
+                    0.6358960270881653,
+                    0.647898256778717,
+                    0.6525719165802002,
+                    0.612112820148468,
+                    0.6160121560096741
+                ],
+                "val_accuracy_lung_lesion": [
+                    0.3233407139778137,
+                    0.4287610650062561,
+                    0.3979535400867462,
+                    0.2663440406322479,
+                    0.18788716197013855
+                ],
+                "val_accuracy_edema": [
+                    0.5602046251296997,
+                    0.6028208136558533,
+                    0.6765763163566589,
+                    0.5428650379180908,
+                    0.7449944615364075
+                ],
+                "val_accuracy_consolidation": [
+                    0.5391039848327637,
+                    0.5912887454032898,
+                    0.541675865650177,
+                    0.38747233152389526,
+                    0.6126659512519836
+                ],
+                "val_accuracy_pneumonia": [
+                    0.4065265357494354,
+                    0.4113108515739441,
+                    0.45016592741012573,
+                    0.3137721121311188,
+                    0.45691370964050293
+                ],
+                "val_accuracy_atelectasis": [
+                    0.35517147183418274,
+                    0.38194137811660767,
+                    0.42867809534072876,
+                    0.37751659750938416,
+                    0.20445244014263153
+                ],
+                "val_accuracy_pneumothorax": [
+                    0.7077433466911316,
+                    0.7785398364067078,
+                    0.6637167930603027,
+                    0.8642975687980652,
+                    0.09701327234506607
+                ],
+                "val_accuracy_pleural_effusion": [
+                    0.7025719285011292,
+                    0.7508019804954529,
+                    0.7618916034698486,
+                    0.6514104008674622,
+                    0.7331581711769104
+                ],
+                "val_accuracy_pleural_other": [
+                    0.3555033206939697,
+                    0.48600664734840393,
+                    0.42146018147468567,
+                    0.5584070682525635,
+                    0.15920907258987427
+                ],
+                "val_accuracy_fracture": [
+                    0.2590155005455017,
+                    0.2399059683084488,
+                    0.3034844994544983,
+                    0.1930309683084488,
+                    0.08177544176578522
+                ],
+                "val_auc_enlarged_cardiomediastinum": [
+                    0.4995584785938263,
+                    0.5220455527305603,
+                    0.5253891348838806,
+                    0.5409401655197144,
+                    0.5099109411239624
+                ],
+                "val_auc_cardiomegaly": [
+                    0.6657084226608276,
+                    0.7427489161491394,
+                    0.7473676204681396,
+                    0.7615818381309509,
+                    0.6488984227180481
+                ],
+                "val_auc_lung_opacity": [
+                    0.6860136389732361,
+                    0.6938034296035767,
+                    0.7012916803359985,
+                    0.6925207376480103,
+                    0.6911227107048035
+                ],
+                "val_auc_lung_lesion": [
+                    0.47687479853630066,
+                    0.49789896607398987,
+                    0.5078064799308777,
+                    0.5462327003479004,
+                    0.4959828853607178
+                ],
+                "val_auc_edema": [
+                    0.7511335015296936,
+                    0.772068440914154,
+                    0.7700010538101196,
+                    0.7717220783233643,
+                    0.6967084407806396
+                ],
+                "val_auc_consolidation": [
+                    0.6668844819068909,
+                    0.6774318814277649,
+                    0.6813464760780334,
+                    0.6724267601966858,
+                    0.6906789541244507
+                ],
+                "val_auc_pneumonia": [
+                    0.5350384712219238,
+                    0.5647073984146118,
+                    0.5833966135978699,
+                    0.5907028913497925,
+                    0.5666021704673767
+                ],
+                "val_auc_atelectasis": [
+                    0.5668696761131287,
+                    0.5695428252220154,
+                    0.588262140750885,
+                    0.6101756691932678,
+                    0.6066123247146606
+                ],
+                "val_auc_pneumothorax": [
+                    0.6625549793243408,
+                    0.627005934715271,
+                    0.7053177356719971,
+                    0.7060086131095886,
+                    0.714734673500061
+                ],
+                "val_auc_pleural_effusion": [
+                    0.7926768660545349,
+                    0.8230051398277283,
+                    0.8365887999534607,
+                    0.8285977244377136,
+                    0.8227248787879944
+                ],
+                "val_auc_pleural_other": [
+                    0.5500905513763428,
+                    0.5732084512710571,
+                    0.5920708775520325,
+                    0.7019397616386414,
+                    0.5327271223068237
+                ],
+                "val_auc_fracture": [
+                    0.400235116481781,
+                    0.4172290563583374,
+                    0.41207730770111084,
+                    0.4122077226638794,
+                    0.41814133524894714
+                ],
+                "val_precision_enlarged_cardiomediastinum": [
+                    0.048416171222925186,
+                    0.049488432705402374,
+                    0.05017409846186638,
+                    0.05089685320854187,
+                    0.04936111345887184
+                ],
+                "val_precision_cardiomegaly": [
+                    0.14754949510097504,
+                    0.17457348108291626,
+                    0.2056877166032791,
+                    0.16366761922836304,
+                    0.3468013405799866
+                ],
+                "val_precision_lung_opacity": [
+                    0.5872519016265869,
+                    0.612549364566803,
+                    0.6135265827178955,
+                    0.5565544962882996,
+                    0.5597886443138123
+                ],
+                "val_precision_lung_lesion": [
+                    0.03515562042593956,
+                    0.03668399900197983,
+                    0.03722727298736572,
+                    0.038165975362062454,
+                    0.03913358971476555
+                ],
+                "val_precision_edema": [
+                    0.3369345963001251,
+                    0.361135333776474,
+                    0.4039689600467682,
+                    0.33367007970809937,
+                    0.41273099184036255
+                ],
+                "val_precision_consolidation": [
+                    0.09383499622344971,
+                    0.10040444135665894,
+                    0.09971334040164948,
+                    0.08625944703817368,
+                    0.10495331138372421
+                ],
+                "val_precision_pneumonia": [
+                    0.029195062816143036,
+                    0.031040385365486145,
+                    0.03213329240679741,
+                    0.030495502054691315,
+                    0.03149210289120674
+                ],
+                "val_precision_atelectasis": [
+                    0.16061963140964508,
+                    0.16115573048591614,
+                    0.16150693595409393,
+                    0.1665899157524109,
+                    0.149222269654274
+                ],
+                "val_precision_pneumothorax": [
+                    0.14242595434188843,
+                    0.1483193337917328,
+                    0.14688222110271454,
+                    0.211994007229805,
+                    0.08360002189874649
+                ],
+                "val_precision_pleural_effusion": [
+                    0.5787273645401001,
+                    0.6597738265991211,
+                    0.6623156070709229,
+                    0.526949942111969,
+                    0.6136351823806763
+                ],
+                "val_precision_pleural_other": [
+                    0.016362091526389122,
+                    0.01681932620704174,
+                    0.016699085012078285,
+                    0.024597743526101112,
+                    0.016077795997262
+                ],
+                "val_precision_fracture": [
+                    0.035779815167188644,
+                    0.03727968782186508,
+                    0.03592415526509285,
+                    0.03798144310712814,
+                    0.04139307513833046
+                ],
+                "val_recall_enlarged_cardiomediastinum": [
+                    0.7426636815071106,
+                    0.7533860206604004,
+                    0.6749435663223267,
+                    0.8278781175613403,
+                    0.8436794877052307
+                ],
+                "val_recall_cardiomegaly": [
+                    0.8905795216560364,
+                    0.856343686580658,
+                    0.7719847559928894,
+                    0.9158648252487183,
+                    0.04610564187169075
+                ],
+                "val_recall_lung_opacity": [
+                    0.7775376439094543,
+                    0.6978332996368408,
+                    0.7194837331771851,
+                    0.8894924521446228,
+                    0.8848198056221008
+                ],
+                "val_recall_lung_lesion": [
+                    0.6193181872367859,
+                    0.5411931872367859,
+                    0.5816761255264282,
+                    0.7372159361839294,
+                    0.8430397510528564
+                ],
+                "val_recall_edema": [
+                    0.8711172938346863,
+                    0.8641631603240967,
+                    0.74800044298172,
+                    0.9188594222068787,
+                    0.16311152279376984
+                ],
+                "val_recall_consolidation": [
+                    0.7107295989990234,
+                    0.6712446212768555,
+                    0.7613734006881714,
+                    0.8866952657699585,
+                    0.6656652092933655
+                ],
+                "val_recall_pneumonia": [
+                    0.6264821887016296,
+                    0.6630434989929199,
+                    0.6403161883354187,
+                    0.7638339996337891,
+                    0.6185770630836487
+                ],
+                "val_recall_atelectasis": [
+                    0.8383011817932129,
+                    0.7975842356681824,
+                    0.7216053009033203,
+                    0.8457042574882507,
+                    0.9793493151664734
+                ],
+                "val_recall_pneumothorax": [
+                    0.505693256855011,
+                    0.35465505719184875,
+                    0.6389819383621216,
+                    0.2367715984582901,
+                    0.997320830821991
+                ],
+                "val_recall_pleural_effusion": [
+                    0.8432328104972839,
+                    0.7315849661827087,
+                    0.7816149592399597,
+                    0.9464029669761658,
+                    0.8332616686820984
+                ],
+                "val_recall_pleural_other": [
+                    0.7064220309257507,
+                    0.5761467814445496,
+                    0.6458715796470642,
+                    0.7321100831031799,
+                    0.910091757774353
+                ],
+                "val_recall_fracture": [
+                    0.6526104211807251,
+                    0.7008032202720642,
+                    0.6137884855270386,
+                    0.7617135047912598,
+                    0.9578313231468201
+                ],
+                "val_f2_score_enlarged_cardiomediastinum": [
+                    0.19201025366783142,
+                    0.19595468044281006,
+                    0.19337104260921478,
+                    0.20425496995449066,
+                    0.20000001788139343
+                ],
+                "val_f2_score_cardiomegaly": [
+                    0.44370126724243164,
+                    0.4808030128479004,
+                    0.49784988164901733,
+                    0.47721758484840393,
+                    0.05577819421887398
+                ],
+                "val_f2_score_lung_opacity": [
+                    0.7302156686782837,
+                    0.6789281368255615,
+                    0.6954622268676758,
+                    0.7944432497024536,
+                    0.7927595376968384
+                ],
+                "val_f2_score_lung_lesion": [
+                    0.14325140416622162,
+                    0.1442963182926178,
+                    0.148197740316391,
+                    0.1580919325351715,
+                    0.16502612829208374
+                ],
+                "val_f2_score_edema": [
+                    0.6613984704017639,
+                    0.6758766174316406,
+                    0.6391386985778809,
+                    0.6802540421485901,
+                    0.18555639684200287
+                ],
+                "val_f2_score_consolidation": [
+                    0.3070305585861206,
+                    0.31409406661987305,
+                    0.32717347145080566,
+                    0.31048059463500977,
+                    0.3218109607696533
+                ],
+                "val_f2_score_pneumonia": [
+                    0.12303990125656128,
+                    0.1307227909564972,
+                    0.13380688428878784,
+                    0.13148047029972076,
+                    0.13082003593444824
+                ],
+                "val_f2_score_atelectasis": [
+                    0.4546511173248291,
+                    0.44562000036239624,
+                    0.4260801672935486,
+                    0.46587246656417847,
+                    0.46357429027557373
+                ],
+                "val_f2_score_pneumothorax": [
+                    0.33487096428871155,
+                    0.2774575650691986,
+                    0.38261011242866516,
+                    0.23136329650878906,
+                    0.31303870677948
+                ],
+                "val_f2_score_pleural_effusion": [
+                    0.7726091146469116,
+                    0.7159987688064575,
+                    0.7544363737106323,
+                    0.81642746925354,
+                    0.7775994539260864
+                ],
+                "val_f2_score_pleural_other": [
+                    0.07487359642982483,
+                    0.07530336827039719,
+                    0.07566963136196136,
+                    0.10841801762580872,
+                    0.07508325576782227
+                ],
+                "val_f2_score_fracture": [
+                    0.1467224359512329,
+                    0.15369485318660736,
+                    0.1455463171005249,
+                    0.15832823514938354,
+                    0.17646187543869019
+                ],
+                "lr": [
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513
+                ]
+            },
+            "description": "Trained DenseNet121 architecture using the 'Chexpert_CWBCE_E5_B32_C0_N12_D256_Masked_NoFinding' benchmark. The benchmark was initialized for the chexpert_full dataset with batch size of 32, shuffle set to True and images rescaled to dimension (256, 256).\nThe training was done for 5 epochs using the Adam optimizer and weighted_binary_crossentropy loss.\nA total of 12 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 142320 number of sample, the validation set 36162, and the test set 44932. ",
+            "test": {
+                "auc": 0.617991030216217,
+                "precision": 0.1574753373861313,
+                "recall": 0.718407928943634,
+                "f2_score": 0.41953110694885254,
+                "binary_accuracy": 0.41429322957992554,
+                "accuracy_enlarged_cardiomediastinum": 0.1953618824481964,
+                "accuracy_cardiomegaly": 0.8748775720596313,
+                "accuracy_lung_opacity": 0.6179782748222351,
+                "accuracy_lung_lesion": 0.18841806054115295,
+                "accuracy_edema": 0.7437238693237305,
+                "accuracy_consolidation": 0.6109899282455444,
+                "accuracy_pneumonia": 0.455755352973938,
+                "accuracy_atelectasis": 0.21394552290439606,
+                "accuracy_pneumothorax": 0.10150894522666931,
+                "accuracy_pleural_effusion": 0.7284340858459473,
+                "accuracy_pleural_other": 0.15799430012702942,
+                "accuracy_fracture": 0.08256921917200089,
+                "auc_enlarged_cardiomediastinum": 0.5088314414024353,
+                "auc_cardiomegaly": 0.6645708680152893,
+                "auc_lung_opacity": 0.6906000971794128,
+                "auc_lung_lesion": 0.5080466270446777,
+                "auc_edema": 0.6834651231765747,
+                "auc_consolidation": 0.6840184330940247,
+                "auc_pneumonia": 0.5935426950454712,
+                "auc_atelectasis": 0.6020093560218811,
+                "auc_pneumothorax": 0.7039108276367188,
+                "auc_pleural_effusion": 0.818939745426178,
+                "auc_pleural_other": 0.5319847464561462,
+                "auc_fracture": 0.42597246170043945,
+                "precision_enlarged_cardiomediastinum": 0.0494849756360054,
+                "precision_cardiomegaly": 0.2939698398113251,
+                "precision_lung_opacity": 0.561536431312561,
+                "precision_lung_lesion": 0.04318980872631073,
+                "precision_edema": 0.375,
+                "precision_consolidation": 0.10915301740169525,
+                "precision_pneumonia": 0.03286007419228554,
+                "precision_atelectasis": 0.16142642498016357,
+                "precision_pneumothorax": 0.08778393268585205,
+                "precision_pleural_effusion": 0.6134359240531921,
+                "precision_pleural_other": 0.01801310107111931,
+                "precision_fracture": 0.04151620343327522,
+                "recall_enlarged_cardiomediastinum": 0.8419150710105896,
+                "recall_cardiomegaly": 0.04420098289847374,
+                "recall_lung_opacity": 0.8898892998695374,
+                "recall_lung_lesion": 0.8595476150512695,
+                "recall_edema": 0.15113277733325958,
+                "recall_consolidation": 0.6571988463401794,
+                "recall_pneumonia": 0.6669387817382812,
+                "recall_atelectasis": 0.9797453880310059,
+                "recall_pneumothorax": 0.9974319338798523,
+                "recall_pleural_effusion": 0.8352401256561279,
+                "recall_pleural_other": 0.9277108311653137,
+                "recall_fracture": 0.95652174949646,
+                "f2_score_enlarged_cardiomediastinum": 0.20032671093940735,
+                "f2_score_cardiomegaly": 0.05324959009885788,
+                "f2_score_lung_opacity": 0.7967150211334229,
+                "f2_score_lung_lesion": 0.17980940639972687,
+                "f2_score_edema": 0.17162397503852844,
+                "f2_score_consolidation": 0.327914297580719,
+                "f2_score_pneumonia": 0.13725095987319946,
+                "f2_score_atelectasis": 0.48650121688842773,
+                "f2_score_pneumothorax": 0.32463517785072327,
+                "f2_score_pleural_effusion": 0.7789127826690674,
+                "f2_score_pleural_other": 0.08357453346252441,
+                "f2_score_fracture": 0.17687344551086426
+            },
+            "classification_report": "                            precision    recall  f1-score   support\n\nEnlarged Cardiomediastinum       0.05      0.84      0.09      2214\n              Cardiomegaly       0.11      0.02      0.03      5294\n              Lung Opacity       0.47      0.75      0.58     21324\n               Lung Lesion       0.04      0.83      0.08      1901\n                     Edema       0.24      0.10      0.14     10461\n             Consolidation       0.07      0.43      0.12      3063\n                 Pneumonia       0.03      0.53      0.05      1225\n               Atelectasis       0.15      0.93      0.26      6912\n              Pneumothorax       0.09      0.99      0.16      3894\n          Pleural Effusion       0.39      0.54      0.45     17656\n             Pleural Other       0.02      0.86      0.03       747\n                  Fracture       0.04      0.96      0.08      1863\n\n                 micro avg       0.13      0.58      0.21     76554\n                 macro avg       0.14      0.65      0.17     76554\n              weighted avg       0.29      0.58      0.33     76554\n               samples avg       0.12      0.49      0.18     76554\n",
+            "benchmark": {
+                "benchmark_name": "Chexpert_CWBCE_E5_B32_C0_N12_D256_Masked_NoFinding",
+                "dataset_name": "chexpert_full",
+                "dataset_folder": "data/chexpert/full",
+                "models_dir": "models",
+                "epochs": 5,
+                "optimizer": "Adam",
+                "loss": "weighted_binary_crossentropy",
+                "use_class_weights": false,
+                "positive_weights": [
+                    5.49075174331665,
+                    2.4165940284729004,
+                    1.3061853647232056,
+                    3.6877658367156982,
+                    1.996018648147583,
+                    5.710649490356445,
+                    8.164649963378906,
+                    2.7000467777252197,
+                    4.474773406982422,
+                    1.6808576583862305,
+                    8.232182502746582,
+                    3.7327115535736084
+                ],
+                "negative_weights": [
+                    1.222679853439331,
+                    1.705918550491333,
+                    4.265995025634766,
+                    1.372056245803833,
+                    2.003997325897217,
+                    1.2122849225997925,
+                    1.1395741701126099,
+                    1.5882190465927124,
+                    1.2877885103225708,
+                    2.468735694885254,
+                    1.1382708549499512,
+                    1.3659368753433228
+                ],
+                "metrics": [
+                    "auc",
+                    "precision",
+                    "recall",
+                    "f2_score",
+                    "binary_accuracy",
+                    "accuracy_enlarged_cardiomediastinum",
+                    "accuracy_cardiomegaly",
+                    "accuracy_lung_opacity",
+                    "accuracy_lung_lesion",
+                    "accuracy_edema",
+                    "accuracy_consolidation",
+                    "accuracy_pneumonia",
+                    "accuracy_atelectasis",
+                    "accuracy_pneumothorax",
+                    "accuracy_pleural_effusion",
+                    "accuracy_pleural_other",
+                    "accuracy_fracture",
+                    "auc_enlarged_cardiomediastinum",
+                    "auc_cardiomegaly",
+                    "auc_lung_opacity",
+                    "auc_lung_lesion",
+                    "auc_edema",
+                    "auc_consolidation",
+                    "auc_pneumonia",
+                    "auc_atelectasis",
+                    "auc_pneumothorax",
+                    "auc_pleural_effusion",
+                    "auc_pleural_other",
+                    "auc_fracture",
+                    "precision_enlarged_cardiomediastinum",
+                    "precision_cardiomegaly",
+                    "precision_lung_opacity",
+                    "precision_lung_lesion",
+                    "precision_edema",
+                    "precision_consolidation",
+                    "precision_pneumonia",
+                    "precision_atelectasis",
+                    "precision_pneumothorax",
+                    "precision_pleural_effusion",
+                    "precision_pleural_other",
+                    "precision_fracture",
+                    "recall_enlarged_cardiomediastinum",
+                    "recall_cardiomegaly",
+                    "recall_lung_opacity",
+                    "recall_lung_lesion",
+                    "recall_edema",
+                    "recall_consolidation",
+                    "recall_pneumonia",
+                    "recall_atelectasis",
+                    "recall_pneumothorax",
+                    "recall_pleural_effusion",
+                    "recall_pleural_other",
+                    "recall_fracture",
+                    "f2_score_enlarged_cardiomediastinum",
+                    "f2_score_cardiomegaly",
+                    "f2_score_lung_opacity",
+                    "f2_score_lung_lesion",
+                    "f2_score_edema",
+                    "f2_score_consolidation",
+                    "f2_score_pneumonia",
+                    "f2_score_atelectasis",
+                    "f2_score_pneumothorax",
+                    "f2_score_pleural_effusion",
+                    "f2_score_pleural_other",
+                    "f2_score_fracture"
+                ],
+                "label_columns": [
+                    "Enlarged Cardiomediastinum",
+                    "Cardiomegaly",
+                    "Lung Opacity",
+                    "Lung Lesion",
+                    "Edema",
+                    "Consolidation",
+                    "Pneumonia",
+                    "Atelectasis",
+                    "Pneumothorax",
+                    "Pleural Effusion",
+                    "Pleural Other",
+                    "Fracture"
+                ],
+                "path_column": "Path",
+                "path_column_prefix": "",
+                "shuffle": true,
+                "batch_size": 32,
+                "dim": [
+                    256,
+                    256
+                ],
+                "crop": false,
+                "n_channels": 3,
+                "nan_replacement": -1,
+                "unc_value": -1,
+                "u_enc": "uzeroes",
+                "drop_last": true,
+                "train_num_samples": 142320,
+                "valid_num_samples": 36162,
+                "test_num_samples": 44932,
+                "split_seed": 6122156
+            }
+        },
+        {
+            "id": "04ee235a-d645-11ea-99df-0242ac110004",
+            "name": "DenseNet121_Chexpert_CWBCE_E9_B32_C0_N12_D320_Masked_NoFinding",
+            "filename": "DenseNet121_Chexpert_CWBCE_E9_B32_C0_N12_D320_Masked_NoFinding_20200804-112411.h5",
+            "version": "1",
+            "history": {
+                "loss": [
+                    1.1461126804351807,
+                    1.0948883295059204,
+                    1.0695574283599854,
+                    1.05064857006073,
+                    1.0365058183670044,
+                    1.0247305631637573,
+                    0.9928423762321472,
+                    0.9777616262435913,
+                    0.9659488797187805
+                ],
+                "auc": [
+                    0.5838227868080139,
+                    0.6142977476119995,
+                    0.6327736973762512,
+                    0.6476340293884277,
+                    0.6580565571784973,
+                    0.66658616065979,
+                    0.6831073760986328,
+                    0.689655601978302,
+                    0.6960389018058777
+                ],
+                "precision": [
+                    0.16935403645038605,
+                    0.174693763256073,
+                    0.1802562177181244,
+                    0.18419474363327026,
+                    0.18707320094108582,
+                    0.1893637478351593,
+                    0.19374440610408783,
+                    0.19581277668476105,
+                    0.19664154946804047
+                ],
+                "recall": [
+                    0.7940067648887634,
+                    0.8156960606575012,
+                    0.8200370073318481,
+                    0.8239229321479797,
+                    0.8280011415481567,
+                    0.830198347568512,
+                    0.8390742540359497,
+                    0.843558132648468,
+                    0.8479930758476257
+                ],
+                "f2_score": [
+                    0.45693275332450867,
+                    0.4704514443874359,
+                    0.4795938730239868,
+                    0.4861988127231598,
+                    0.4913322925567627,
+                    0.49510008096694946,
+                    0.5035958290100098,
+                    0.5076792240142822,
+                    0.5100783705711365
+                ],
+                "binary_accuracy": [
+                    0.42426085472106934,
+                    0.4330478608608246,
+                    0.4511185586452484,
+                    0.46289682388305664,
+                    0.47064757347106934,
+                    0.4771542251110077,
+                    0.4871310293674469,
+                    0.4915837049484253,
+                    0.4922197759151459
+                ],
+                "accuracy_enlarged_cardiomediastinum": [
+                    0.3272852599620819,
+                    0.3104480504989624,
+                    0.3083328604698181,
+                    0.3185153007507324,
+                    0.32656848430633545,
+                    0.33942124247550964,
+                    0.3483598530292511,
+                    0.36294832825660706,
+                    0.3694063425064087
+                ],
+                "accuracy_cardiomegaly": [
+                    0.44552507996559143,
+                    0.48706290125846863,
+                    0.5326062440872192,
+                    0.566842794418335,
+                    0.5880860686302185,
+                    0.6000955700874329,
+                    0.6196101307868958,
+                    0.6266935467720032,
+                    0.6257237792015076
+                ],
+                "accuracy_lung_opacity": [
+                    0.6222031712532043,
+                    0.6294974088668823,
+                    0.6336434483528137,
+                    0.6346413493156433,
+                    0.6362294554710388,
+                    0.6385765671730042,
+                    0.6408182382583618,
+                    0.6412680149078369,
+                    0.6412398815155029
+                ],
+                "accuracy_lung_lesion": [
+                    0.27791911363601685,
+                    0.2710816264152527,
+                    0.28053322434425354,
+                    0.2853538990020752,
+                    0.28756043314933777,
+                    0.2890220880508423,
+                    0.29267624020576477,
+                    0.29389193654060364,
+                    0.29280272126197815
+                ],
+                "accuracy_edema": [
+                    0.5888871550559998,
+                    0.6037567257881165,
+                    0.6165462732315063,
+                    0.6225053668022156,
+                    0.6307412385940552,
+                    0.6356883645057678,
+                    0.6452383399009705,
+                    0.6512606739997864,
+                    0.6532353162765503
+                ],
+                "accuracy_consolidation": [
+                    0.45781567692756653,
+                    0.45674049854278564,
+                    0.46744292974472046,
+                    0.46995165944099426,
+                    0.4743647277355194,
+                    0.4778642952442169,
+                    0.4844909608364105,
+                    0.483197957277298,
+                    0.47776591777801514
+                ],
+                "accuracy_pneumonia": [
+                    0.3295409679412842,
+                    0.3120502531528473,
+                    0.34448084235191345,
+                    0.37218210101127625,
+                    0.38254019618034363,
+                    0.4061586558818817,
+                    0.42844194173812866,
+                    0.45044413208961487,
+                    0.4610903561115265
+                ],
+                "accuracy_atelectasis": [
+                    0.39573025703430176,
+                    0.37778276205062866,
+                    0.390902578830719,
+                    0.4004947245121002,
+                    0.4084003269672394,
+                    0.412447988986969,
+                    0.41462641954421997,
+                    0.40795761346817017,
+                    0.4047883450984955
+                ],
+                "accuracy_pneumothorax": [
+                    0.44190606474876404,
+                    0.5161696076393127,
+                    0.5736732482910156,
+                    0.6047053933143616,
+                    0.6282184720039368,
+                    0.6421182751655579,
+                    0.6641907691955566,
+                    0.6731504201889038,
+                    0.6770997047424316
+                ],
+                "accuracy_pleural_effusion": [
+                    0.6771559715270996,
+                    0.7081529498100281,
+                    0.7231912016868591,
+                    0.7302395105361938,
+                    0.7351093292236328,
+                    0.7374564409255981,
+                    0.7465777397155762,
+                    0.7473999261856079,
+                    0.746198296546936
+                ],
+                "accuracy_pleural_other": [
+                    0.285979300737381,
+                    0.2956909239292145,
+                    0.31949910521507263,
+                    0.32249972224235535,
+                    0.32103103399276733,
+                    0.32045480608940125,
+                    0.3339189291000366,
+                    0.3298080265522003,
+                    0.326765239238739
+                ],
+                "accuracy_fracture": [
+                    0.24118085205554962,
+                    0.22813835740089417,
+                    0.22257280349731445,
+                    0.22683128714561462,
+                    0.22891837358474731,
+                    0.22655020654201508,
+                    0.22662048041820526,
+                    0.23097734153270721,
+                    0.2305205762386322
+                ],
+                "auc_enlarged_cardiomediastinum": [
+                    0.4920063316822052,
+                    0.5098823308944702,
+                    0.5164594650268555,
+                    0.5258070826530457,
+                    0.5396035313606262,
+                    0.5511875748634338,
+                    0.5687842965126038,
+                    0.5756553411483765,
+                    0.5869360566139221
+                ],
+                "auc_cardiomegaly": [
+                    0.6404697895050049,
+                    0.7036485075950623,
+                    0.7404020428657532,
+                    0.7599355578422546,
+                    0.7694550156593323,
+                    0.7780614495277405,
+                    0.7921160459518433,
+                    0.7967306971549988,
+                    0.798283040523529
+                ],
+                "auc_lung_opacity": [
+                    0.6731371283531189,
+                    0.6841091513633728,
+                    0.6907117962837219,
+                    0.6937546133995056,
+                    0.6964340209960938,
+                    0.6981353759765625,
+                    0.7038746476173401,
+                    0.7056665420532227,
+                    0.7064080834388733
+                ],
+                "auc_lung_lesion": [
+                    0.4454105496406555,
+                    0.48234471678733826,
+                    0.5075559616088867,
+                    0.5320556163787842,
+                    0.5475472807884216,
+                    0.5604230165481567,
+                    0.5865145325660706,
+                    0.5913110971450806,
+                    0.6079930663108826
+                ],
+                "auc_edema": [
+                    0.7371734976768494,
+                    0.7560514211654663,
+                    0.7672635316848755,
+                    0.772665798664093,
+                    0.7777529358863831,
+                    0.7815630435943604,
+                    0.7910676598548889,
+                    0.7950832843780518,
+                    0.7963549494743347
+                ],
+                "auc_consolidation": [
+                    0.6527138352394104,
+                    0.6647036671638489,
+                    0.674946129322052,
+                    0.685365617275238,
+                    0.6926054358482361,
+                    0.6979278326034546,
+                    0.7104038596153259,
+                    0.7162579298019409,
+                    0.7202470898628235
+                ],
+                "auc_pneumonia": [
+                    0.5247238874435425,
+                    0.5594095587730408,
+                    0.586665689945221,
+                    0.6202371120452881,
+                    0.6377291679382324,
+                    0.6544074416160583,
+                    0.6835644245147705,
+                    0.6927294135093689,
+                    0.7047197222709656
+                ],
+                "auc_atelectasis": [
+                    0.5671506524085999,
+                    0.5759114027023315,
+                    0.5997570157051086,
+                    0.6152746081352234,
+                    0.6165977120399475,
+                    0.6239119172096252,
+                    0.6323224306106567,
+                    0.6356152296066284,
+                    0.6382814645767212
+                ],
+                "auc_pneumothorax": [
+                    0.613293468952179,
+                    0.68695068359375,
+                    0.7132769823074341,
+                    0.7352749705314636,
+                    0.7542032599449158,
+                    0.7696720361709595,
+                    0.7954466342926025,
+                    0.806857705116272,
+                    0.8143136501312256
+                ],
+                "auc_pleural_effusion": [
+                    0.7753178477287292,
+                    0.8042720556259155,
+                    0.8231431245803833,
+                    0.8332175016403198,
+                    0.838310718536377,
+                    0.8439029455184937,
+                    0.8546479940414429,
+                    0.8568297028541565,
+                    0.8576680421829224
+                ],
+                "auc_pleural_other": [
+                    0.49987515807151794,
+                    0.5523629188537598,
+                    0.5804557204246521,
+                    0.5998462438583374,
+                    0.6192803382873535,
+                    0.6258191466331482,
+                    0.6486510038375854,
+                    0.6617778539657593,
+                    0.6697884202003479
+                ],
+                "auc_fracture": [
+                    0.38460129499435425,
+                    0.391926109790802,
+                    0.39264678955078125,
+                    0.398173987865448,
+                    0.4071596562862396,
+                    0.4140219986438751,
+                    0.42989492416381836,
+                    0.44135260581970215,
+                    0.45147407054901123
+                ],
+                "precision_enlarged_cardiomediastinum": [
+                    0.04749061167240143,
+                    0.0475916787981987,
+                    0.048298031091690063,
+                    0.04882710799574852,
+                    0.049648404121398926,
+                    0.050500571727752686,
+                    0.052201468497514725,
+                    0.05335606262087822,
+                    0.05414269492030144
+                ],
+                "precision_cardiomegaly": [
+                    0.15312182903289795,
+                    0.1688896268606186,
+                    0.1833162009716034,
+                    0.19485411047935486,
+                    0.20390114188194275,
+                    0.20908984541893005,
+                    0.21897754073143005,
+                    0.2230214774608612,
+                    0.22254396975040436
+                ],
+                "precision_lung_opacity": [
+                    0.5719625353813171,
+                    0.5763423442840576,
+                    0.579371452331543,
+                    0.5795550346374512,
+                    0.5804040431976318,
+                    0.5819708704948425,
+                    0.5828632712364197,
+                    0.5827329754829407,
+                    0.5822368860244751
+                ],
+                "precision_lung_lesion": [
+                    0.03716832771897316,
+                    0.03865121677517891,
+                    0.039806973189115524,
+                    0.04075725004076958,
+                    0.04210415109992027,
+                    0.042363766580820084,
+                    0.04366917535662651,
+                    0.04408547282218933,
+                    0.04447563737630844
+                ],
+                "precision_edema": [
+                    0.34216588735580444,
+                    0.3524937927722931,
+                    0.36106568574905396,
+                    0.36558422446250916,
+                    0.3711586892604828,
+                    0.3746461570262909,
+                    0.3821357190608978,
+                    0.3865877091884613,
+                    0.3883671760559082
+                ],
+                "precision_consolidation": [
+                    0.08991443365812302,
+                    0.09151380509138107,
+                    0.0934109017252922,
+                    0.09455692768096924,
+                    0.09611371159553528,
+                    0.09695005416870117,
+                    0.09862212836742401,
+                    0.09928794205188751,
+                    0.09870576113462448
+                ],
+                "precision_pneumonia": [
+                    0.027657467871904373,
+                    0.028662165626883507,
+                    0.0302683524787426,
+                    0.03178061172366142,
+                    0.032696668058633804,
+                    0.0339016318321228,
+                    0.036213330924510956,
+                    0.037783436477184296,
+                    0.03878911957144737
+                ],
+                "precision_atelectasis": [
+                    0.17090797424316406,
+                    0.17243832349777222,
+                    0.17541350424289703,
+                    0.1773149073123932,
+                    0.1787845939397812,
+                    0.17994017899036407,
+                    0.18124864995479584,
+                    0.18121758103370667,
+                    0.1807851493358612
+                ],
+                "precision_pneumothorax": [
+                    0.1084035262465477,
+                    0.1255721151828766,
+                    0.13953419029712677,
+                    0.15018977224826813,
+                    0.15954627096652985,
+                    0.16657105088233948,
+                    0.17894583940505981,
+                    0.18506698310375214,
+                    0.1886320859193802
+                ],
+                "precision_pleural_effusion": [
+                    0.5514277219772339,
+                    0.580048143863678,
+                    0.5947288870811462,
+                    0.6015132665634155,
+                    0.6062705516815186,
+                    0.6085946559906006,
+                    0.617703914642334,
+                    0.618333637714386,
+                    0.6163098812103271
+                ],
+                "precision_pleural_other": [
+                    0.015049628913402557,
+                    0.016174422577023506,
+                    0.0170301403850317,
+                    0.017302704975008965,
+                    0.01779857650399208,
+                    0.017901794984936714,
+                    0.018829669803380966,
+                    0.018954457715153694,
+                    0.01926574483513832
+                ],
+                "precision_fracture": [
+                    0.03363482281565666,
+                    0.03458568826317787,
+                    0.03509347140789032,
+                    0.035398464649915695,
+                    0.0361960306763649,
+                    0.03610474243760109,
+                    0.0369805172085762,
+                    0.03740793094038963,
+                    0.03806964308023453
+                ],
+                "recall_enlarged_cardiomediastinum": [
+                    0.6850682497024536,
+                    0.7051827907562256,
+                    0.71913081407547,
+                    0.7162360548973083,
+                    0.7204521894454956,
+                    0.719236433506012,
+                    0.7352811694145203,
+                    0.7352811694145203,
+                    0.7392453551292419
+                ],
+                "recall_cardiomegaly": [
+                    0.7896843552589417,
+                    0.8250173926353455,
+                    0.827454149723053,
+                    0.8224748969078064,
+                    0.8266419172286987,
+                    0.8271640539169312,
+                    0.8340585827827454,
+                    0.8382455110549927,
+                    0.8382941484451294
+                ],
+                "recall_lung_opacity": [
+                    0.791040301322937,
+                    0.8097848892211914,
+                    0.8151386976242065,
+                    0.821137011051178,
+                    0.8259742856025696,
+                    0.8299143314361572,
+                    0.8389893770217896,
+                    0.84352046251297,
+                    0.8477557897567749
+                ],
+                "recall_lung_lesion": [
+                    0.6620149612426758,
+                    0.6977021098136902,
+                    0.7104681134223938,
+                    0.7236214876174927,
+                    0.7472770810127258,
+                    0.7508085370063782,
+                    0.7717835307121277,
+                    0.7782882452011108,
+                    0.7871363162994385
+                ],
+                "recall_edema": [
+                    0.8288791179656982,
+                    0.837360143661499,
+                    0.8391796350479126,
+                    0.8434625267982483,
+                    0.8426640629768372,
+                    0.8422306776046753,
+                    0.8474346399307251,
+                    0.8467501401901245,
+                    0.8494646549224854
+                ],
+                "recall_consolidation": [
+                    0.7911608219146729,
+                    0.8103099465370178,
+                    0.8123335838317871,
+                    0.8203899264335632,
+                    0.8289487957954407,
+                    0.8314164280891418,
+                    0.8370433449745178,
+                    0.8465225100517273,
+                    0.850463330745697
+                ],
+                "recall_pneumonia": [
+                    0.7056037783622742,
+                    0.7524986863136292,
+                    0.7584846019744873,
+                    0.7635455131530762,
+                    0.773743748664856,
+                    0.7719621062278748,
+                    0.7963693737983704,
+                    0.8000526428222656,
+                    0.8061546683311462
+                ],
+                "recall_atelectasis": [
+                    0.7871542572975159,
+                    0.8294810056686401,
+                    0.8279257416725159,
+                    0.8241444230079651,
+                    0.8201509714126587,
+                    0.8208927512168884,
+                    0.8260197043418884,
+                    0.8384435176849365,
+                    0.8415080308914185
+                ],
+                "recall_pneumothorax": [
+                    0.7362349033355713,
+                    0.7510145902633667,
+                    0.7408881187438965,
+                    0.7462401390075684,
+                    0.7521286010742188,
+                    0.7624731659889221,
+                    0.7809516191482544,
+                    0.7937291264533997,
+                    0.8046470880508423
+                ],
+                "recall_pleural_effusion": [
+                    0.8475691080093384,
+                    0.8655597567558289,
+                    0.8729978203773499,
+                    0.8784818649291992,
+                    0.8820187449455261,
+                    0.8834967613220215,
+                    0.8898051977157593,
+                    0.8917007446289062,
+                    0.8958161473274231
+                ],
+                "recall_pleural_other": [
+                    0.6911698579788208,
+                    0.7341998815536499,
+                    0.7479820847511292,
+                    0.7569506764411926,
+                    0.7808157801628113,
+                    0.7861945033073425,
+                    0.8121076226234436,
+                    0.8228699564933777,
+                    0.8404303193092346
+                ],
+                "recall_fracture": [
+                    0.6491289734840393,
+                    0.6809783577919006,
+                    0.6969910264015198,
+                    0.6995776295661926,
+                    0.7146629095077515,
+                    0.714763343334198,
+                    0.733415424823761,
+                    0.7381664514541626,
+                    0.7527714371681213
+                ],
+                "f2_score_enlarged_cardiomediastinum": [
+                    0.18590381741523743,
+                    0.18737562000751495,
+                    0.19035257399082184,
+                    0.19182682037353516,
+                    0.19460022449493408,
+                    0.19713594019412994,
+                    0.2032797634601593,
+                    0.20676441490650177,
+                    0.20937465131282806
+                ],
+                "f2_score_cardiomegaly": [
+                    0.431180864572525,
+                    0.4642780125141144,
+                    0.4859482944011688,
+                    0.5002293586730957,
+                    0.513178825378418,
+                    0.5198352336883545,
+                    0.5340451002120972,
+                    0.5402050614356995,
+                    0.5396602153778076
+                ],
+                "f2_score_lung_opacity": [
+                    0.7347540855407715,
+                    0.7491014003753662,
+                    0.7537898421287537,
+                    0.7579482793807983,
+                    0.7615330219268799,
+                    0.7647513151168823,
+                    0.7712110877037048,
+                    0.7742236852645874,
+                    0.7768976092338562
+                ],
+                "f2_score_lung_lesion": [
+                    0.15175986289978027,
+                    0.1582002490758896,
+                    0.16259464621543884,
+                    0.1663159430027008,
+                    0.17180126905441284,
+                    0.17281502485275269,
+                    0.17804843187332153,
+                    0.17970941960811615,
+                    0.18138331174850464
+                ],
+                "f2_score_edema": [
+                    0.645298421382904,
+                    0.6566982865333557,
+                    0.663469672203064,
+                    0.6686543822288513,
+                    0.6719422340393066,
+                    0.6739926934242249,
+                    0.6814774870872498,
+                    0.6839310526847839,
+                    0.6864613890647888
+                ],
+                "f2_score_consolidation": [
+                    0.309070348739624,
+                    0.3151850700378418,
+                    0.31990838050842285,
+                    0.32359588146209717,
+                    0.328305184841156,
+                    0.33056414127349854,
+                    0.335155725479126,
+                    0.33790794014930725,
+                    0.3370535373687744
+                ],
+                "f2_score_pneumonia": [
+                    0.11954429745674133,
+                    0.12436319142580032,
+                    0.1305091679096222,
+                    0.13622328639030457,
+                    0.13984517753124237,
+                    0.14418068528175354,
+                    0.1532006561756134,
+                    0.1589001715183258,
+                    0.16264261305332184
+                ],
+                "f2_score_atelectasis": [
+                    0.4573436975479126,
+                    0.4707447290420532,
+                    0.47473612427711487,
+                    0.47649896144866943,
+                    0.47753334045410156,
+                    0.47937965393066406,
+                    0.48263564705848694,
+                    0.48595714569091797,
+                    0.48615437746047974
+                ],
+                "f2_score_pneumothorax": [
+                    0.3411143720149994,
+                    0.3762317895889282,
+                    0.3979108929634094,
+                    0.41602712869644165,
+                    0.4315548539161682,
+                    0.44446295499801636,
+                    0.4668429493904114,
+                    0.47879186272621155,
+                    0.4867388606071472
+                ],
+                "f2_score_pleural_effusion": [
+                    0.7653623819351196,
+                    0.7879870533943176,
+                    0.7982946634292603,
+                    0.8044037818908691,
+                    0.8084754943847656,
+                    0.8102947473526001,
+                    0.8177597522735596,
+                    0.8192611932754517,
+                    0.8213198781013489
+                ],
+                "f2_score_pleural_other": [
+                    0.06921937316656113,
+                    0.07432278990745544,
+                    0.0780431255698204,
+                    0.07926594465970993,
+                    0.08155660331249237,
+                    0.08203698694705963,
+                    0.08615768700838089,
+                    0.08677682280540466,
+                    0.08823779225349426
+                ],
+                "f2_score_fracture": [
+                    0.13930216431617737,
+                    0.14372938871383667,
+                    0.14605242013931274,
+                    0.14719931781291962,
+                    0.1504918932914734,
+                    0.1501796990633011,
+                    0.1538688689470291,
+                    0.15551552176475525,
+                    0.1583212912082672
+                ],
+                "learning rate": [
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0005000000237487257,
+                    0.0005000000237487257,
+                    0.0005000000237487257
+                ],
+                "val_loss": [
+                    1.1405969858169556,
+                    1.129902958869934,
+                    1.0706311464309692,
+                    1.0598459243774414,
+                    1.1079132556915283,
+                    1.075985074043274,
+                    1.021275281906128,
+                    1.021134853363037,
+                    1.0366710424423218
+                ],
+                "val_auc": [
+                    0.5991275310516357,
+                    0.6349309086799622,
+                    0.6458269953727722,
+                    0.6532610654830933,
+                    0.6598846912384033,
+                    0.664914071559906,
+                    0.6669222712516785,
+                    0.6858111023902893,
+                    0.670487105846405
+                ],
+                "val_precision": [
+                    0.17225712537765503,
+                    0.1645776927471161,
+                    0.18569552898406982,
+                    0.18335887789726257,
+                    0.17415060102939606,
+                    0.17542822659015656,
+                    0.1931486427783966,
+                    0.1891869604587555,
+                    0.2010822743177414
+                ],
+                "val_recall": [
+                    0.710886538028717,
+                    0.8771445751190186,
+                    0.7806517481803894,
+                    0.8667137622833252,
+                    0.8416892886161804,
+                    0.7410073280334473,
+                    0.8209127187728882,
+                    0.8676789402961731,
+                    0.781582772731781
+                ],
+                "val_f2_score": [
+                    0.4373668134212494,
+                    0.47008341550827026,
+                    0.47577887773513794,
+                    0.4965776205062866,
+                    0.47643986344337463,
+                    0.45051562786102295,
+                    0.49751317501068115,
+                    0.5052660703659058,
+                    0.4954954981803894
+                ],
+                "val_binary_accuracy": [
+                    0.48037633299827576,
+                    0.35835859179496765,
+                    0.4891568124294281,
+                    0.4399496614933014,
+                    0.4180215299129486,
+                    0.4752074182033539,
+                    0.49396663904190063,
+                    0.4599442481994629,
+                    0.5338590741157532
+                ],
+                "val_accuracy_enlarged_cardiomediastinum": [
+                    0.3935011029243469,
+                    0.2425055354833603,
+                    0.41584622859954834,
+                    0.25271016359329224,
+                    0.26338496804237366,
+                    0.2550331950187683,
+                    0.36772677302360535,
+                    0.289850652217865,
+                    0.40323561429977417
+                ],
+                "val_accuracy_cardiomegaly": [
+                    0.4301161468029022,
+                    0.5337665677070618,
+                    0.7157356142997742,
+                    0.48719578981399536,
+                    0.6464048624038696,
+                    0.5762721300125122,
+                    0.574087381362915,
+                    0.605475664138794,
+                    0.6308351755142212
+                ],
+                "val_accuracy_lung_opacity": [
+                    0.6405143737792969,
+                    0.6073838472366333,
+                    0.643998920917511,
+                    0.6224834322929382,
+                    0.6409015655517578,
+                    0.643113911151886,
+                    0.6418418288230896,
+                    0.6343749761581421,
+                    0.6504424810409546
+                ],
+                "val_accuracy_lung_lesion": [
+                    0.28932520747184753,
+                    0.13747234642505646,
+                    0.30707964301109314,
+                    0.26675885915756226,
+                    0.20320796966552734,
+                    0.25495022535324097,
+                    0.31316372752189636,
+                    0.28456857800483704,
+                    0.35929203033447266
+                ],
+                "val_accuracy_edema": [
+                    0.7045077681541443,
+                    0.6049779057502747,
+                    0.6991426944732666,
+                    0.5713219046592712,
+                    0.6704922318458557,
+                    0.6100940108299255,
+                    0.606001079082489,
+                    0.6316648125648499,
+                    0.6771571040153503
+                ],
+                "val_accuracy_consolidation": [
+                    0.6319413781166077,
+                    0.3264104127883911,
+                    0.4946626126766205,
+                    0.3972068727016449,
+                    0.49825775623321533,
+                    0.6157909035682678,
+                    0.5029037594795227,
+                    0.4661780893802643,
+                    0.5481194853782654
+                ],
+                "val_accuracy_pneumonia": [
+                    0.38794246315956116,
+                    0.21496129035949707,
+                    0.30555862188339233,
+                    0.3926438093185425,
+                    0.30431416630744934,
+                    0.3738937973976135,
+                    0.4041205644607544,
+                    0.46559733152389526,
+                    0.4863938093185425
+                ],
+                "val_accuracy_atelectasis": [
+                    0.3892146050930023,
+                    0.4229812026023865,
+                    0.4019635021686554,
+                    0.3494192361831665,
+                    0.3961006700992584,
+                    0.5025442242622375,
+                    0.4517422616481781,
+                    0.32206857204437256,
+                    0.4298672676086426
+                ],
+                "val_accuracy_pneumothorax": [
+                    0.6511338353157043,
+                    0.29452434182167053,
+                    0.5176161527633667,
+                    0.7311670184135437,
+                    0.2565542161464691,
+                    0.6140486598014832,
+                    0.6897400617599487,
+                    0.6339878439903259,
+                    0.7859236598014832
+                ],
+                "val_accuracy_pleural_effusion": [
+                    0.7209900617599487,
+                    0.6248617172241211,
+                    0.7324391603469849,
+                    0.6827433705329895,
+                    0.701299786567688,
+                    0.7612279057502747,
+                    0.7511062026023865,
+                    0.7125276327133179,
+                    0.7662057280540466
+                ],
+                "val_accuracy_pleural_other": [
+                    0.2687223553657532,
+                    0.15284845232963562,
+                    0.3706858456134796,
+                    0.3092367351055145,
+                    0.26155972480773926,
+                    0.3338218927383423,
+                    0.34535399079322815,
+                    0.3028208017349243,
+                    0.39087387919425964
+                ],
+                "val_accuracy_fracture": [
+                    0.2566094994544983,
+                    0.13761061429977417,
+                    0.2651548683643341,
+                    0.21650995314121246,
+                    0.17378318309783936,
+                    0.16169801354408264,
+                    0.27981194853782654,
+                    0.17021571099758148,
+                    0.27795907855033875
+                ],
+                "val_auc_enlarged_cardiomediastinum": [
+                    0.4963495135307312,
+                    0.5005642175674438,
+                    0.5155490636825562,
+                    0.5288328528404236,
+                    0.5248692631721497,
+                    0.5435874462127686,
+                    0.5380392074584961,
+                    0.5734961032867432,
+                    0.5596340298652649
+                ],
+                "val_auc_cardiomegaly": [
+                    0.6474667191505432,
+                    0.695340633392334,
+                    0.7410691380500793,
+                    0.735736608505249,
+                    0.7557958364486694,
+                    0.760795533657074,
+                    0.7659879326820374,
+                    0.7930176258087158,
+                    0.773666262626648
+                ],
+                "val_auc_lung_opacity": [
+                    0.6867466568946838,
+                    0.6904285550117493,
+                    0.6983683109283447,
+                    0.7013198733329773,
+                    0.7024733424186707,
+                    0.697401225566864,
+                    0.7031581401824951,
+                    0.704136312007904,
+                    0.708270788192749
+                ],
+                "val_auc_lung_lesion": [
+                    0.4440920352935791,
+                    0.5257087349891663,
+                    0.5206773281097412,
+                    0.537463903427124,
+                    0.552598237991333,
+                    0.5572873950004578,
+                    0.5586821436882019,
+                    0.5797137022018433,
+                    0.5403473973274231
+                ],
+                "val_auc_edema": [
+                    0.7504177689552307,
+                    0.7497153878211975,
+                    0.7725219130516052,
+                    0.7706043124198914,
+                    0.7774980068206787,
+                    0.7779877185821533,
+                    0.7769522070884705,
+                    0.7929052114486694,
+                    0.7857110500335693
+                ],
+                "val_auc_consolidation": [
+                    0.6601064801216125,
+                    0.6712397933006287,
+                    0.6834068298339844,
+                    0.6882013082504272,
+                    0.6984529495239258,
+                    0.7068812847137451,
+                    0.7098944783210754,
+                    0.7057642340660095,
+                    0.7106707692146301
+                ],
+                "val_auc_pneumonia": [
+                    0.5447518825531006,
+                    0.5702921152114868,
+                    0.5908291935920715,
+                    0.6206794381141663,
+                    0.6207048892974854,
+                    0.63759446144104,
+                    0.6366134285926819,
+                    0.6602082848548889,
+                    0.6202853322029114
+                ],
+                "val_auc_atelectasis": [
+                    0.5510475039482117,
+                    0.6035501956939697,
+                    0.6073638796806335,
+                    0.6254974007606506,
+                    0.6169292330741882,
+                    0.6038332581520081,
+                    0.612335741519928,
+                    0.6371909976005554,
+                    0.6195179224014282
+                ],
+                "val_auc_pneumothorax": [
+                    0.6283263564109802,
+                    0.7006500959396362,
+                    0.7239620089530945,
+                    0.7037443518638611,
+                    0.7729977965354919,
+                    0.7295712828636169,
+                    0.769679605960846,
+                    0.7789896130561829,
+                    0.7791086435317993
+                ],
+                "val_auc_pleural_effusion": [
+                    0.7913841605186462,
+                    0.8064443469047546,
+                    0.839084267616272,
+                    0.8367599844932556,
+                    0.8469032645225525,
+                    0.8406789898872375,
+                    0.8512393832206726,
+                    0.8548908233642578,
+                    0.8551824688911438
+                ],
+                "val_auc_pleural_other": [
+                    0.5847690105438232,
+                    0.6689615845680237,
+                    0.629178524017334,
+                    0.6703001856803894,
+                    0.6080062389373779,
+                    0.6554070711135864,
+                    0.6400511264801025,
+                    0.6805517673492432,
+                    0.6321699023246765
+                ],
+                "val_auc_fracture": [
+                    0.4040725827217102,
+                    0.4362756013870239,
+                    0.4279133379459381,
+                    0.4199928939342499,
+                    0.44138699769973755,
+                    0.4679429829120636,
+                    0.44043290615081787,
+                    0.4688681364059448,
+                    0.46127980947494507
+                ],
+                "val_precision_enlarged_cardiomediastinum": [
+                    0.04810580611228943,
+                    0.04843314737081528,
+                    0.04848569631576538,
+                    0.04975035786628723,
+                    0.04920588806271553,
+                    0.05035020038485527,
+                    0.0511598214507103,
+                    0.052051715552806854,
+                    0.053675245493650436
+                ],
+                "val_precision_cardiomegaly": [
+                    0.15436673164367676,
+                    0.17794759571552277,
+                    0.24212300777435303,
+                    0.1743335872888565,
+                    0.22263723611831665,
+                    0.19937953352928162,
+                    0.20235243439674377,
+                    0.217278391122818,
+                    0.22298477590084076
+                ],
+                "val_precision_lung_opacity": [
+                    0.5965166687965393,
+                    0.5529412031173706,
+                    0.5931088924407959,
+                    0.5651178359985352,
+                    0.5863018035888672,
+                    0.5949316024780273,
+                    0.5864455699920654,
+                    0.5766420364379883,
+                    0.5992209315299988
+                ],
+                "val_precision_lung_lesion": [
+                    0.03478127717971802,
+                    0.038177646696567535,
+                    0.03743838518857956,
+                    0.03764272481203079,
+                    0.03918073698878288,
+                    0.04029383137822151,
+                    0.03994187340140343,
+                    0.03935673460364342,
+                    0.03823953866958618
+                ],
+                "val_precision_edema": [
+                    0.4192383289337158,
+                    0.3589385449886322,
+                    0.42350301146507263,
+                    0.34631726145744324,
+                    0.40252652764320374,
+                    0.36454105377197266,
+                    0.36428606510162354,
+                    0.3804718852043152,
+                    0.40830573439598083
+                ],
+                "val_precision_consolidation": [
+                    0.09898458421230316,
+                    0.08074156194925308,
+                    0.09446536004543304,
+                    0.08754608035087585,
+                    0.09514056146144867,
+                    0.10901467502117157,
+                    0.09804223477840424,
+                    0.09415646642446518,
+                    0.10126366466283798
+                ],
+                "val_precision_pneumonia": [
+                    0.028697669506072998,
+                    0.028910687193274498,
+                    0.030654773116111755,
+                    0.03340757265686989,
+                    0.03173002228140831,
+                    0.03383912518620491,
+                    0.034585919231176376,
+                    0.03836845979094505,
+                    0.03515459597110748
+                ],
+                "val_precision_atelectasis": [
+                    0.16041024029254913,
+                    0.1704302579164505,
+                    0.16822241246700287,
+                    0.16613417863845825,
+                    0.16824880242347717,
+                    0.1742105484008789,
+                    0.17219990491867065,
+                    0.16289828717708588,
+                    0.1714552491903305
+                ],
+                "val_precision_pneumothorax": [
+                    0.1204572319984436,
+                    0.09775698184967041,
+                    0.12556332349777222,
+                    0.16442450881004333,
+                    0.09765296429395676,
+                    0.14017710089683533,
+                    0.17102213203907013,
+                    0.15641970932483673,
+                    0.21699798107147217
+                ],
+                "val_precision_pleural_effusion": [
+                    0.6114440560340881,
+                    0.5074586868286133,
+                    0.6048378944396973,
+                    0.5520885586738586,
+                    0.5689014792442322,
+                    0.7204141020774841,
+                    0.6268947124481201,
+                    0.5794785022735596,
+                    0.6511397957801819
+                ],
+                "val_precision_pleural_other": [
+                    0.016250746324658394,
+                    0.015958815813064575,
+                    0.017466869205236435,
+                    0.017611056566238403,
+                    0.01659582369029522,
+                    0.018172888085246086,
+                    0.01784597337245941,
+                    0.01835579052567482,
+                    0.01808229088783264
+                ],
+                "val_precision_fracture": [
+                    0.037189628928899765,
+                    0.03968992084264755,
+                    0.03751106560230255,
+                    0.038073599338531494,
+                    0.039940349757671356,
+                    0.04058664292097092,
+                    0.037249282002449036,
+                    0.040663767606019974,
+                    0.038058776408433914
+                ],
+                "val_recall_enlarged_cardiomediastinum": [
+                    0.6055305004119873,
+                    0.7762711644172668,
+                    0.5863431096076965,
+                    0.78724604845047,
+                    0.7658013701438904,
+                    0.7951467037200928,
+                    0.678329586982727,
+                    0.7838600277900696,
+                    0.6721218824386597
+                ],
+                "val_recall_cardiomegaly": [
+                    0.8066248893737793,
+                    0.765943169593811,
+                    0.6105639934539795,
+                    0.8429178595542908,
+                    0.7469232678413391,
+                    0.8053255677223206,
+                    0.8315059542655945,
+                    0.8426589369773865,
+                    0.7997314929962158
+                ],
+                "val_recall_lung_opacity": [
+                    0.7441303730010986,
+                    0.8921270966529846,
+                    0.7902575731277466,
+                    0.879446268081665,
+                    0.8208841681480408,
+                    0.7718857526779175,
+                    0.8263053297996521,
+                    0.8572679758071899,
+                    0.7905740737915039
+                ],
+                "val_recall_lung_lesion": [
+                    0.6448863744735718,
+                    0.8749111294746399,
+                    0.6796875,
+                    0.7258522510528564,
+                    0.8274147510528564,
+                    0.7947443127632141,
+                    0.7223011255264282,
+                    0.7421875,
+                    0.6399147510528564
+                ],
+                "val_recall_edema": [
+                    0.6187992691993713,
+                    0.8340287208557129,
+                    0.7221835851669312,
+                    0.8975428938865662,
+                    0.7866249680519104,
+                    0.853483259677887,
+                    0.8745652437210083,
+                    0.8653222322463989,
+                    0.7863683700561523
+                ],
+                "val_recall_consolidation": [
+                    0.5815450549125671,
+                    0.9103004336357117,
+                    0.7973378896713257,
+                    0.8866952657699585,
+                    0.7974249124526978,
+                    0.6918454766273499,
+                    0.8188841342926025,
+                    0.8454272150993347,
+                    0.763519287109375
+                ],
+                "val_recall_pneumonia": [
+                    0.6353754997253418,
+                    0.8300395011901855,
+                    0.7776679992675781,
+                    0.7411067485809326,
+                    0.8083003759384155,
+                    0.7756916880607605,
+                    0.7539525628089905,
+                    0.7519763112068176,
+                    0.6561264991760254
+                ],
+                "val_recall_atelectasis": [
+                    0.7800506353378296,
+                    0.7926734089851379,
+                    0.8145334124565125,
+                    0.8914864659309387,
+                    0.8254091739654541,
+                    0.6695889234542847,
+                    0.7518020868301392,
+                    0.9125097393989563,
+                    0.7870640754699707
+                ],
+                "val_recall_pneumothorax": [
+                    0.5117213726043701,
+                    0.916610836982727,
+                    0.8117883205413818,
+                    0.5525786876678467,
+                    0.9711989164352417,
+                    0.7159128785133362,
+                    0.7166778445243835,
+                    0.7813127636909485,
+                    0.6105157136917114
+                ],
+                "val_recall_pleural_effusion": [
+                    0.7602636814117432,
+                    0.9554345607757568,
+                    0.885003924369812,
+                    0.9432502388954163,
+                    0.9332903623580933,
+                    0.6232714653015137,
+                    0.8771854639053345,
+                    0.9299892783164978,
+                    0.8493229150772095
+                ],
+                "val_recall_pleural_other": [
+                    0.7981651425361633,
+                    0.910091757774353,
+                    0.7376146912574768,
+                    0.8183486461639404,
+                    0.8238531947135925,
+                    0.8146789073944092,
+                    0.7853211164474487,
+                    0.8623853325843811,
+                    0.7394495606422424
+                ],
+                "val_recall_fracture": [
+                    0.6827309131622314,
+                    0.8567603826522827,
+                    0.6807228922843933,
+                    0.7402945160865784,
+                    0.8246318697929382,
+                    0.8520749807357788,
+                    0.66131192445755,
+                    0.8447121977806091,
+                    0.6787148714065552
+                ],
+                "val_f2_score_enlarged_cardiomediastinum": [
+                    0.18252643942832947,
+                    0.19379952549934387,
+                    0.182172030210495,
+                    0.19855955243110657,
+                    0.19572493433952332,
+                    0.2008724808692932,
+                    0.19651441276073456,
+                    0.20563766360282898,
+                    0.20340198278427124
+                ],
+                "val_f2_score_cardiomegaly": [
+                    0.43717706203460693,
+                    0.46117156744003296,
+                    0.4681011736392975,
+                    0.47702866792678833,
+                    0.5077732801437378,
+                    0.500876784324646,
+                    0.5126931667327881,
+                    0.534801185131073,
+                    0.5270764231681824
+                ],
+                "val_f2_score_lung_opacity": [
+                    0.7090386748313904,
+                    0.7946375608444214,
+                    0.7409963011741638,
+                    0.7914073467254639,
+                    0.7600631713867188,
+                    0.7285465002059937,
+                    0.7638236284255981,
+                    0.7812300324440002,
+                    0.7431134581565857
+                ],
+                "val_f2_score_lung_lesion": [
+                    0.14304620027542114,
+                    0.1625211238861084,
+                    0.153394877910614,
+                    0.1558782309293747,
+                    0.16470623016357422,
+                    0.16749991476535797,
+                    0.16353636980056763,
+                    0.1623477339744568,
+                    0.15431252121925354
+                ],
+                "val_f2_score_edema": [
+                    0.5650094151496887,
+                    0.6594573855400085,
+                    0.6329101324081421,
+                    0.6808151006698608,
+                    0.6605610251426697,
+                    0.6729609370231628,
+                    0.6831724047660828,
+                    0.6895723342895508,
+                    0.663497805595398
+                ],
+                "val_f2_score_consolidation": [
+                    0.29444998502731323,
+                    0.297985315322876,
+                    0.3204597532749176,
+                    0.31380054354667664,
+                    0.32202157378196716,
+                    0.33434271812438965,
+                    0.3314686417579651,
+                    0.32569143176078796,
+                    0.33081674575805664
+                ],
+                "val_f2_score_pneumonia": [
+                    0.12153171747922897,
+                    0.12687671184539795,
+                    0.13239796459674835,
+                    0.14152011275291443,
+                    0.13711947202682495,
+                    0.14405785501003265,
+                    0.1461181938648224,
+                    0.1593250185251236,
+                    0.14475060999393463
+                ],
+                "val_f2_score_atelectasis": [
+                    0.4400676488876343,
+                    0.4581390619277954,
+                    0.46060457825660706,
+                    0.4759131371974945,
+                    0.46340659260749817,
+                    0.4268398880958557,
+                    0.4493269920349121,
+                    0.47518062591552734,
+                    0.4581018090248108
+                ],
+                "val_f2_score_pneumothorax": [
+                    0.3102034032344818,
+                    0.3426218032836914,
+                    0.38785243034362793,
+                    0.3753582835197449,
+                    0.3482145071029663,
+                    0.39304760098457336,
+                    0.43750256299972534,
+                    0.4343050718307495,
+                    0.44802162051200867
+                ],
+                "val_f2_score_pleural_effusion": [
+                    0.7249733805656433,
+                    0.8120599985122681,
+                    0.8099672198295593,
+                    0.8261787295341492,
+                    0.827309787273407,
+                    0.6405460834503174,
+                    0.8123208284378052,
+                    0.82962566614151,
+                    0.800588846206665
+                ],
+                "val_f2_score_pleural_other": [
+                    0.07513471692800522,
+                    0.07456403970718384,
+                    0.07977773249149323,
+                    0.08107616752386093,
+                    0.07679151743650436,
+                    0.0834210142493248,
+                    0.08179489523172379,
+                    0.0845780149102211,
+                    0.08235582709312439
+                ],
+                "val_f2_score_fracture": [
+                    0.1526808887720108,
+                    0.16742528975009918,
+                    0.15368109941482544,
+                    0.15788722038269043,
+                    0.1672912985086441,
+                    0.17045608162879944,
+                    0.15199999511241913,
+                    0.1704898625612259,
+                    0.1554308831691742
+                ],
+                "lr": [
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0010000000474974513,
+                    0.0005000000237487257,
+                    0.0005000000237487257,
+                    0.0005000000237487257
+                ]
+            },
+            "description": "Trained DenseNet121 architecture using the 'Chexpert_CWBCE_E9_B32_C0_N12_D320_Masked_NoFinding' benchmark. The benchmark was initialized for the chexpert_full dataset with batch size of 32, shuffle set to True and images rescaled to dimension (320, 320).\nThe training was done for 9 epochs using the Adam optimizer and weighted_binary_crossentropy loss.\nA total of 12 labels/pathologies were included in the training and encoded using the 'uzeroes' method.\nThe traing set included 142320 number of sample, the validation set 36162, and the test set 44932. ",
+            "test": {
+                "loss": 0.6720725893974304,
+                "auc": 0.20295846462249756,
+                "precision": 0.7850145101547241,
+                "recall": 0.49887436628341675,
+                "f2_score": 0.5317652225494385,
+                "binary_accuracy": 0.410776287317276,
+                "accuracy_enlarged_cardiomediastinum": 0.6298406720161438,
+                "accuracy_cardiomegaly": 0.6489806771278381,
+                "accuracy_lung_opacity": 0.35702839493751526,
+                "accuracy_lung_lesion": 0.6740185022354126,
+                "accuracy_edema": 0.5420858263969421,
+                "accuracy_consolidation": 0.4857339859008789,
+                "accuracy_pneumonia": 0.4266001880168915,
+                "accuracy_atelectasis": 0.7850752472877502,
+                "accuracy_pneumothorax": 0.757210910320282,
+                "accuracy_pleural_effusion": 0.38796404004096985,
+                "accuracy_pleural_other": 0.2759280800819397,
+                "accuracy_fracture": 0.5612546801567078,
+                "auc_enlarged_cardiomediastinum": 0.7878790497779846,
+                "auc_cardiomegaly": 0.7057811617851257,
+                "auc_lung_opacity": 0.5523748993873596,
+                "auc_lung_lesion": 0.786817729473114,
+                "auc_edema": 0.7050762176513672,
+                "auc_consolidation": 0.6472144722938538,
+                "auc_pneumonia": 0.6149752736091614,
+                "auc_atelectasis": 0.7703368663787842,
+                "auc_pneumothorax": 0.8488591313362122,
+                "auc_pleural_effusion": 0.6184005737304688,
+                "auc_pleural_other": 0.4659003019332886,
+                "auc_fracture": 0.055088941007852554,
+                "precision_enlarged_cardiomediastinum": 0.21575410664081573,
+                "precision_cardiomegaly": 0.5976707935333252,
+                "precision_lung_opacity": 0.04310140386223793,
+                "precision_lung_lesion": 0.3996259272098541,
+                "precision_edema": 0.10505187511444092,
+                "precision_consolidation": 0.036201778799295425,
+                "precision_pneumonia": 0.18209105730056763,
+                "precision_atelectasis": 0.22370313107967377,
+                "precision_pneumothorax": 0.6458684802055359,
+                "precision_pleural_effusion": 0.01964304968714714,
+                "precision_pleural_other": 0.03904535621404648,
+                "precision_fracture": 0.6784101128578186,
+                "recall_enlarged_cardiomediastinum": 0.8128069639205933,
+                "recall_cardiomegaly": 0.7966141700744629,
+                "recall_lung_opacity": 0.6696475744247437,
+                "recall_lung_lesion": 0.7965777516365051,
+                "recall_edema": 0.7603656649589539,
+                "recall_consolidation": 0.6971428394317627,
+                "recall_pneumonia": 0.7811053395271301,
+                "recall_atelectasis": 0.5991268754005432,
+                "recall_pneumothorax": 0.846001386642456,
+                "recall_pleural_effusion": 0.732262372970581,
+                "recall_pleural_other": 0.6972624659538269,
+                "recall_fracture": 0.20791229605674744,
+                "f2_score_enlarged_cardiomediastinum": 0.5232247114181519,
+                "f2_score_cardiomegaly": 0.746891438961029,
+                "f2_score_lung_opacity": 0.17138317227363586,
+                "f2_score_lung_lesion": 0.6645559668540955,
+                "f2_score_edema": 0.33830106258392334,
+                "f2_score_consolidation": 0.1498771607875824,
+                "f2_score_pneumonia": 0.47113341093063354,
+                "f2_score_atelectasis": 0.44856756925582886,
+                "f2_score_pneumothorax": 0.7966315150260925,
+                "f2_score_pleural_effusion": 0.0886979028582573,
+                "f2_score_pleural_other": 0.15950001776218414
+            },
+            "classification_report": "                            precision    recall  f1-score   support\n\nEnlarged Cardiomediastinum       0.05      0.61      0.09      2214\n              Cardiomegaly       0.12      0.45      0.19      5294\n              Lung Opacity       0.47      0.63      0.54     21324\n               Lung Lesion       0.04      0.64      0.08      1901\n                     Edema       0.23      0.46      0.31     10461\n             Consolidation       0.07      0.51      0.12      3063\n                 Pneumonia       0.03      0.52      0.05      1225\n               Atelectasis       0.15      0.66      0.25      6912\n              Pneumothorax       0.09      0.24      0.13      3894\n          Pleural Effusion       0.39      0.51      0.44     17656\n             Pleural Other       0.02      0.61      0.03       747\n                  Fracture       0.04      0.74      0.08      1863\n\n                 micro avg       0.14      0.55      0.22     76554\n                 macro avg       0.14      0.55      0.19     76554\n              weighted avg       0.29      0.55      0.35     76554\n               samples avg       0.11      0.45      0.16     76554\n",
+            "benchmark": {
+                "benchmark_name": "Chexpert_CWBCE_E9_B32_C0_N12_D320_Masked_NoFinding",
+                "dataset_name": "chexpert_full",
+                "dataset_folder": "data/chexpert/full",
+                "models_dir": "models",
+                "epochs": 9,
+                "optimizer": "Adam",
+                "loss": "weighted_binary_crossentropy",
+                "use_class_weights": false,
+                "positive_weights": [
+                    5.491044998168945,
+                    2.416487693786621,
+                    1.3061808347702026,
+                    3.6879360675811768,
+                    1.996109127998352,
+                    5.71186637878418,
+                    8.164386749267578,
+                    2.7001125812530518,
+                    4.474417209625244,
+                    1.6808327436447144,
+                    8.232630729675293,
+                    3.7330634593963623
+                ],
+                "negative_weights": [
+                    1.2226653099060059,
+                    1.7059714794158936,
+                    4.266043663024902,
+                    1.372032642364502,
+                    2.003906011581421,
+                    1.2122300863265991,
+                    1.1395792961120605,
+                    1.5881963968276978,
+                    1.2878180742263794,
+                    2.468789577484131,
+                    1.1382622718811035,
+                    1.3658897876739502
+                ],
+                "metrics": [
+                    "auc",
+                    "precision",
+                    "recall",
+                    "f2_score",
+                    "binary_accuracy",
+                    "accuracy_enlarged_cardiomediastinum",
+                    "accuracy_cardiomegaly",
+                    "accuracy_lung_opacity",
+                    "accuracy_lung_lesion",
+                    "accuracy_edema",
+                    "accuracy_consolidation",
+                    "accuracy_pneumonia",
+                    "accuracy_atelectasis",
+                    "accuracy_pneumothorax",
+                    "accuracy_pleural_effusion",
+                    "accuracy_pleural_other",
+                    "accuracy_fracture",
+                    "auc_enlarged_cardiomediastinum",
+                    "auc_cardiomegaly",
+                    "auc_lung_opacity",
+                    "auc_lung_lesion",
+                    "auc_edema",
+                    "auc_consolidation",
+                    "auc_pneumonia",
+                    "auc_atelectasis",
+                    "auc_pneumothorax",
+                    "auc_pleural_effusion",
+                    "auc_pleural_other",
+                    "auc_fracture",
+                    "precision_enlarged_cardiomediastinum",
+                    "precision_cardiomegaly",
+                    "precision_lung_opacity",
+                    "precision_lung_lesion",
+                    "precision_edema",
+                    "precision_consolidation",
+                    "precision_pneumonia",
+                    "precision_atelectasis",
+                    "precision_pneumothorax",
+                    "precision_pleural_effusion",
+                    "precision_pleural_other",
+                    "precision_fracture",
+                    "recall_enlarged_cardiomediastinum",
+                    "recall_cardiomegaly",
+                    "recall_lung_opacity",
+                    "recall_lung_lesion",
+                    "recall_edema",
+                    "recall_consolidation",
+                    "recall_pneumonia",
+                    "recall_atelectasis",
+                    "recall_pneumothorax",
+                    "recall_pleural_effusion",
+                    "recall_pleural_other",
+                    "recall_fracture",
+                    "f2_score_enlarged_cardiomediastinum",
+                    "f2_score_cardiomegaly",
+                    "f2_score_lung_opacity",
+                    "f2_score_lung_lesion",
+                    "f2_score_edema",
+                    "f2_score_consolidation",
+                    "f2_score_pneumonia",
+                    "f2_score_atelectasis",
+                    "f2_score_pneumothorax",
+                    "f2_score_pleural_effusion",
+                    "f2_score_pleural_other",
+                    "f2_score_fracture"
+                ],
+                "label_columns": [
+                    "Enlarged Cardiomediastinum",
+                    "Cardiomegaly",
+                    "Lung Opacity",
+                    "Lung Lesion",
+                    "Edema",
+                    "Consolidation",
+                    "Pneumonia",
+                    "Atelectasis",
+                    "Pneumothorax",
+                    "Pleural Effusion",
+                    "Pleural Other",
+                    "Fracture"
+                ],
+                "path_column": "Path",
+                "path_column_prefix": "",
+                "shuffle": true,
+                "batch_size": 32,
+                "dim": [
+                    320,
+                    320
+                ],
+                "crop": false,
+                "n_channels": 3,
+                "nan_replacement": -1,
+                "unc_value": -1,
+                "u_enc": "uzeroes",
+                "drop_last": true,
+                "train_num_samples": 142320,
+                "valid_num_samples": 36162,
+                "test_num_samples": 44932,
+                "split_seed": 6122156
+            }
         }
     ]
 }

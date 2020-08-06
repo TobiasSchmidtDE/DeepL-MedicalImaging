@@ -39,7 +39,7 @@ class WeightedBinaryCrossentropy(Loss):
             self.epsilon(), dtype=y_pred.dtype.base_dtype)
         y_pred = clip_ops.clip_by_value(y_pred, epsilon_, 1. - epsilon_)
 
-        # Create a mask for which labels are provided and which are not (e.g. NaN)
+        # Create a mask for which labels are provided and which are not (e.g. NaN encoded as -1)
         # where 0 means no label (-1) and 1 means a label was provided (0 or 1)
         mask = tf.cast(tf.math.greater_equal(y_true, 0), y_true.dtype.base_dtype)
                 

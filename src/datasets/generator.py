@@ -341,6 +341,15 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         if self.drop_last:
             return self.label_generation(self.index[:len(self)*self.batch_size])
         return self.label_generation(self.index)
+    
+    def get_labels_nonan(self):
+        """
+        Returns all labels with NaNs encoded as 0
+        """
+        
+        labels = self.get_labels()
+        labels[labels == self.nan_replacement] = 0
+        return labels
 
     def on_epoch_end(self):
         """

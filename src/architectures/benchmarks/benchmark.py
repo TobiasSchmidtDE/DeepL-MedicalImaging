@@ -1,6 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 import numpy as np
+import math
 import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import TensorBoard
@@ -9,7 +10,7 @@ from sklearn.metrics import classification_report
 from src.datasets.generator import ImageDataGenerator
 from src.utils.save_model import save_model, model_set
 from src.preprocessing.split.train_test_split import train_test_split
-from src.metrics.metrics import SingleClassMetric
+from src.metrics.metrics import SingleClassMetric, NaNWrapper
 from src.metrics.losses import compute_class_weight
 from src.metrics.custom_callbacks import CustomTensorBoard
 
@@ -92,7 +93,8 @@ class Experiment:
                                            update_freq=int(len(traingen)/100),
                                            histogram_freq=1,
                                            write_graph=False,
-                                           embeddings_freq=1)
+                                           profile_batch=0,
+                                           embeddings_freq=0)
 
         early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                                    min_delta=0,
@@ -145,7 +147,7 @@ class Experiment:
 
         y_pred = np.array(predictions_bool, dtype=int)
 
-        groundtruth_label = testgen.get_labels()
+        groundtruth_label = testgen.get_labels_nonan()
 
         report = classification_report(
             groundtruth_label, y_pred, target_names=list(self.benchmark.label_columns))
@@ -155,7 +157,7 @@ class Experiment:
 
         metric_names = self.benchmark.as_dict()["metrics"]
         eval_metrics = dict(
-            zip(["loss"] + metric_names, [float(i) for i in eval_res]))
+            zip(["loss"] + metric_names, [float(i) for i in eval_res if not math.isnan(float(i))]))
 
         self.evaluation_result = {
             "report": report,
@@ -196,7 +198,7 @@ class Benchmark:
                  optimizer=Adam(), loss='binary_crossentropy', single_class_metrics=[],
                  metrics=None, train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
-                 shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), crop=False,
+                 shuffle=True, drop_last=True, batch_size=64, dim=(320, 320), crop=False,
                  crop_template=None, view_pos_column="Frontal/Lateral", view_pos_frontal="Frontal",
                  view_pos_lateral="Lateral", n_channels=3, nan_replacement=0, unc_value=-1,
                  u_enc='uzeroes', path_column="Path", path_column_prefix="",
@@ -332,9 +334,11 @@ class Benchmark:
                 for class_id in iter(range(len(label_columns))):
                     class_name = label_columns[class_id].lower().replace(
                         " ", "_")
-                    self.metrics += [SingleClassMetric(
-                        base_metric, class_id, class_name=class_name)]
+                    self.metrics += [NaNWrapper(SingleClassMetric(
+                        base_metric, class_id, class_name=class_name))]
 
+                    
+                    
         if self.dataset_name is None:
             self.dataset_name = dataset_folder.parent.name + "_" + dataset_folder.name
 
