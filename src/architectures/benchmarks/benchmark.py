@@ -353,12 +353,10 @@ class Benchmark:
             train_labels, validation_labels = train_test_split(
                 train_labels, test_size=split_valid_size, group=split_group, seed=split_seed)
         else:
-            # read train/validation labels from one file and test from another
-            train_valid_labels = pd.read_csv(
+            # read train labels from one file and test from another. Set valid equal to test
+            train_labels = pd.read_csv(
                 self.dataset_folder / train_labels)
-            test_labels = pd.read_csv(self.dataset_folder / test_labels)
-            train_labels, validation_labels = train_test_split(
-                train_valid_labels, test_size=split_valid_size, group=split_group, seed=split_seed)
+            validation_labels = test_labels = pd.read_csv(self.dataset_folder / test_labels)
 
         self.traingen = ImageDataGenerator(dataset=train_labels,
                                            dataset_folder=self.dataset_folder,

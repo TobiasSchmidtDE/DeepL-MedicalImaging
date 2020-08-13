@@ -20,11 +20,11 @@ from pathlib import Path
 # Run this before loading other dependencies, otherwise they might occupy memory on gpu 0 by default and it will stay that way
 
 # Specify which GPU(s) to use
-os.environ["CUDA_VISIBLE_DEVICES"] = "1,0"  # Or 2, 3, etc. other than 0
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # Or 2, 3, etc. other than 0
 
-config = tf.compat.v1.ConfigProto(device_count={'GPU': 2}, allow_soft_placement=True, log_device_placement=True)
+config = tf.compat.v1.ConfigProto(device_count={'GPU': 1}, allow_soft_placement=True, log_device_placement=True)
 #config.gpu_options.allow_growth = True
-config.gpu_options.per_process_gpu_memory_fraction = 1.2
+config.gpu_options.per_process_gpu_memory_fraction = 0.8
 tf.compat.v1.Session(config=config)
 
         
@@ -37,27 +37,6 @@ from src.architectures.benchmarks.benchmark_definitions import generate_benchmar
 from src.metrics.metrics import F2Score
 from src.metrics.losses import WeightedBinaryCrossentropy, compute_class_weight
 run_configs = [
-   
-   {
-        "architectures" : {
-            "DenseNet121": {
-                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
-                "model_fn": DenseNet121
-            },
-        },
-        "columns": ['Cardiomegaly',
-                    'Edema',
-                    'Consolidation',
-                    'Atelectasis',
-                    'Pleural Effusion'],
-        "epochs": 9,
-        "batch_sizes": 32,
-        "nan_replacement": 0,
-        "dim":(320, 320),
-        "name_suffix": "_D320",
-        "loss_functions": ["BCE"],
-        "crop_confs":  ["C0"]
-    },
     {
         "architectures" : {
             "DenseNet121": {
@@ -80,9 +59,9 @@ run_configs = [
         "epochs": 9,
         "batch_sizes": 32,
         "nan_replacement": 0,
-        "dim":(320, 320),
-        "name_suffix": "_D320",
-        "loss_functions": ["CWBCE"],
+        "dim":(256, 256),
+        "name_suffix": "_D256_FULLDS",
+        "loss_functions": ["WBCE"],
         "crop_confs":  ["C0"]
     },
 ]
@@ -171,11 +150,12 @@ for run_conf in run_configs:
             for crop_conf in crop_confs:
                 try:
                     chexpert_benchmarks, _ = generate_benchmarks(
-                                                     #path = Path(os.environ.get("CHEXPERT_FULL_PREPROCESSED_DATASET_DIRECTORY")),
+                                                    # path = Path(os.environ.get("CHEXPERT_FULL_PREPROCESSED_DATASET_DIRECTORY")),
                                                      path = Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY")),
                                                      name_suffix=run_conf["name_suffix"],
                                                      classes=run_conf["columns"],
-                                                     train_labels = "nofinding_train.csv",
+                                                     #train_labels = "nofinding_train.csv",
+                                                     test_labels = "test.csv",
                                                      nan_replacement = run_conf["nan_replacement"], #float("NaN"),
                                                      batch_sizes = {"b": run_conf["batch_sizes"]},
                                                      epoch_sizes = {"e": epoch_sizes},
