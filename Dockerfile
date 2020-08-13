@@ -89,10 +89,10 @@ RUN ln -s $(which python3) /usr/local/bin/python
 #RUN python3 -m pip install --no-cache-dir ${TF_PACKAGE}${TF_PACKAGE_VERSION:+==${TF_PACKAGE_VERSION}}
 
 # set working directory
-WORKDIR  /srv/idp1/idp-radio-1
+WORKDIR  /srv/idp-radio-1
 
 # add workdir to pythonpath
-ENV PYTHONPATH "${PYTHONPATH}:/srv/idp1/idp-radio-1/src"
+ENV PYTHONPATH "${PYTHONPATH}:/srv/idp-radio-1/src"
 
 # install requirements
 COPY requirements.txt .
@@ -102,5 +102,5 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 RUN apt-get -y install git wget unzip ipython
 RUN pip install ipython[notebook] jupyterlab
 
-#ENTRYPOINT ["./remote_access/open_remoteaccess.sh"]
+ENTRYPOINT ["./remote_access/open_remoteaccess.sh"]
 CMD ["/bin/bash"]
