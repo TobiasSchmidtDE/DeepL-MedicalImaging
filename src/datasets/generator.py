@@ -105,7 +105,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                 lateral xray in the view_pos_column must be provided.
 
             preprocess_input_fn (function): (default: None)
-                When using a pretrained model from tf.keras.application this can be 
+                When using a pretrained model from tf.keras.application this can be
                 used to provide the corresponding tf.application.*.preprocess_input function
                 which will be called for each image input.
 
@@ -206,15 +206,13 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
         labels = self.dataset.iloc[sample_ids][self.label_columns].to_numpy()
 
-
         # enforce uncertainty encoding strategy
         labels = uencode(self.u_enc, labels, unc_value=self.unc_value)
-        
+
         # replace nan values
         labels[np.isnan(labels)] = self.nan_replacement
-        
+
         return np.array(labels, dtype=np.float32)
-    
 
     def data_generation(self, sample_ids):
         """
@@ -244,8 +242,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
             images = self.preprocess_input_fn(images)
 
         labels = self.label_generation(sample_ids)
-            
-            
+
         return images, labels
 
     def load_image(self, path, template_type):
@@ -341,12 +338,12 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         if self.drop_last:
             return self.label_generation(self.index[:len(self)*self.batch_size])
         return self.label_generation(self.index)
-    
+
     def get_labels_nonan(self):
         """
         Returns all labels with NaNs encoded as 0
         """
-        
+
         labels = self.get_labels()
         labels[labels == self.nan_replacement] = 0
         return labels

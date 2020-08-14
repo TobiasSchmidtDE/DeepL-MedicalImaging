@@ -1,10 +1,11 @@
+import math
+import os
+
 from datetime import datetime
 from pathlib import Path
 import numpy as np
-import math
 import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import TensorBoard
 import pandas as pd
 from sklearn.metrics import classification_report
 from src.datasets.generator import ImageDataGenerator
@@ -90,11 +91,12 @@ class Experiment:
         log_dir.mkdir(parents=True, exist_ok=True)
 
         tensorboard_callback = CustomTensorBoard(log_dir=str(log_dir),
-                                           update_freq=int(len(traingen)/200),
-                                           histogram_freq=0,
-                                           write_graph=False,
-                                           profile_batch=0,
-                                           embeddings_freq=0)
+                                                 update_freq=int(
+                                                     len(traingen)/200),
+                                                 histogram_freq=0,
+                                                 write_graph=False,
+                                                 profile_batch=0,
+                                                 embeddings_freq=0)
 
         early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                                    min_delta=0,
@@ -120,7 +122,7 @@ class Experiment:
                                                                   cooldown=0,
                                                                   min_lr=0,)
 
-        terminate_on_nan_callback = tf.keras.callbacks.TerminateOnNaN()
+        # terminate_on_nan_callback = tf.keras.callbacks.TerminateOnNaN()
 
         self.train_result = self.model.fit(x=traingen,
                                            steps_per_epoch=len(traingen),
@@ -131,8 +133,8 @@ class Experiment:
                                            callbacks=[tensorboard_callback,
                                                       early_stopping_callback,
                                                       model_checkpoint_callback,
-                                                      #terminate_on_nan_callback,
-                                                      reduce_lr_callback,])
+                                                      # terminate_on_nan_callback,
+                                                      reduce_lr_callback, ])
         return self.train_result
 
     def evaluate(self):
@@ -189,8 +191,8 @@ class Experiment:
             model_set(self.model_id, 'test', self.evaluation_result["metrics"])
             model_set(self.model_id, 'classification_report',
                       self.evaluation_result["report"])
-        
-        # Save predictions 
+
+        # Save predictions
         CURRENT_WORKING_DIR = Path(os.getcwd())
         basepath = CURRENT_WORKING_DIR
         # path main directory
@@ -199,10 +201,12 @@ class Experiment:
         folderpath = basepath / 'models' / self.model_name
         # make sure path exists, ceate one if necessary
         Path(folderpath).mkdir(parents=True, exist_ok=True)
-        
-        np.savetxt(folderpath / "predictions_probs.csv", self.predictions.numpy(), delimiter=";")
-        np.savetxt(folderpath / "predictions_classes.csv", self.y_pred, delimiter=";")
-           
+
+        np.savetxt(folderpath / "predictions_probs.csv",
+                   self.predictions.numpy(), delimiter=";")
+        np.savetxt(folderpath / "predictions_classes.csv",
+                   self.y_pred, delimiter=";")
+
         return self.model_id
 
 
@@ -350,8 +354,6 @@ class Benchmark:
                     self.metrics += [NaNWrapper(SingleClassMetric(
                         base_metric, class_id, class_name=class_name))]
 
-                    
-                    
         if self.dataset_name is None:
             self.dataset_name = dataset_folder.parent.name + "_" + dataset_folder.name
 
@@ -370,7 +372,8 @@ class Benchmark:
             train_labels = pd.read_csv(self.dataset_folder / train_labels)
             train_labels, validation_labels = train_test_split(
                 train_labels, test_size=split_valid_size, group=split_group, seed=split_seed)
-            validation_labels = test_labels = pd.read_csv(self.dataset_folder / test_labels)
+            validation_labels = test_labels = pd.read_csv(
+                self.dataset_folder / test_labels)
 
         self.traingen = ImageDataGenerator(dataset=train_labels,
                                            dataset_folder=self.dataset_folder,

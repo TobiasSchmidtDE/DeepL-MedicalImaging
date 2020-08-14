@@ -1,8 +1,8 @@
 import os
+
 from pathlib import Path
 import tensorflow as tf
 from dotenv import load_dotenv, find_dotenv
-import math
 
 from src.architectures.benchmarks.benchmark import Benchmark, Experiment
 from src.metrics.metrics import F2Score, NaNWrapper
@@ -56,13 +56,17 @@ CHESTXRAY14_COLUMNS = ['Edema',
                        'Hernia',
                        'Emphysema',
                        'Pneumothorax']
-def simple_architecture_experiment(benchmark, base_model_fn, classes, train_last_layer_only=False ):
-    model = SimpleBaseArchitecture(base_model_fn, len(classes), train_last_layer_only = train_last_layer_only)
+
+
+def simple_architecture_experiment(benchmark, base_model_fn, classes, train_last_layer_only=False):
+    model = SimpleBaseArchitecture(base_model_fn, len(
+        classes), train_last_layer_only=train_last_layer_only)
     experiment = Experiment(benchmark, model)
     return experiment
 
+
 class Chexpert_Benchmark(Benchmark):
-    def __init__(self, name, path = Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY")), classes=None, train_labels="train.csv",
+    def __init__(self, name, path=Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY")), classes=None, train_labels="train.csv",
                  split_group='patient_id', path_column="Path", **kwargs):
 
         if classes is None:
@@ -77,7 +81,7 @@ class Chexpert_Benchmark(Benchmark):
 
 
 class Chestxray14_Benchmark(Benchmark):
-    def __init__(self, name, path = Path(os.environ.get("CHESTXRAY14_DATASET_DIRECTORY")), classes=None, train_labels="meta/data/labels.csv", split_group='Patient ID',
+    def __init__(self, name, path=Path(os.environ.get("CHESTXRAY14_DATASET_DIRECTORY")), classes=None, train_labels="meta/data/labels.csv", split_group='Patient ID',
                  path_column="Image Index", path_column_prefix="images/",
                  view_pos_column="View Position", view_pos_frontal="PA", view_pos_lateral="AP",
                  ** kwargs):
@@ -135,9 +139,9 @@ def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=N
 
                 if classes is not None:
                     key_suffix += "_N" + str(len(classes))
-                
+
                 key_suffix += name_suffix
-                
+
                 try:
                     CHEXPERT_BENCHMARKS["BCE" + key_suffix] = \
                         Chexpert_Benchmark("Chexpert_BCE"+key_suffix,
@@ -204,7 +208,7 @@ def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=N
                                               **kwargs)
                 except Exception as err:
                     print("Chestxray_BCE"+key_suffix + " could not be created")
-                    #print(err)
+                    # print(err)
 
                 try:
                     CHESTXRAY14_BENCHMARKS["WBCE" + key_suffix] =  \
@@ -219,7 +223,7 @@ def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=N
                                               **kwargs)
                 except Exception as err:
                     print("Chestxray_WBCE"+key_suffix + " could not be created")
-                    #print(err)
+                    # print(err)
 
                 try:
                     CHESTXRAY14_BENCHMARKS["CWBCE" + key_suffix] =  \
@@ -242,8 +246,9 @@ def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=N
                         WeightedBinaryCrossentropy(positive_weights,
                                                    negative_weights)
                 except Exception as err:
-                    print("Chestxray_CWBCE"+key_suffix + " could not be created")
-                    #print(err)
+                    print("Chestxray_CWBCE"+key_suffix +
+                          " could not be created")
+                    # print(err)
 
     return CHEXPERT_BENCHMARKS, CHESTXRAY14_BENCHMARKS
 

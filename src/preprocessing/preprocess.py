@@ -22,12 +22,13 @@ m = int(labels.shape[0]/1000)
 # iterate through dataset and save preprocessed images
 for i, row in labels.iterrows():
     if i % m == 0:
-        print("Preprocessing {p}% {i} of {l}".format(p=i/labels.shape[0], i=i, l=labels.shape[0]))
+        print("Preprocessing {p}% {i} of {l}".format(
+            p=i/labels.shape[0], i=i, l=labels.shape[0]))
 
     # load image
     path = row['Path']
     img = Image.open(str(CHEXPERT_DIR / path))
-    
+
     if img.mode != "L":
         print(img.mode)
         img = img.convert(mode="L")
@@ -44,10 +45,10 @@ for i, row in labels.iterrows():
     folderpath = '/'.join(path.split('/')[:-1])
     folderpath = CHEXPERT_PREPROCESSED_DATASET_DIRECTORY / folderpath
     folderpath.mkdir(parents=True, exist_ok=True)
-    
+
     if img.mode != "L":
         img = img.convert(mode="L")
-        
+
     img.save(CHEXPERT_PREPROCESSED_DATASET_DIRECTORY / path)
 
 print("Preprocessing done. Copying labels file")

@@ -33,7 +33,6 @@ class F2Score(tf.keras.metrics.Metric):
         self.recall_metric.reset_states()
 
 
-        
 class SingleClassMetric(tf.keras.metrics.Metric):
     def __init__(self, base_metric, class_id, class_name=None, dtype=None, **vargs):
         name = base_metric.name + "_" + \
@@ -44,13 +43,14 @@ class SingleClassMetric(tf.keras.metrics.Metric):
         # might be shared between different single_class_metrics and interfere with each other
         self.base_metric = base_metric.__class__(name=base_metric.name)
         self.class_id = class_id
-    
+
     def update_state(self, y_true, y_pred, sample_weight=None):  # pylint: disable=W0221
         # Create a mask for which labels are provided and which are not (e.g. NaN encoded as -1)
         # where 0 means no label (-1) and 1 means a label was provided (0 or 1)
         #mask = tf.cast(tf.math.greater_equal(y_true, 0), y_true.dtype.base_dtype)
         #y_true = tf.math.multiply_no_nan(y_true, mask)
-        self.base_metric.update_state(y_true[:, self.class_id], y_pred[:, self.class_id])
+        self.base_metric.update_state(
+            y_true[:, self.class_id], y_pred[:, self.class_id])
 
     def result(self):
         return self.base_metric.result()
@@ -66,11 +66,12 @@ class NaNWrapper(tf.keras.metrics.Metric):
         self.base_metric = base_metric
         vargs["name"] = self.base_metric.name
         super().__init__(**vargs)
-    
+
     def update_state(self, y_true, y_pred, sample_weight=None):  # pylint: disable=W0221
         # Create a mask for which labels are provided and which are not (e.g. NaN encoded as -1)
         # where 0 means no label (-1) and 1 means a label was provided (0 or 1)
-        mask = tf.cast(tf.math.greater_equal(y_true, 0), y_true.dtype.base_dtype)
+        mask = tf.cast(tf.math.greater_equal(
+            y_true, 0), y_true.dtype.base_dtype)
         y_true = tf.math.multiply_no_nan(y_true, mask)
         self.base_metric.update_state(y_true, y_pred)
 
