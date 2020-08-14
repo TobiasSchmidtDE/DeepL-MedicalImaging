@@ -20,7 +20,8 @@ def SimpleBaseArchitecture(base_model_fn, num_classes, name=None, train_last_lay
     """
     try:
         base_model = base_model_fn(include_top=False, weights='imagenet')
-    except TypeError:
+    except Exception as err:
+        print(err)
         ValueError(
             "You must provide a function from tf.keras.applications " +
             "that instantiates a model architecure")
@@ -36,4 +37,5 @@ def SimpleBaseArchitecture(base_model_fn, num_classes, name=None, train_last_lay
     prediction_layer = Dense(num_classes, activation='sigmoid')(x)
     model = Model(inputs=base_model.input, outputs=prediction_layer)
     model.simple_name = name if name is not None else base_model_fn.__name__
+    model.simple_name += "_small" if train_last_layer_only else ""
     return model

@@ -123,7 +123,7 @@ def execute():
             f.write(json_data)
 
         # remove temp dir
-        os.system('rm  -rf ' + str(tempdir))
+        # os.system('rm  -rf ' + str(tempdir))
 
     # pylint: disable=bare-except
     except:

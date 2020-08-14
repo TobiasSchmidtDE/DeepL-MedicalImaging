@@ -7,7 +7,6 @@ from tensorflow.python.framework import constant_op
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import clip_ops
 from tensorflow.python.keras import backend_config
-from tensorflow.keras import backend as K
 
 
 class WeightedBinaryCrossentropy(Loss):
@@ -38,13 +37,25 @@ class WeightedBinaryCrossentropy(Loss):
             self.epsilon(), dtype=y_pred.dtype.base_dtype)
         y_pred = clip_ops.clip_by_value(y_pred, epsilon_, 1. - epsilon_)
 
+        # Create a mask for which labels are provided and which are not (e.g. NaN encoded as -1)
+        # where 0 means no label (-1) and 1 means a label was provided (0 or 1)
+        mask = tf.cast(tf.math.greater_equal(
+            y_true, 0), y_true.dtype.base_dtype)
+
         # Compute cross entropy from probabilities.
         bce_pos = y_true * math_ops.log(y_pred + epsilon_)
         bce_neg = (1 - y_true) * math_ops.log(1 - y_pred + epsilon_)
+
+        # removes all nans of bce_pos and bce_neg
+        bce_pos = tf.math.multiply_no_nan(bce_pos, mask)
+        bce_neg = tf.math.multiply_no_nan(bce_neg, mask)
+
         bce = bce_pos * self.positive_class_weights + \
             bce_neg * self.negative_class_weights
 
-        return K.mean(-bce)
+        # caclulate mean, but only weighted by the number of classes
+        return tf.reduce_sum(-bce) / tf.reduce_sum(mask)
+        # return K.mean(-bce)
 
 
 def compute_class_weight(datagenerator):
@@ -65,7 +76,11 @@ def compute_class_weight(datagenerator):
         class_weights_negative (tf.tensor(shape=(num_classes,))):
             The weights based on the negative occurances of the class labels
     """
-    labels = datagenerator.get_labels()
+    labels = np.copy(datagenerator.get_labels())
+
+    # set -1 to nan so it is disregarded by the coming compuations
+    labels[labels == -1] = np.nan
+
     _, num_classes = labels.shape
     class_weights_positive = [0, ]*num_classes
     class_weights_negative = [0, ]*num_classes

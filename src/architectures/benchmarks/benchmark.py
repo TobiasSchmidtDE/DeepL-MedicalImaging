@@ -1,16 +1,19 @@
+import math
+import os
+
 from datetime import datetime
 from pathlib import Path
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import TensorBoard
 import pandas as pd
 from sklearn.metrics import classification_report
 from src.datasets.generator import ImageDataGenerator
 from src.utils.save_model import save_model, model_set
 from src.preprocessing.split.train_test_split import train_test_split
-from src.metrics.metrics import SingleClassMetric
+from src.metrics.metrics import SingleClassMetric, NaNWrapper
 from src.metrics.losses import compute_class_weight
+from src.metrics.custom_callbacks import CustomTensorBoard
 
 
 class Experiment:
@@ -44,7 +47,7 @@ class Experiment:
         self.model_id = None
 
         if self.model_name is None:
-            self.model_name = self.model.simple_name.replace(" ", "_") + \
+            self.model_name = self.model.simple_name.replace(" ", "_") + "_" +\
                 self.benchmark.name.replace(" ", "_")
 
         self.model_description = ("Trained {model_name} architecture using the "
@@ -87,23 +90,25 @@ class Experiment:
         log_dir = model_dir / "logs"
         log_dir.mkdir(parents=True, exist_ok=True)
 
-        tensorboard_callback = TensorBoard(log_dir=str(log_dir),
-                                           update_freq=int(len(traingen)/100),
-                                           histogram_freq=1,
-                                           write_graph=False,
-                                           embeddings_freq=1)
+        tensorboard_callback = CustomTensorBoard(log_dir=str(log_dir),
+                                                 update_freq=int(
+                                                     len(traingen)/200),
+                                                 histogram_freq=0,
+                                                 write_graph=False,
+                                                 profile_batch=0,
+                                                 embeddings_freq=0)
 
         early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                                    min_delta=0,
-                                                                   patience=3,
+                                                                   patience=5,
                                                                    verbose=2,
                                                                    mode='auto',
-                                                                   restore_best_weights=False)
+                                                                   restore_best_weights=True)
 
         model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_filepath,
                                                                        monitor='val_loss',
                                                                        verbose=2,
-                                                                       save_best_only=False,
+                                                                       save_best_only=True,
                                                                        save_weights_only=False,
                                                                        mode='auto',
                                                                        save_freq='epoch')
@@ -114,10 +119,10 @@ class Experiment:
                                                                   verbose=0,
                                                                   mode='auto',
                                                                   min_delta=0.0001,
-                                                                  cooldown=1,
+                                                                  cooldown=0,
                                                                   min_lr=0,)
 
-        terminate_on_nan_callback = tf.keras.callbacks.TerminateOnNaN()
+        # terminate_on_nan_callback = tf.keras.callbacks.TerminateOnNaN()
 
         self.train_result = self.model.fit(x=traingen,
                                            steps_per_epoch=len(traingen),
@@ -127,9 +132,9 @@ class Experiment:
                                            class_weight=self.benchmark.class_weights,
                                            callbacks=[tensorboard_callback,
                                                       early_stopping_callback,
-                                                      reduce_lr_callback,
                                                       model_checkpoint_callback,
-                                                      terminate_on_nan_callback])
+                                                      # terminate_on_nan_callback,
+                                                      reduce_lr_callback, ])
         return self.train_result
 
     def evaluate(self):
@@ -142,25 +147,25 @@ class Experiment:
 
         predictions_bool = (self.predictions >= 0.5)
 
-        y_pred = np.array(predictions_bool, dtype=int)
+        self.y_pred = np.array(predictions_bool, dtype=int)
 
-        groundtruth_label = testgen.get_labels()
+        self.groundtruth_label = testgen.get_labels_nonan()
 
-        report = classification_report(
-            groundtruth_label, y_pred, target_names=list(self.benchmark.label_columns))
+        self.report = classification_report(
+            self.groundtruth_label, self.y_pred, target_names=list(self.benchmark.label_columns))
 
-        eval_res = self.model.evaluate(
+        self.eval_res = self.model.evaluate(
             x=testgen, steps=len(testgen), verbose=1)
 
         metric_names = self.benchmark.as_dict()["metrics"]
         eval_metrics = dict(
-            zip(["loss"] + metric_names, [float(i) for i in eval_res]))
+            zip(["loss"] + metric_names, [float(i) for i in self.eval_res if not math.isnan(float(i))]))
 
         self.evaluation_result = {
-            "report": report,
+            "report": self.report,
             "metrics": eval_metrics,
             "predictions": self.predictions,
-            "groundtruth_label": groundtruth_label,
+            "groundtruth_label": self.groundtruth_label,
         }
 
         return self.evaluation_result
@@ -187,19 +192,34 @@ class Experiment:
             model_set(self.model_id, 'classification_report',
                       self.evaluation_result["report"])
 
+        # Save predictions
+        CURRENT_WORKING_DIR = Path(os.getcwd())
+        basepath = CURRENT_WORKING_DIR
+        # path main directory
+        if basepath.name != "idp-radio-1":
+            basepath = basepath.parent.parent
+        folderpath = basepath / 'models' / self.model_name
+        # make sure path exists, ceate one if necessary
+        Path(folderpath).mkdir(parents=True, exist_ok=True)
+
+        np.savetxt(folderpath / "predictions_probs.csv",
+                   self.predictions.numpy(), delimiter=";")
+        np.savetxt(folderpath / "predictions_classes.csv",
+                   self.y_pred, delimiter=";")
+
         return self.model_id
 
 
 class Benchmark:
     def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
-                 optimizer=Adam(), loss='binary_crossentropy', single_class_metrics=None,
+                 optimizer=Adam(), loss='binary_crossentropy', single_class_metrics=[],
                  metrics=None, train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
-                 shuffle=True, drop_last=True, batch_size=64, dim=(256, 256), crop=False,
+                 shuffle=True, drop_last=True, batch_size=64, dim=(320, 320), crop=False,
                  crop_template=None, view_pos_column="Frontal/Lateral", view_pos_frontal="Frontal",
                  view_pos_lateral="Lateral", n_channels=3, nan_replacement=0, unc_value=-1,
                  u_enc='uzeroes', path_column="Path", path_column_prefix="",
-                 use_class_weights=False):
+                 use_class_weights=False, preprocess_input_fn=None):
         """
         Instaniates a benchmark that can be provided as basis of an
         src.architecures.benchmark.Experiment. Provides these experiments with the same
@@ -322,6 +342,8 @@ class Benchmark:
         self.drop_last = drop_last
         self.use_class_weights = use_class_weights
         self.class_weights = None
+        self.preprocess_input_fn = preprocess_input_fn
+        self.split_seed = split_seed
 
         # for each metric in single_class instantiate a metric for each individual pathology
         if self.single_class_metrics is not None:
@@ -329,8 +351,8 @@ class Benchmark:
                 for class_id in iter(range(len(label_columns))):
                     class_name = label_columns[class_id].lower().replace(
                         " ", "_")
-                    self.metrics += [SingleClassMetric(
-                        base_metric, class_id, class_name=class_name)]
+                    self.metrics += [NaNWrapper(SingleClassMetric(
+                        base_metric, class_id, class_name=class_name))]
 
         if self.dataset_name is None:
             self.dataset_name = dataset_folder.parent.name + "_" + dataset_folder.name
@@ -346,12 +368,12 @@ class Benchmark:
             train_labels, validation_labels = train_test_split(
                 train_labels, test_size=split_valid_size, group=split_group, seed=split_seed)
         else:
-            # read train/validation labels from one file and test from another
-            train_valid_labels = pd.read_csv(
-                self.dataset_folder / train_labels)
-            test_labels = pd.read_csv(self.dataset_folder / test_labels)
+            # read train and valid labels from one file and test from another.
+            train_labels = pd.read_csv(self.dataset_folder / train_labels)
             train_labels, validation_labels = train_test_split(
-                train_valid_labels, test_size=split_valid_size, group=split_group, seed=split_seed)
+                train_labels, test_size=split_valid_size, group=split_group, seed=split_seed)
+            validation_labels = test_labels = pd.read_csv(
+                self.dataset_folder / test_labels)
 
         self.traingen = ImageDataGenerator(dataset=train_labels,
                                            dataset_folder=self.dataset_folder,
@@ -370,7 +392,8 @@ class Benchmark:
                                            view_pos_column=self.view_pos_column,
                                            view_pos_lateral=self.view_pos_lateral,
                                            view_pos_frontal=self.view_pos_frontal,
-                                           crop_template=self.crop_template)
+                                           crop_template=self.crop_template,
+                                           preprocess_input_fn=self.preprocess_input_fn)
 
         self.valgen = ImageDataGenerator(dataset=validation_labels,
                                          dataset_folder=self.dataset_folder,
@@ -389,7 +412,8 @@ class Benchmark:
                                          view_pos_column=self.view_pos_column,
                                          view_pos_lateral=self.view_pos_lateral,
                                          view_pos_frontal=self.view_pos_frontal,
-                                         crop_template=self.crop_template)
+                                         crop_template=self.crop_template,
+                                         preprocess_input_fn=self.preprocess_input_fn)
 
         self.testgen = ImageDataGenerator(dataset=test_labels,
                                           dataset_folder=self.dataset_folder,
@@ -408,7 +432,8 @@ class Benchmark:
                                           view_pos_column=self.view_pos_column,
                                           view_pos_lateral=self.view_pos_lateral,
                                           view_pos_frontal=self.view_pos_frontal,
-                                          crop_template=self.crop_template)
+                                          crop_template=self.crop_template,
+                                          preprocess_input_fn=self.preprocess_input_fn)
 
         self.positive_weights, self.negative_weights = compute_class_weight(
             self.traingen)
@@ -431,6 +456,7 @@ class Benchmark:
             "models_dir": str(self.models_dir),
             "epochs": self.epochs,
             "optimizer": self.optimizer.__class__.__name__,
+            "learning_rate": round(float(self.optimizer.learning_rate), 10),
             "loss": self.loss if isinstance(self.loss, str) else self.loss.name,
             "use_class_weights": self.use_class_weights,
             "positive_weights": [float(i) for i in self.positive_weights.numpy()],
@@ -451,6 +477,7 @@ class Benchmark:
             "train_num_samples": len(self.traingen.index),
             "valid_num_samples": len(self.valgen.index),
             "test_num_samples": len(self.testgen.index),
+            "split_seed": self.split_seed
         }
 
     def __str__(self):

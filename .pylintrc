@@ -149,7 +149,14 @@ disable=print-statement,
         too-many-locals,
         too-many-instance-attributes,
         duplicate-code,
-        too-few-public-methods
+        too-few-public-methods,
+        broad-except,
+        attribute-defined-outside-init,
+        dangerous-default-value,
+        line-too-long,
+        unused-argument,
+        too-many-branches,
+        cell-var-from-loop
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

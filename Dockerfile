@@ -43,7 +43,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # following libraries are needed to run cv2
     libsm6 \
     libxext6 \
-    libxrender-dev
+    libxrender-dev \
+    libgl1-mesa-glx
+
 
 # Install TensorRT if not building for PowerPC
 RUN [[ "${ARCH}" = "ppc64le" ]] || { apt-get update && \
@@ -103,3 +105,4 @@ RUN apt-get -y install git wget unzip ipython
 RUN pip install ipython[notebook] jupyterlab
 
 ENTRYPOINT ["./remote_access/open_remoteaccess.sh"]
+CMD ["/bin/bash"]
