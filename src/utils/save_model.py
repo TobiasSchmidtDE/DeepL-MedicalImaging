@@ -81,15 +81,16 @@ def save_model(model, history, name, filename, description, version='1', upload=
     Path(folderpath).mkdir(parents=True, exist_ok=True)
     model.save(path)
 
-    # upload model to gcp
-    if upload:
-        remote_name = log['id'] + '.h5'
-        upload_file(str(path), remote_name)
-
     with open(log_file, 'w') as f:
         json_data = json.dumps(data, indent=4)
         f.write(json_data)
 
+    
+    # upload model to gcp
+    if upload:
+        remote_name = log['id'] + '.h5'
+        upload_file(str(path), remote_name)
+        
     return identifier
 
 

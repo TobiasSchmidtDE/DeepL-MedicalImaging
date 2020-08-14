@@ -15,16 +15,17 @@ load_dotenv(find_dotenv())
 print(os.getcwd())
 
 import tensorflow as tf
+from tensorflow.keras.optimizers import Adam
 from pathlib import Path
 
 # Run this before loading other dependencies, otherwise they might occupy memory on gpu 0 by default and it will stay that way
 
 # Specify which GPU(s) to use
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # Or 2, 3, etc. other than 0
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # Or 2, 3, etc. other than 0
 
 config = tf.compat.v1.ConfigProto(device_count={'GPU': 1}, allow_soft_placement=True, log_device_placement=True)
-#config.gpu_options.allow_growth = True
-config.gpu_options.per_process_gpu_memory_fraction = 0.8
+config.gpu_options.allow_growth = True
+#config.gpu_options.per_process_gpu_memory_fraction = 0.8
 tf.compat.v1.Session(config=config)
 
         
@@ -56,14 +57,39 @@ run_configs = [
                     'Pleural Effusion',
                     'Pleural Other',
                     'Fracture'],
-        "epochs": 9,
+        "epochs": 5,
         "batch_sizes": 32,
         "nan_replacement": 0,
         "dim":(256, 256),
-        "name_suffix": "_D256_FULLDS",
-        "loss_functions": ["WBCE"],
+        "optim": Adam(learning_rate=0.0001), # Adam()
+        "split_valid_size": 0.1, 
+        "name_suffix": "_D256_DS9010_LR4",
+        "loss_functions": ["BCE"],
         "crop_confs":  ["C0"]
     },
+    {
+        "architectures" : {
+            "DenseNet121": {
+                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
+                "model_fn": DenseNet121
+            },
+        },
+        "columns": ['Cardiomegaly',
+                    'Edema',
+                    'Consolidation',
+                    'Atelectasis',
+                    'Pleural Effusion',
+                    ],
+        "epochs": 5,
+        "batch_sizes": 32,
+        "nan_replacement": 0,
+        "dim":(256, 256),
+        "optim": Adam(learning_rate=0.0001), # Adam()
+        "split_valid_size": 0.1, 
+        "name_suffix": "_D256_DS9010_LR4",
+        "loss_functions": ["BCE"],
+        "crop_confs":  ["C0"]
+    }
 ]
 
 
@@ -154,15 +180,17 @@ for run_conf in run_configs:
                                                      path = Path(os.environ.get("CHEXPERT_DATASET_DIRECTORY")),
                                                      name_suffix=run_conf["name_suffix"],
                                                      classes=run_conf["columns"],
-                                                     #train_labels = "nofinding_train.csv",
+                                                     train_labels = "nofinding_train.csv",
                                                      test_labels = "test.csv",
                                                      nan_replacement = run_conf["nan_replacement"], #float("NaN"),
                                                      batch_sizes = {"b": run_conf["batch_sizes"]},
                                                      epoch_sizes = {"e": epoch_sizes},
                                                      dim=run_conf["dim"],
+                                                     optimizer = run_conf["optim"],
                                                      #crop = {"C1": False},
                                                      #crop = {"C0": False},
-                                                     split_seed = 6122156, 
+                                                     split_seed = 6122156,
+                                                     split_valid_size = run_conf["split_valid_size"],
                                                      preprocess_input_fn = architecture["preprocess_input_fn"])
                     
                     benchmark_key = list(filter(lambda k: "_"+loss_function in "_"+k and crop_conf in k, list(chexpert_benchmarks.keys())))

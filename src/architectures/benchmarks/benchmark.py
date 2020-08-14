@@ -90,8 +90,8 @@ class Experiment:
         log_dir.mkdir(parents=True, exist_ok=True)
 
         tensorboard_callback = CustomTensorBoard(log_dir=str(log_dir),
-                                           update_freq=int(len(traingen)/100),
-                                           histogram_freq=1,
+                                           update_freq=int(len(traingen)/200),
+                                           histogram_freq=0,
                                            write_graph=False,
                                            profile_batch=0,
                                            embeddings_freq=0)
@@ -145,25 +145,25 @@ class Experiment:
 
         predictions_bool = (self.predictions >= 0.5)
 
-        y_pred = np.array(predictions_bool, dtype=int)
+        self.y_pred = np.array(predictions_bool, dtype=int)
 
-        groundtruth_label = testgen.get_labels_nonan()
+        self.groundtruth_label = testgen.get_labels_nonan()
 
-        report = classification_report(
-            groundtruth_label, y_pred, target_names=list(self.benchmark.label_columns))
+        self.report = classification_report(
+            self.groundtruth_label, self.y_pred, target_names=list(self.benchmark.label_columns))
 
-        eval_res = self.model.evaluate(
+        self.eval_res = self.model.evaluate(
             x=testgen, steps=len(testgen), verbose=1)
 
         metric_names = self.benchmark.as_dict()["metrics"]
         eval_metrics = dict(
-            zip(["loss"] + metric_names, [float(i) for i in eval_res if not math.isnan(float(i))]))
+            zip(["loss"] + metric_names, [float(i) for i in self.eval_res if not math.isnan(float(i))]))
 
         self.evaluation_result = {
-            "report": report,
+            "report": self.report,
             "metrics": eval_metrics,
             "predictions": self.predictions,
-            "groundtruth_label": groundtruth_label,
+            "groundtruth_label": self.groundtruth_label,
         }
 
         return self.evaluation_result
@@ -189,7 +189,20 @@ class Experiment:
             model_set(self.model_id, 'test', self.evaluation_result["metrics"])
             model_set(self.model_id, 'classification_report',
                       self.evaluation_result["report"])
-
+        
+        # Save predictions 
+        CURRENT_WORKING_DIR = Path(os.getcwd())
+        basepath = CURRENT_WORKING_DIR
+        # path main directory
+        if basepath.name != "idp-radio-1":
+            basepath = basepath.parent.parent
+        folderpath = basepath / 'models' / self.model_name
+        # make sure path exists, ceate one if necessary
+        Path(folderpath).mkdir(parents=True, exist_ok=True)
+        
+        np.savetxt(folderpath / "predictions_probs.csv", self.predictions.numpy(), delimiter=";")
+        np.savetxt(folderpath / "predictions_classes.csv", self.y_pred, delimiter=";")
+           
         return self.model_id
 
 
@@ -353,9 +366,10 @@ class Benchmark:
             train_labels, validation_labels = train_test_split(
                 train_labels, test_size=split_valid_size, group=split_group, seed=split_seed)
         else:
-            # read train labels from one file and test from another. Set valid equal to test
-            train_labels = pd.read_csv(
-                self.dataset_folder / train_labels)
+            # read train and valid labels from one file and test from another.
+            train_labels = pd.read_csv(self.dataset_folder / train_labels)
+            train_labels, validation_labels = train_test_split(
+                train_labels, test_size=split_valid_size, group=split_group, seed=split_seed)
             validation_labels = test_labels = pd.read_csv(self.dataset_folder / test_labels)
 
         self.traingen = ImageDataGenerator(dataset=train_labels,
@@ -439,6 +453,7 @@ class Benchmark:
             "models_dir": str(self.models_dir),
             "epochs": self.epochs,
             "optimizer": self.optimizer.__class__.__name__,
+            "learning_rate": round(float(self.optimizer.learning_rate), 10),
             "loss": self.loss if isinstance(self.loss, str) else self.loss.name,
             "use_class_weights": self.use_class_weights,
             "positive_weights": [float(i) for i in self.positive_weights.numpy()],
