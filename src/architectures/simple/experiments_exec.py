@@ -45,35 +45,6 @@ run_configs = [
                 "model_fn": DenseNet121
             },
         },
-        "columns": ['Enlarged Cardiomediastinum',
-                    'Cardiomegaly',
-                    'Lung Opacity',
-                    'Lung Lesion',
-                    'Edema',
-                    'Consolidation',
-                    'Pneumonia',
-                    'Atelectasis',
-                    'Pneumothorax',
-                    'Pleural Effusion',
-                    'Pleural Other',
-                    'Fracture'],
-        "epochs": 5,
-        "batch_sizes": 32,
-        "nan_replacement": 0,
-        "dim":(256, 256),
-        "optim": Adam(learning_rate=0.0001), # Adam()
-        "split_valid_size": 0.1, 
-        "name_suffix": "_D256_DS9010_LR4",
-        "loss_functions": ["BCE"],
-        "crop_confs":  ["C0"]
-    },
-    {
-        "architectures" : {
-            "DenseNet121": {
-                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
-                "model_fn": DenseNet121
-            },
-        },
         "columns": ['Cardiomegaly',
                     'Edema',
                     'Consolidation',
@@ -199,7 +170,8 @@ for run_conf in run_configs:
                         print("Found benchmark {benchmark} for crop {crop_conf} and loss function {loss_function}".format(benchmark=benchmark_key,
                                                                                                                           crop_conf = crop_conf,
                                                                                                                           loss_function=loss_function))
-                        
+                        print("Benchmark generator class number: ", len(chexpert_benchmarks[benchmark_key].label_columns))
+                        print("Run Config class number: ", len(run_conf["columns"]))
                         chexpert_exp = simple_architecture_experiment(chexpert_benchmarks[benchmark_key], architecture["model_fn"], run_conf["columns"], train_last_layer_only=train_last_layer_only)
                         print("START TRAINING FOR", chexpert_exp.model_name)
                         
