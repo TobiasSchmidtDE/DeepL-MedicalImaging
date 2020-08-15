@@ -5,6 +5,7 @@ import tensorflow as tf
 from PIL import Image
 from src.datasets.u_encoding import uencode
 from src.preprocessing.cropping.template_matching import TemplateMatcher
+from src.datasets.data_augmentation import augment_image
 
 
 class ImageDataGenerator(tf.keras.utils.Sequence):
@@ -18,7 +19,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                  dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
                  crop=False, crop_template=None, view_pos_column="Frontal/Lateral",
                  view_pos_frontal="Frontal", view_pos_lateral="Lateral",
-                 preprocess_input_fn=None,
+                 preprocess_input_fn=None, augment=False
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
                  ):
@@ -167,6 +168,8 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         self.view_pos_lateral = view_pos_lateral
         self.preprocess_input_fn = preprocess_input_fn
         self.template_matcher = None
+        self.augment = augment
+
         if crop:
             self.template_matcher = TemplateMatcher(
                 template_conf=crop_template, size=dim)
@@ -269,6 +272,9 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
             img = Image.fromarray(img)
         else:
             img = img.resize(self.dim)
+
+        if self.augment:
+            img = augment_image(img)
 
         if self.n_channels == 3:
             img = img.convert(mode="RGB")
