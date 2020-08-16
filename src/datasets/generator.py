@@ -15,11 +15,11 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
     """
 
     def __init__(self, dataset, dataset_folder, label_columns, path_column="Path",
-                 path_column_prefix="", shuffle=True, drop_last=False, batch_size=64,
+                 path_column_prefix="", shuffle=True, drop_last=False, batch_size=32,
                  dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
                  crop=False, crop_template=None, view_pos_column="Frontal/Lateral",
                  view_pos_frontal="Frontal", view_pos_lateral="Lateral",
-                 preprocess_input_fn=None, augment=False
+                 preprocess_input_fn=None, augmentation=None
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
                  ):
@@ -168,9 +168,10 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         self.view_pos_lateral = view_pos_lateral
         self.preprocess_input_fn = preprocess_input_fn
         self.template_matcher = None
-        self.augment = augment
-
-        if crop:
+        self.augmentation = augmentation
+        self.crop = crop
+        
+        if self.crop:
             self.template_matcher = TemplateMatcher(
                 template_conf=crop_template, size=dim)
 
@@ -273,8 +274,8 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         else:
             img = img.resize(self.dim)
 
-        if self.augment:
-            img = augment_image(img)
+        if self.augmentation is not None:
+            img = augment_image(img, self.augmentation)
 
         if self.n_channels == 3:
             img = img.convert(mode="RGB")

@@ -1,7 +1,8 @@
 import torchvision.transforms as tfs
+import cv2
+import numpy as np
 
-
-def augment_image(image, shift=True, rotate=True, zoom=True):
+def augment_image_affine(image, shift=True, rotate=True, zoom=True):
     """
       Random affine transformations from https://github.com/jfhealthcare/Chexpert
 
@@ -15,3 +16,29 @@ def augment_image(image, shift=True, rotate=True, zoom=True):
     image = img_aug(image)
 
     return image
+
+def augment_image_eqhist(image):
+    """
+     Equalize Hist transformations from https://github.com/jfhealthcare/Chexpert
+
+      Parameters:
+        image (Image)
+    """
+    # TODO: fix this function
+    raise NotImplementedError ("No functional yet.")
+    
+    image=np.float32(image)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    image = cv2.equalizeHist(image)
+    image = cv2.GaussianBlur(image, (3, 3), 0)
+
+    return image
+
+def augment_image(image, augmentation="affine"):
+    if augmentation.lower() == "affine":
+        return augment_image_affine(image)
+    elif augmentation.lower() == "eqhist":
+        return augment_image_eqhist(image)
+    else:
+        raise Exception(
+            'Unknown augmentation type : {}'.format(augmentation))
