@@ -15,7 +15,7 @@ load_dotenv(find_dotenv())
 print(os.getcwd())
 
 import tensorflow as tf
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam, SGD
 from pathlib import Path
 
 # Run this before loading other dependencies, otherwise they might occupy memory on gpu 0 by default and it will stay that way
@@ -23,9 +23,10 @@ from pathlib import Path
 # Specify which GPU(s) to use
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # Or 2, 3, etc. other than 0
 
-config = tf.compat.v1.ConfigProto(device_count={'GPU': 1}, allow_soft_placement=True, log_device_placement=True)
+#config = tf.compat.v1.ConfigProto(device_count={'GPU': 1}, allow_soft_placement=True, log_device_placement=True)
+config = tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)
 config.gpu_options.allow_growth = True
-#config.gpu_options.per_process_gpu_memory_fraction = 0.8
+#config.gpu_options.per_process_gpu_memory_fraction = 1.2
 tf.compat.v1.Session(config=config)
 
         
@@ -57,14 +58,15 @@ run_configs = [
                     'Pleural Effusion',
                     'Pleural Other',
                     'Fracture'],
-        "epochs": 5,
-        "batch_sizes": 32,
+        "epochs": 4,
+        "batch_sizes": 52,
         "nan_replacement": 0,
         "augmentation": None,
         "dim":(256, 256),
-        "optim": Adam(learning_rate=0.0001), # Adam()
+        "optim": SGD(learning_rate=1e-1), # Adam()
+        "lr_factor": 0.1,
         "split_valid_size": 0.05, 
-        "name_suffix": "_D256_DS9505_LR4",
+        "name_suffix": "_D256_DS9505_LR1_SGD",
         "loss_functions": ["BCE"],
         "crop_confs":  ["C0"]
     }
@@ -80,18 +82,11 @@ run_configs = [
                 "model_fn": DenseNet121
             },
         },
-        "columns": ['Enlarged Cardiomediastinum',
-                    'Cardiomegaly',
-                    'Lung Opacity',
-                    'Lung Lesion',
+        "columns": ['Cardiomegaly',
                     'Edema',
                     'Consolidation',
-                    'Pneumonia',
                     'Atelectasis',
-                    'Pneumothorax',
-                    'Pleural Effusion',
-                    'Pleural Other',
-                    'Fracture'],
+                    'Pleural Effusion'],
         "epochs": 9,
         "batch_sizes": 32,
         "nan_replacement": 0,
@@ -165,6 +160,7 @@ for run_conf in run_configs:
                                                      epoch_sizes = {"e": epoch_sizes},
                                                      dim=run_conf["dim"],
                                                      optimizer = run_conf["optim"],
+                                                     lr_factor = run_config["lr_factor"],
                                                      augmentation = run_conf["augmentation"],
                                                      #crop = {"C1": False},
                                                      #crop = {"C0": False},

@@ -107,7 +107,7 @@ class Experiment:
         model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_filepath,
                                                                        monitor='val_loss',
                                                                        verbose=2,
-                                                                       save_best_only=True,
+                                                                       save_best_only=False,
                                                                        save_weights_only=False,
                                                                        mode='auto',
                                                                        save_freq='epoch')
@@ -120,6 +120,9 @@ class Experiment:
                                                                   min_delta=0.0001,
                                                                   cooldown=0,
                                                                   min_lr=0,)
+        
+        scheduler = lambda epoch, lr: lr if epoch == 0 else lr * self.benchmark.lr_factor 
+        lr_scheduler_callback = tf.keras.callbacks.LearningRateScheduler(scheduler)
 
         terminate_on_nan_callback = tf.keras.callbacks.TerminateOnNaN()
 
@@ -133,7 +136,7 @@ class Experiment:
                                                       early_stopping_callback,
                                                       model_checkpoint_callback,
                                                       #terminate_on_nan_callback,
-                                                      reduce_lr_callback,])
+                                                      lr_scheduler_callback,])
         return self.train_result
 
     def evaluate(self):
@@ -201,7 +204,7 @@ class Experiment:
         # make sure path exists, ceate one if necessary
         Path(folderpath).mkdir(parents=True, exist_ok=True)
         
-        np.savetxt(folderpath / "predictions_probs.csv", self.predictions.numpy(), delimiter=";")
+        np.savetxt(folderpath / "predictions_probs.csv", self.predictions, delimiter=";")
         np.savetxt(folderpath / "predictions_classes.csv", self.y_pred, delimiter=";")
            
         return self.model_id
@@ -209,7 +212,7 @@ class Experiment:
 
 class Benchmark:
     def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
-                 optimizer=Adam(), loss='binary_crossentropy', single_class_metrics=[],
+                 optimizer=Adam(), lr_factor = 1.0 , loss='binary_crossentropy', single_class_metrics=[],
                  metrics=None, train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
                  use_class_weights=False, **datagenargs):
@@ -288,6 +291,7 @@ class Benchmark:
         self.use_class_weights = use_class_weights
         self.class_weights = None
         self.split_seed = split_seed
+        self.lr_factor = lr_factor
 
         # for each metric in single_class instantiate a metric for each individual pathology
         if self.single_class_metrics is not None:
