@@ -58,15 +58,15 @@ run_configs = [
                     'Pleural Effusion',
                     'Pleural Other',
                     'Fracture'],
-        "epochs": 4,
-        "batch_sizes": 52,
+        "epochs": 3,
+        "batch_sizes": 32,
         "nan_replacement": 0,
         "augmentation": None,
         "dim":(256, 256),
         "optim": SGD(learning_rate=1e-1), # Adam()
-        "lr_factor": 0.1,
+        "lr_factor": 1.0,
         "split_valid_size": 0.05, 
-        "name_suffix": "_D256_DS9505_LR1_SGD",
+        "name_suffix": "_D256_DS9505_1LR1_SGD",
         "loss_functions": ["BCE"],
         "crop_confs":  ["C0"]
     }
@@ -160,7 +160,7 @@ for run_conf in run_configs:
                                                      epoch_sizes = {"e": epoch_sizes},
                                                      dim=run_conf["dim"],
                                                      optimizer = run_conf["optim"],
-                                                     lr_factor = run_config["lr_factor"],
+                                                     lr_factor = run_conf["lr_factor"],
                                                      augmentation = run_conf["augmentation"],
                                                      #crop = {"C1": False},
                                                      #crop = {"C0": False},

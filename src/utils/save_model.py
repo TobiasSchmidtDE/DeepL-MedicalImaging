@@ -69,17 +69,20 @@ def save_model(model, history, name, filename, description, version='1', upload=
     # check for exisiting model with same name and version
     for experiment in data['experiments']:
         if experiment['name'] == log['name'] and experiment['version'] == log['version']:
-            raise Exception(
-                'There is already a model with the same name and version')
+            log['version'] += 1
+            print('There is already a model with the same name and version. Increased version number.')
 
     data['experiments'].append(log)
 
     # save model
     folderpath = basepath / 'models' / name
-    path = folderpath / filename
+    path_h5 = folderpath / filename
+    path_tf = folderpath / filename.replace(".h5", "")
+    
     # make sure path exists, ceate one if necessary
     Path(folderpath).mkdir(parents=True, exist_ok=True)
-    model.save(path)
+    model.save(path_h5, save_format="h5")
+    model.save(path_tf, save_format="tf")
 
     with open(log_file, 'w') as f:
         json_data = json.dumps(data, indent=4)
@@ -88,7 +91,7 @@ def save_model(model, history, name, filename, description, version='1', upload=
     # upload model to gcp
     if upload:
         remote_name = log['id'] + '.h5'
-        upload_file(str(path), remote_name)
+        upload_file(str(path_h5), remote_name)
 
     return identifier
 
