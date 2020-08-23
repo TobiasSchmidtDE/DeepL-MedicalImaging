@@ -7,6 +7,7 @@ from tensorflow.python.framework import constant_op
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import clip_ops
 from tensorflow.python.keras import backend_config
+from tensorflow.python.keras import backend as K
 
 
 class WeightedBinaryCrossentropy(Loss):
@@ -57,6 +58,31 @@ class WeightedBinaryCrossentropy(Loss):
         return tf.reduce_sum(-bce) / tf.reduce_sum(mask)
         # return K.mean(-bce)
 
+        
+class BinaryCrossentropy(Loss):
+    def __init__(self):
+        super().__init__(
+            name="custom_binary_crossentropy")
+
+        self.epsilon = lambda: 1e-5
+        print(f"Initialzed {self.name} with epsilon {self.epsilon()}")
+
+    def call(self, y_true, y_pred):
+        
+        epsilon_ = constant_op.constant(
+            self.epsilon(), dtype=y_pred.dtype.base_dtype)
+        #y_pred = clip_ops.clip_by_value(y_pred, epsilon_, 1. - epsilon_)
+        if not tf.reduce_all((y_pred <= 1)):
+            print("Some predictions are greater than 1")
+        if not tf.reduce_all((y_pred >= 0)):
+            print("Some predictions are less than 0")
+        
+        # Compute cross entropy from probabilities.
+        bce = y_true * math_ops.log(y_pred + epsilon_)
+        bce += (1 - y_true) * math_ops.log(1 - y_pred + epsilon_)
+    
+        return K.mean(-bce)
+
 
 def compute_class_weight(datagenerator):
     """
@@ -81,7 +107,8 @@ def compute_class_weight(datagenerator):
     # set -1 to nan so it is disregarded by the coming compuations
     labels[labels == -1] = np.nan
 
-    _, num_classes = labels.shape
+    num_samples, num_classes = labels.shape
+    class_weights = [0, ]*num_classes
     class_weights_positive = [0, ]*num_classes
     class_weights_negative = [0, ]*num_classes
 
@@ -97,11 +124,14 @@ def compute_class_weight(datagenerator):
             sparse_positive_labels[sparse_positive_labels == class_id])
         num_negative_occurence = len(
             sparse_negativ_labels[sparse_negativ_labels == class_id])
-
+                
+        class_weights[i] = num_samples / num_positive_occurence
         class_weights_positive[i] = (
             num_positive_occurence+num_negative_occurence) / num_positive_occurence
         class_weights_negative[i] = (
             num_positive_occurence+num_negative_occurence) / num_negative_occurence
-
-    return tf.constant(class_weights_positive, dtype=tf.float32), \
-        tf.constant(class_weights_negative, dtype=tf.float32)
+    #class_weights = class_weights / (np.array(class_weights).mean())
+    scale_factor = 10
+    return  tf.keras.utils.normalize(tf.constant(class_weights, dtype=tf.float32), order=1)[0] * scale_factor,\
+            tf.keras.utils.normalize(tf.constant(class_weights_positive, dtype=tf.float32), order=1)[0] * scale_factor,\
+            tf.keras.utils.normalize(tf.constant(class_weights_negative, dtype=tf.float32), order=1)[0] * scale_factor,

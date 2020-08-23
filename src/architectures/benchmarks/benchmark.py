@@ -12,7 +12,7 @@ from src.datasets.generator import ImageDataGenerator
 from src.utils.save_model import save_model, model_set
 from src.preprocessing.split.train_test_split import train_test_split
 from src.metrics.metrics import SingleClassMetric, NaNWrapper
-from src.metrics.losses import compute_class_weight
+from src.metrics.losses import WeightedBinaryCrossentropy, BinaryCrossentropy, compute_class_weight
 from src.metrics.custom_callbacks import CustomTensorBoard
 
 
@@ -125,13 +125,17 @@ class Experiment:
         lr_scheduler_callback = tf.keras.callbacks.LearningRateScheduler(scheduler)
 
         terminate_on_nan_callback = tf.keras.callbacks.TerminateOnNaN()
-
+        
+        class_weights = None
+        if self.benchmark.use_class_weights:
+            class_weights = { i: float(self.benchmark.class_weights[i]) for i in range(len(self.benchmark.class_weights))}
+            print("Train with class weights: ", class_weights)
         self.train_result = self.model.fit(x=traingen,
                                            steps_per_epoch=len(traingen),
                                            validation_data=valgen,
                                            validation_steps=len(valgen),
                                            epochs=self.benchmark.epochs,
-                                           class_weight=self.benchmark.class_weights,
+                                           class_weight= class_weights,
                                            callbacks=[tensorboard_callback,
                                                       early_stopping_callback,
                                                       model_checkpoint_callback,
@@ -212,7 +216,7 @@ class Experiment:
 
 class Benchmark:
     def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
-                 optimizer=Adam(), lr_factor = 1.0 , loss='binary_crossentropy', single_class_metrics=[],
+                 optimizer=Adam(), lr_factor = 1.0 , loss=tf.keras.losses.BinaryCrossentropy(), single_class_metrics=[],
                  metrics=None, train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
                  use_class_weights=False, **datagenargs):
@@ -291,6 +295,7 @@ class Benchmark:
         self.use_class_weights = use_class_weights
         self.class_weights = None
         self.split_seed = split_seed
+        self.lr = round(float(self.optimizer.learning_rate), 8)
         self.lr_factor = lr_factor
 
         # for each metric in single_class instantiate a metric for each individual pathology
@@ -330,6 +335,7 @@ class Benchmark:
                                            **datagenargs)
 
         datagenargs["augmentation"] = None
+        datagenargs["upsample_factors"] = None        
         self.valgen = ImageDataGenerator(validation_labels,
                                            self.dataset_folder,
                                            self.label_columns,
@@ -341,11 +347,8 @@ class Benchmark:
                                           self.label_columns,
                                           **datagenargs)
 
-        self.positive_weights, self.negative_weights = compute_class_weight(
+        self.class_weights , self.positive_weights, self.negative_weights = compute_class_weight(
             self.traingen)
-        if self.use_class_weights:
-            self.class_weights = {
-                i: float(self.positive_weights[i]) for i in range(len(self.positive_weights))}
 
     def as_dict(self):
         """
@@ -362,15 +365,18 @@ class Benchmark:
             "models_dir": str(self.models_dir),
             "epochs": self.epochs,
             "optimizer": self.optimizer.__class__.__name__,
-            "learning_rate": round(float(self.optimizer.learning_rate), 10),
+            "learning_rate": self.lr,
+            "lr_factor": self.lr_factor,
             "loss": self.loss if isinstance(self.loss, str) else self.loss.name,
             "use_class_weights": self.use_class_weights,
+            "class_weights": [float(i) for i in self.class_weights.numpy()],
             "positive_weights": [float(i) for i in self.positive_weights.numpy()],
             "negative_weights": [float(i) for i in self.negative_weights.numpy()],
             "metrics": metrics,
             "label_columns": self.label_columns,
             "path_column": self.traingen.path_column,
             "path_column_prefix": self.traingen.path_column_prefix,
+            "upsample_factors": self.traingen.upsample_factors,
             "shuffle": self.traingen.shuffle,
             "batch_size": self.traingen.batch_size,
             "dim": self.traingen.dim,

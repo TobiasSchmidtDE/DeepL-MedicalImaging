@@ -61,12 +61,13 @@ run_configs = [
         "epochs": 3,
         "batch_sizes": 32,
         "nan_replacement": 0,
+        "u_enc": "uones",
         "augmentation": None,
         "dim":(256, 256),
-        "optim": SGD(learning_rate=1e-1), # Adam()
-        "lr_factor": 1.0,
+        "optim": SGD(learning_rate=2e-1), # Adam()
+        "lr_factor": 0.5,
         "split_valid_size": 0.05, 
-        "name_suffix": "_D256_DS9505_1LR1_SGD",
+        "name_suffix": "_Uones_D256_DS9505_2LR1_LF5_SGD",
         "loss_functions": ["BCE"],
         "crop_confs":  ["C0"]
     }
@@ -156,6 +157,7 @@ for run_conf in run_configs:
                                                      train_labels = "nofinding_train.csv",
                                                      test_labels = "test.csv",
                                                      nan_replacement = run_conf["nan_replacement"], #float("NaN"),
+                                                     u_enc = run_conf["u_enc"],
                                                      batch_sizes = {"b": run_conf["batch_sizes"]},
                                                      epoch_sizes = {"e": epoch_sizes},
                                                      dim=run_conf["dim"],

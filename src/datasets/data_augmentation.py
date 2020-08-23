@@ -2,6 +2,15 @@ import torchvision.transforms as tfs
 import cv2
 import numpy as np
 
+
+# more augmentations to explore:
+# torchvision.transforms.CenterCrop
+# torchvision.transforms.ColorJitter
+# torchvision.transforms.RandomCrop
+# torchvision.transforms.RandomPerspective
+# torchvision.transforms.RandomResizedCrop
+# torchvision.transforms.RandomErasing
+
 def augment_image_affine(image, shift=True, rotate=True, zoom=True):
     """
       Random affine transformations from https://github.com/jfhealthcare/Chexpert
@@ -27,7 +36,7 @@ def augment_image_eqhist(image):
     # TODO: fix this function
     raise NotImplementedError ("No functional yet.")
     
-    image=np.float32(image)
+    image= np.float32(image)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = cv2.equalizeHist(image)
     image = cv2.GaussianBlur(image, (3, 3), 0)
