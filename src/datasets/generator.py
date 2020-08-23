@@ -192,11 +192,10 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         
     def preprocess_labels(self, dataset, label_columns, nan_replacement, unc_value, u_enc):
         replacement_dict = {}
-        
         if u_enc == 'uzero':
             uzeros = label_columns
             uones = []
-        elif u_enc == 'uuonesone':
+        elif u_enc == 'uones':
             uzeros = []
             uones = label_columns
         elif isinstance(u_enc, list):
@@ -315,7 +314,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         else:
             img = img.resize(self.dim)
 
-        for transformation in self.transformations:
+        #for transformation in self.transformations:
             
             
         if self.augmentation is not None:
