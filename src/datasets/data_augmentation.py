@@ -26,6 +26,7 @@ def augment_image_affine(image, shift=True, rotate=True, zoom=True):
 
     return image
 
+
 def augment_image_eqhist(image):
     """
      Equalize Hist transformations from https://github.com/jfhealthcare/Chexpert
@@ -34,20 +35,34 @@ def augment_image_eqhist(image):
         image (Image)
     """
     # TODO: fix this function
-    raise NotImplementedError ("No functional yet.")
-    
-    image= np.float32(image)
+    raise NotImplementedError("No functional yet.")
+
+    image = np.float32(image)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = cv2.equalizeHist(image)
     image = cv2.GaussianBlur(image, (3, 3), 0)
 
     return image
 
+
+def augment_color(image):
+    img_aug = tfs.Compose([
+        tfs.ColorJitter(
+            brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1)
+    ])
+
+    image = img_aug(image)
+
+    return image
+
+
 def augment_image(image, augmentation="affine"):
     if augmentation.lower() == "affine":
         return augment_image_affine(image)
     elif augmentation.lower() == "eqhist":
         return augment_image_eqhist(image)
+    elif augmentation.lower() == "color":
+        return augment_color(image)
     else:
         raise Exception(
             'Unknown augmentation type : {}'.format(augmentation))
