@@ -35,11 +35,31 @@ class CRM:
 
         top = decode_predictions(
             self.classes, output[0], self.num_classes)[:top_num]
+
+        boxes = []
         for c, i, p in top:
             original, resized_crm, img, output = self.single_image_crm(
                 image_path, thresh, class_idx=i)
             print('{:15s}({})with probability {}'.format(c, i, p))
-            self.plot_crm(original, img, resized_crm, thresh)
+            bbox = self.plot_crm(original, img, resized_crm, thresh)
+            boxes = boxes + bbox.tolist()
+
+        plt.figure(figsize=(5, 5))
+        ax = plt.subplot(111)
+        plt.imshow(original)
+
+        for bbox in boxes:
+            xs = bbox[1]
+            ys = bbox[0]
+            w = bbox[3] - bbox[1]
+            h = bbox[2] - bbox[0]
+            rect = patches.Rectangle((ys, xs), w, h, linewidth=1,
+                                     edgecolor='r', facecolor='none')
+
+            # Add the patch to the Axes
+            ax.add_patch(rect)
+
+        plt.show()
 
     def plot_crm(self, original, img, resized_crm, thresh):
         aBBox_coord = self.generate_bBox(resized_crm, thresh + 0.3)
@@ -74,6 +94,8 @@ class CRM:
             ax.add_patch(rect)
 
         plt.show()
+
+        return aBBox_coord
 
     def get_predictions(self, image):
         image = np.expand_dims(image, axis=0)
@@ -195,11 +217,6 @@ class CRM:
         TheProps = self.generate_BoundingBox(crm, threshold)
         for b in TheProps:
             bbox = b.bbox
-            xs = bbox[1]
-            ys = bbox[0]
-            w = bbox[3] - bbox[1]
-            h = bbox[2] - bbox[0]
-
             bboxes.append([bbox[1], bbox[0], bbox[3], bbox[2]])
 
         CRM_bboxes = np.vstack(bboxes)
