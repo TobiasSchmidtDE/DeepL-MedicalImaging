@@ -6,6 +6,7 @@ from PIL import Image
 from src.datasets.u_encoding import uencode
 from src.preprocessing.cropping.template_matching import TemplateMatcher
 from src.datasets.data_augmentation import augment_image
+from src.preprocessing.normalizing.normalizer import Normalizer
 
 
 class ImageDataGenerator(tf.keras.utils.Sequence):
@@ -19,7 +20,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                  dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
                  crop=False, crop_template=None, view_pos_column="Frontal/Lateral",
                  view_pos_frontal="Frontal", view_pos_lateral="Lateral",
-                 preprocess_input_fn=None, augmentation=None, upsample_factors=None, transformations = []
+                 preprocess_input_fn=None, augmentation=None, upsample_factors=None, transformations = {}
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
                  ):
@@ -313,10 +314,24 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
             img = Image.fromarray(img)
         else:
             img = img.resize(self.dim)
-
-        #for transformation in self.transformations:
-            
-            
+        
+        normalizer = Normalizer(img)
+        for transform_name, transform_params in self.transformations.items():
+            if transform_name == "unsharp_mask":
+                normalizer.apply_unsharp_mask(**transform_params) 
+            elif transform_name == "gaussian_blur":
+                normalizer.apply_gaussian_blur(**transform_params) 
+            elif transform_name == "windowing":
+                normalizer.apply_windowing(**transform_params) 
+            elif transform_name == "median_filter":
+                normalizer.apply_median_filter() 
+            elif transform_name == "hist_equalization":
+                normalizer.apply_hist_equalization() 
+            else:
+                raise ValueError(f"Unknown transformation name {transform_name}. Allowed names are 'unsharp_mask', 'gaussian_blur', 'windowing', 'median_filter', 'hist_equalization' ")
+        
+        img = Image.fromarray(normalizer.get_img())           
+        
         if self.augmentation is not None:
             img = augment_image(img, self.augmentation)
 
