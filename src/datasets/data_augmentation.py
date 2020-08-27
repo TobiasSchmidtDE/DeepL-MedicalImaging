@@ -57,12 +57,18 @@ def augment_color(image):
 
 
 def augment_image(image, augmentation="affine"):
-    if augmentation.lower() == "affine":
-        return augment_image_affine(image)
-    elif augmentation.lower() == "eqhist":
-        return augment_image_eqhist(image)
-    elif augmentation.lower() == "color":
-        return augment_color(image)
-    else:
-        raise Exception(
-            'Unknown augmentation type : {}'.format(augmentation))
+
+    augmentations = augmentation.lower().split(',')
+
+    for aug in augmentations:
+        if aug.lower() == "affine":
+            image = augment_image_affine(image)
+        elif aug.lower() == "eqhist":
+            image = augment_image_eqhist(image)
+        elif aug.lower() == "color":
+            image = augment_color(image)
+        else:
+            raise Exception(
+                'Unknown augmentation type : {}'.format(augmentation))
+
+    return image
