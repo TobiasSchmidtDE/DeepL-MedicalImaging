@@ -120,7 +120,7 @@ run_configs = [
         "loss_functions": ["BCE"],
         "crop_confs":  ["C0"]
     },
-    
+
 
 "InceptionResNetV2": {
     "preprocess_input_fn":tf.keras.applications.inception_resnet_v2.preprocess_input,
@@ -134,8 +134,8 @@ run_configs = [
     "Xception": {
         "preprocess_input_fn":tf.keras.applications.xception.preprocess_input,
         "model_fn": Xception
-    },   
-    
+    }
+
 """
 estim_run_time = 0
 for run_conf in run_configs:
