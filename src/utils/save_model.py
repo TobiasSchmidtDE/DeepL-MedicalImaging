@@ -208,7 +208,7 @@ def load_model(identifier=None, name=None, version=None):
         Path(folderpath).mkdir(parents=True, exist_ok=True)
         download_file(bucket_filename, exp_path)
 
-    return tf.keras.models.load_model(exp_path)
+    return exp_path
 
 
 def delete_model(identifier=None, name=None, version=None):
