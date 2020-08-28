@@ -91,11 +91,12 @@ class Experiment:
         log_dir.mkdir(parents=True, exist_ok=True)
 
         tensorboard_callback = CustomTensorBoard(log_dir=str(log_dir),
-                                           update_freq=int(len(traingen)/200),
-                                           histogram_freq=0,
-                                           write_graph=False,
-                                           profile_batch=0,
-                                           embeddings_freq=0)
+                                                 update_freq=int(
+                                                     len(traingen)/200),
+                                                 histogram_freq=0,
+                                                 write_graph=False,
+                                                 profile_batch=0,
+                                                 embeddings_freq=0)
 
         early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                                    min_delta=0,
@@ -120,27 +121,30 @@ class Experiment:
                                                                   min_delta=0.0001,
                                                                   cooldown=0,
                                                                   min_lr=0,)
-        
-        scheduler = lambda epoch, lr: lr if epoch == 0 else lr * self.benchmark.lr_factor 
-        lr_scheduler_callback = tf.keras.callbacks.LearningRateScheduler(scheduler)
+
+        def scheduler(epoch, lr): return lr if epoch == 0 else lr * \
+            self.benchmark.lr_factor
+        lr_scheduler_callback = tf.keras.callbacks.LearningRateScheduler(
+            scheduler)
 
         terminate_on_nan_callback = tf.keras.callbacks.TerminateOnNaN()
-        
+
         class_weights = None
         if self.benchmark.use_class_weights:
-            class_weights = { i: float(self.benchmark.class_weights[i]) for i in range(len(self.benchmark.class_weights))}
+            class_weights = {i: float(self.benchmark.class_weights[i]) for i in range(
+                len(self.benchmark.class_weights))}
             print("Train with class weights: ", class_weights)
         self.train_result = self.model.fit(x=traingen,
                                            steps_per_epoch=len(traingen),
                                            validation_data=valgen,
                                            validation_steps=len(valgen),
                                            epochs=self.benchmark.epochs,
-                                           class_weight= class_weights,
+                                           class_weight=class_weights,
                                            callbacks=[tensorboard_callback,
                                                       early_stopping_callback,
                                                       model_checkpoint_callback,
-                                                      #terminate_on_nan_callback,
-                                                      lr_scheduler_callback,])
+                                                      # terminate_on_nan_callback,
+                                                      lr_scheduler_callback, ])
         return self.train_result
 
     def evaluate(self):
@@ -197,8 +201,8 @@ class Experiment:
             model_set(self.model_id, 'test', self.evaluation_result["metrics"])
             model_set(self.model_id, 'classification_report',
                       self.evaluation_result["report"])
-        
-        # Save predictions 
+
+        # Save predictions
         CURRENT_WORKING_DIR = Path(os.getcwd())
         basepath = CURRENT_WORKING_DIR
         # path main directory
@@ -207,16 +211,18 @@ class Experiment:
         folderpath = basepath / 'models' / self.model_name
         # make sure path exists, ceate one if necessary
         Path(folderpath).mkdir(parents=True, exist_ok=True)
-        
-        np.savetxt(folderpath / "predictions_probs.csv", self.predictions, delimiter=";")
-        np.savetxt(folderpath / "predictions_classes.csv", self.y_pred, delimiter=";")
-           
+
+        np.savetxt(folderpath / "predictions_probs.csv",
+                   self.predictions, delimiter=";")
+        np.savetxt(folderpath / "predictions_classes.csv",
+                   self.y_pred, delimiter=";")
+
         return self.model_id
 
 
 class Benchmark:
     def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
-                 optimizer=Adam(), lr_factor = 1.0 , loss=tf.keras.losses.BinaryCrossentropy(), single_class_metrics=[],
+                 optimizer=Adam(), lr_factor=1.0, loss=tf.keras.losses.BinaryCrossentropy(), single_class_metrics=[],
                  metrics=None, train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
                  use_class_weights=False, **datagenargs):
@@ -295,7 +301,8 @@ class Benchmark:
         self.use_class_weights = use_class_weights
         self.class_weights = None
         self.split_seed = split_seed
-        self.lr = round(float(self.optimizer.learning_rate), 8)
+        self.lr = round(
+            float(self.optimizer.learning_rate.read_value().numpy()), 8)
         self.lr_factor = lr_factor
 
         # for each metric in single_class instantiate a metric for each individual pathology
@@ -307,8 +314,6 @@ class Benchmark:
                     self.metrics += [NaNWrapper(SingleClassMetric(
                         base_metric, class_id, class_name=class_name))]
 
-                    
-                    
         if self.dataset_name is None:
             self.dataset_name = dataset_folder.parent.name + "_" + dataset_folder.name
 
@@ -335,19 +340,19 @@ class Benchmark:
                                            **datagenargs)
 
         datagenargs["augmentation"] = None
-        datagenargs["upsample_factors"] = None        
+        datagenargs["upsample_factors"] = None
         self.valgen = ImageDataGenerator(validation_labels,
-                                           self.dataset_folder,
-                                           self.label_columns,
-                                           **datagenargs)
-        
+                                         self.dataset_folder,
+                                         self.label_columns,
+                                         **datagenargs)
+
         datagenargs["batch_size"] = 1
         self.testgen = ImageDataGenerator(test_labels,
                                           self.dataset_folder,
                                           self.label_columns,
                                           **datagenargs)
 
-        self.class_weights , self.positive_weights, self.negative_weights = compute_class_weight(
+        self.class_weights, self.positive_weights, self.negative_weights = compute_class_weight(
             self.traingen)
 
     def as_dict(self):
