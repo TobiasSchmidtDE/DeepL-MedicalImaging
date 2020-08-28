@@ -58,7 +58,7 @@ class WeightedBinaryCrossentropy(Loss):
         return tf.reduce_sum(-bce) / tf.reduce_sum(mask)
         # return K.mean(-bce)
 
-        
+
 class BinaryCrossentropy(Loss):
     def __init__(self):
         super().__init__(
@@ -68,7 +68,7 @@ class BinaryCrossentropy(Loss):
         print(f"Initialzed {self.name} with epsilon {self.epsilon()}")
 
     def call(self, y_true, y_pred):
-        
+
         epsilon_ = constant_op.constant(
             self.epsilon(), dtype=y_pred.dtype.base_dtype)
         #y_pred = clip_ops.clip_by_value(y_pred, epsilon_, 1. - epsilon_)
@@ -76,11 +76,11 @@ class BinaryCrossentropy(Loss):
             print("Some predictions are greater than 1")
         if not tf.reduce_all((y_pred >= 0)):
             print("Some predictions are less than 0")
-        
+
         # Compute cross entropy from probabilities.
         bce = y_true * math_ops.log(y_pred + epsilon_)
         bce += (1 - y_true) * math_ops.log(1 - y_pred + epsilon_)
-    
+
         return K.mean(-bce)
 
 
@@ -124,7 +124,7 @@ def compute_class_weight(datagenerator):
             sparse_positive_labels[sparse_positive_labels == class_id])
         num_negative_occurence = len(
             sparse_negativ_labels[sparse_negativ_labels == class_id])
-                
+
         class_weights[i] = num_samples / num_positive_occurence
         class_weights_positive[i] = (
             num_positive_occurence+num_negative_occurence) / num_positive_occurence
@@ -132,6 +132,7 @@ def compute_class_weight(datagenerator):
             num_positive_occurence+num_negative_occurence) / num_negative_occurence
     #class_weights = class_weights / (np.array(class_weights).mean())
     scale_factor = 10
-    return  tf.keras.utils.normalize(tf.constant(class_weights, dtype=tf.float32), order=1)[0] * scale_factor,\
-            tf.keras.utils.normalize(tf.constant(class_weights_positive, dtype=tf.float32), order=1)[0] * scale_factor,\
-            tf.keras.utils.normalize(tf.constant(class_weights_negative, dtype=tf.float32), order=1)[0] * scale_factor,
+    return tf.keras.utils.normalize(tf.constant(class_weights, dtype=tf.float32), order=1)[0] * scale_factor,\
+        tf.keras.utils.normalize(tf.constant(class_weights_positive, dtype=tf.float32), order=1)[0] * scale_factor,\
+        tf.keras.utils.normalize(tf.constant(
+            class_weights_negative, dtype=tf.float32), order=1)[0] * scale_factor,

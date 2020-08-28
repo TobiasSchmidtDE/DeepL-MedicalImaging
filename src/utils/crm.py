@@ -223,11 +223,14 @@ class CRM:
 
         return CRM_bboxes
 
+    # pylint: disable=no-self-use
     def generate_BoundingBox(self, aCRM, threshold):
+        # pylint: disable=unused-variable
         labeled_CRM, nr_objects = ndimage.label(aCRM > threshold)
         props = regionprops(labeled_CRM)
         return props
 
+    # pylint: disable=no-self-use
     def Calculate_Confidence_Score(self, crm, bboxes, outScores):
         c_scores = []
         for a_b in bboxes:
