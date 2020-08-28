@@ -27,7 +27,7 @@ class CRM:
         for c, i, p in top:
             print('\t{:15s}\t({})\twith probability \t{}'.format(c, i, p))
 
-        self.plot_crm(original, img, resized_crm, thresh)
+        return self.plot_crm(original, img, resized_crm, thresh)
 
     def generate_crm_class_plot(self, image_path, thresh, top_num=3):
         original, resized_crm, img, output = self.single_image_crm(
@@ -41,7 +41,7 @@ class CRM:
             original, resized_crm, img, output = self.single_image_crm(
                 image_path, thresh, class_idx=i)
             print('{:15s}({})with probability {}'.format(c, i, p))
-            bbox = self.plot_crm(original, img, resized_crm, thresh)
+            bbox, fig = self.plot_crm(original, img, resized_crm, thresh)
             boxes = boxes + bbox.tolist()
 
         plt.figure(figsize=(5, 5))
@@ -64,7 +64,7 @@ class CRM:
     def plot_crm(self, original, img, resized_crm, thresh):
         aBBox_coord = self.generate_bBox(resized_crm, thresh + 0.3)
 
-        plt.figure(figsize=(15, 10))
+        fig = plt.figure(figsize=(15, 10))
 
         plt.subplot(131)
         plt.title('Original')
@@ -95,7 +95,7 @@ class CRM:
 
         plt.show()
 
-        return aBBox_coord
+        return aBBox_coord, fig
 
     def get_predictions(self, image):
         image = np.expand_dims(image, axis=0)
