@@ -9,6 +9,7 @@ from scipy import ndimage
 from skimage.measure import regionprops
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+from PIL import Image
 
 
 class CRM:
@@ -29,7 +30,7 @@ class CRM:
 
         return self.plot_crm(original, img, resized_crm, thresh)
 
-    def generate_crm_class_plot(self, image_path, thresh, top_num=3):
+    def generate_crm_class_plot(self, image_path, thresh, top_num=3, figsize=(6, 3)):
         original, resized_crm, img, output = self.single_image_crm(
             image_path, thresh)
 
@@ -41,7 +42,8 @@ class CRM:
             original, resized_crm, img, output = self.single_image_crm(
                 image_path, thresh, class_idx=i)
             print('{:15s}({})with probability {}'.format(c, i, p))
-            bbox, fig = self.plot_crm(original, img, resized_crm, thresh)
+            bbox, fig = self.plot_crm(
+                original, img, resized_crm, thresh, figsize=figsize)
             boxes = boxes + bbox.tolist()
 
         plt.figure(figsize=(5, 5))
@@ -49,11 +51,11 @@ class CRM:
         plt.imshow(original)
 
         for bbox in boxes:
-            xs = bbox[1]
-            ys = bbox[0]
-            w = bbox[3] - bbox[1]
-            h = bbox[2] - bbox[0]
-            rect = patches.Rectangle((ys, xs), w, h, linewidth=1,
+            ys = bbox[1]
+            xs = bbox[0]
+            w = bbox[2] - bbox[0]
+            h = bbox[3] - bbox[1]
+            rect = patches.Rectangle((xs, ys), w, h, linewidth=1,
                                      edgecolor='r', facecolor='none')
 
             # Add the patch to the Axes
@@ -61,10 +63,10 @@ class CRM:
 
         plt.show()
 
-    def plot_crm(self, original, img, resized_crm, thresh):
+    def plot_crm(self, original, img, resized_crm, thresh, figsize=(6, 3)):
         aBBox_coord = self.generate_bBox(resized_crm, thresh + 0.3)
 
-        fig = plt.figure(figsize=(15, 10))
+        fig = plt.figure(figsize=figsize)
 
         plt.subplot(131)
         plt.title('Original')
@@ -83,17 +85,15 @@ class CRM:
 
         # Create a Rectangle patch
         for bbox in aBBox_coord:
-            xs = bbox[1]
-            ys = bbox[0]
-            w = bbox[3] - bbox[1]
-            h = bbox[2] - bbox[0]
-            rect = patches.Rectangle((ys, xs), w, h, linewidth=1,
+            ys = bbox[1]
+            xs = bbox[0]
+            w = bbox[2] - bbox[0]
+            h = bbox[3] - bbox[1]
+            rect = patches.Rectangle((xs, ys), w, h, linewidth=1,
                                      edgecolor='r', facecolor='none')
 
             # Add the patch to the Axes
             ax.add_patch(rect)
-
-        plt.show()
 
         return aBBox_coord, fig
 
@@ -119,11 +119,13 @@ class CRM:
         return original, resized_crm, aImg, output
 
     def generate_crm_combined(self, image_path):
-        original_img = cv2.imread(image_path)
         width, height = self.dims
-        resized_original_image = cv2.resize(original_img, (width, height))
 
-        input_image = img_to_array(resized_original_image)
+        original_img = Image.open(image_path)
+        original_img = original_img.convert(mode="RGB")
+        resized_original_image = original_img.resize(self.dims)
+        input_image = np.asarray(resized_original_image)
+
         input_image = np.expand_dims(input_image, axis=0)
         input_image = preprocess_input(input_image)
 
