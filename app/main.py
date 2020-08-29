@@ -27,7 +27,7 @@ colors = ['#F79F1F', '#A3CB38', '#1289A7',
 
 st.title('CRM Visualization')
 
-models = ['DenseNet121_Chexpert_CWBCE_L1Normed_E3_B32_C0_N12_AugAffineColor_sharp21_U75_D256_DS9505_5LR1_LF1_SGD_Upsampled']
+models = ['DenseNet121_Chexpert_CWBCE_L1Normed_E3_B32_C0_N12_AugAffine_sharp21_U75_D256_DS9505_2LR4_LF5_Adam_Upsampled']
 
 model_name = st.selectbox('Select the model', models)
 
