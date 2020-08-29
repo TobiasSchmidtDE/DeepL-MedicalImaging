@@ -23,17 +23,20 @@ from src.utils.crm import CRM, decode_predictions
 colors = ['#F79F1F', '#A3CB38', '#1289A7',
           '#D980FA', '#B53471', '#EE5A24', '#009432', '#0652DD', '#9980FA', '#EA2027', '#5758BB', '#ED4C67']
 
-
-
 st.set_option('deprecation.showfileUploaderEncoding', False)
 st.title('CRM Visualization')
 
-models = ['DenseNet121_Chexpert_CWBCE_L1Normed_E3_B32_C0_N12_AugAffine_sharp21_U75_D256_DS9505_2LR4_LF5_Adam_Upsampled']
+models = os.listdir('models')
+models = [model for model in models if "Chexpert" in model]
 
 model_name = st.selectbox('Select the model', models)
 
 with st.spinner('Loading model....'):
-    crm = build_crm(model_name)
+    try:
+        crm = build_crm(model_name)
+    except Exception as err:
+        print(err)
+        st.error("Could not load selected model: {}".format(err))
 
 image = st.file_uploader("Upload image")
 
@@ -48,7 +51,7 @@ with st.spinner('Evaluating image....'):
             'app/temp.png', thresh)
 
         visualization = st.selectbox('Select the visualization mode', [
-            'combined', 'class based'])
+            'class based','combined'])
 
         top = decode_predictions(crm.classes, output[0], crm.num_classes)[:7]
 
