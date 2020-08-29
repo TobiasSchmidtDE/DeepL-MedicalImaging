@@ -27,9 +27,11 @@ st.set_option('deprecation.showfileUploaderEncoding', False)
 st.title('CRM Visualization')
 
 models = os.listdir('models')
+index = models.index(
+    'DenseNet121_Chexpert_CWBCE_L1Normed_E3_B32_C0_N12_AugAffine_sharp21_U75_D256_DS9505_2LR4_LF5_Adam_Upsampled')
 models = [model for model in models if "Chexpert" in model]
 
-model_name = st.selectbox('Select the model', models)
+model_name = st.selectbox('Select the model', models, index=index)
 
 with st.spinner('Loading model....'):
     try:
