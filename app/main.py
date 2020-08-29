@@ -14,6 +14,7 @@ if basepath.name != "idp-radio-1":
 
 load_dotenv(find_dotenv())
 
+print(os.environ.get("CHEXPERT_DATASET_DIRECTORY"))
 
 from src.utils.load_model_crm import build_crm
 from src.utils.crm import CRM, decode_predictions
@@ -24,7 +25,7 @@ colors = ['#F79F1F', '#A3CB38', '#1289A7',
 
 
 
-
+st.set_option('deprecation.showfileUploaderEncoding', False)
 st.title('CRM Visualization')
 
 models = ['DenseNet121_Chexpert_CWBCE_L1Normed_E3_B32_C0_N12_AugAffine_sharp21_U75_D256_DS9505_2LR4_LF5_Adam_Upsampled']
