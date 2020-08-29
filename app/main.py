@@ -1,17 +1,11 @@
-from src.utils.load_model_crm import build_crm
-import streamlit as st
 import os
-from pathlib import Path
-from dotenv import load_dotenv, find_dotenv
-from src.utils.crm import CRM, decode_predictions
 import io
+from pathlib import Path
+import streamlit as st
+from dotenv import load_dotenv, find_dotenv
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
-
-colors = ['#F79F1F', '#A3CB38', '#1289A7',
-          '#D980FA', '#B53471', '#EE5A24', '#009432', '#0652DD', '#9980FA', '#EA2027', '#5758BB', '#ED4C67']
-
 
 basepath = Path(os.getcwd())
 # make sure your working directory is the repository root.
@@ -19,6 +13,16 @@ if basepath.name != "idp-radio-1":
     os.chdir(basepath.parent.parent)
 
 load_dotenv(find_dotenv())
+
+
+from src.utils.load_model_crm import build_crm
+from src.utils.crm import CRM, decode_predictions
+
+
+colors = ['#F79F1F', '#A3CB38', '#1289A7',
+          '#D980FA', '#B53471', '#EE5A24', '#009432', '#0652DD', '#9980FA', '#EA2027', '#5758BB', '#ED4C67']
+
+
 
 
 st.title('CRM Visualization')
