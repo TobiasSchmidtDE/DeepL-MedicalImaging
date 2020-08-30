@@ -1,5 +1,3 @@
-from src.utils.load_model_crm import build_crm
-from src.utils.crm import CRM, decode_predictions, generate_ensemble_crm, generate_ensemble_crm_class
 import os
 import io
 from pathlib import Path
@@ -15,6 +13,9 @@ if basepath.name != "idp-radio-1":
     os.chdir(basepath.parent.parent)
 
 load_dotenv(find_dotenv())
+
+from src.utils.load_model_crm import build_crm
+from src.utils.crm import CRM, decode_predictions, generate_ensemble_crm, generate_ensemble_crm_class
 
 colors = ['#F79F1F', '#A3CB38', '#1289A7',
           '#D980FA', '#B53471', '#EE5A24', '#009432', '#0652DD', '#9980FA', '#EA2027', '#5758BB', '#ED4C67']
