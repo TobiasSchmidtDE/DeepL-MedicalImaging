@@ -23,15 +23,14 @@ from src.utils.crm import CRM, decode_predictions
 colors = ['#F79F1F', '#A3CB38', '#1289A7',
           '#D980FA', '#B53471', '#EE5A24', '#009432', '#0652DD', '#9980FA', '#EA2027', '#5758BB', '#ED4C67']
 
-# st.set_option('deprecation.showfileUploaderEncoding', False)
+st.set_option('deprecation.showfileUploaderEncoding', False)
 st.title('CRM Visualization')
 
 models = os.listdir('models')
 index = models.index(
     'DenseNet121_Chexpert_CWBCE_L1Normed_E3_B32_C0_N12_AugAffine_sharp21_U75_D256_DS9505_2LR4_LF5_Adam_Upsampled')
-# models = [model for model in models if "Chexpert" in model]
-models = ['DenseNet169_Chexpert_BCE_NoNorm_E5_B32_C0_N12_AugAffine_sharp21_U75_D256_DS9505_1LR4_LF1_Adam_Upsampled']
-model_name = st.selectbox('Select the model', models, index=0)
+models = [model for model in models if "Chexpert" in model]
+model_name = st.selectbox('Select the model', models, index=index)
 
 with st.spinner('Loading model....'):
     # try:
