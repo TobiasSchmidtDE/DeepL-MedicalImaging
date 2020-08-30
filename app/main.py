@@ -95,7 +95,7 @@ with st.spinner('Evaluating image....'):
                 w = bbox[2] - bbox[0]
                 h = bbox[3] - bbox[1]
 
-                if w > 50 and h > 50:
+                if w > 25 and h > 25:
                     rect = patches.Rectangle((xs, ys), w, h, linewidth=1,
                                              edgecolor=colors[i], facecolor='none')
 
