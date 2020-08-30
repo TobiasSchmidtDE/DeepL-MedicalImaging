@@ -70,7 +70,8 @@ def save_model(model, history, name, filename, description, version='1', upload=
     for experiment in data['experiments']:
         if experiment['name'] == log['name'] and experiment['version'] == log['version']:
             log['version'] += 1
-            print('There is already a model with the same name and version. Increased version number.')
+            print(
+                'There is already a model with the same name and version. Increased version number.')
 
     data['experiments'].append(log)
 
@@ -78,7 +79,7 @@ def save_model(model, history, name, filename, description, version='1', upload=
     folderpath = basepath / 'models' / name
     path_h5 = folderpath / filename
     path_tf = folderpath / filename.replace(".h5", "")
-    
+
     # make sure path exists, ceate one if necessary
     Path(folderpath).mkdir(parents=True, exist_ok=True)
     model.save(path_h5, save_format="h5")
@@ -208,7 +209,7 @@ def load_model(identifier=None, name=None, version=None):
         Path(folderpath).mkdir(parents=True, exist_ok=True)
         download_file(bucket_filename, exp_path)
 
-    return tf.keras.models.load_model(exp_path)
+    return exp_path
 
 
 def delete_model(identifier=None, name=None, version=None):
@@ -297,3 +298,43 @@ def find_experiment(experiments, identifier=None, name=None, version=None):
         if exp['id'] == identifier or (exp['name'] == name and exp['version'] == version):
             return exp
     return None
+
+
+def get_experiment(identifier=None, name=None, version=None):
+    """
+    Helper function to find an experiment from the logs
+
+    Parameters:
+    experiments: list of experiments
+    identifier: the id of the model
+    name: the name of the model
+    version: the version of the model
+
+    Returns:
+    dict
+    """
+
+    # load logfile
+    CURRENT_WORKING_DIR = os.getcwd()
+    basepath = Path(CURRENT_WORKING_DIR)
+    log_file = basepath / 'logs/experiment-log.json'
+
+    with open(log_file, 'r') as f:
+        data = json.load(f)
+
+    if data and 'experiments' in data:
+        experiment = find_experiment(
+            data['experiments'], identifier, name, version)
+
+    # look for the model in the unvalidated experiment log
+    if not experiment:
+        log_file = basepath / 'logs/unvalidated-experiment-log.json'
+
+        with open(log_file, 'r') as f:
+            data = json.load(f)
+
+        if data and 'experiments' in data:
+            experiment = find_experiment(
+                data['experiments'], identifier, name, version)
+
+    return experiment
