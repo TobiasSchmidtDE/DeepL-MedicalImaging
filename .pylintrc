@@ -156,7 +156,23 @@ disable=print-statement,
         line-too-long,
         unused-argument,
         too-many-branches,
-        cell-var-from-loop
+        cell-var-from-loop,
+        unused-variable,
+        redefined-outer-name,
+        protected-access,
+        bad-continuation,
+        ungrouped-imports,
+        wrong-import-order,
+        unused-import,
+        no-self-use,
+        pointless-statement,
+        trailing-whitespace,
+        bad-whitespace,
+        trailing-comma-tuple,
+        multiple-statements,
+        no-member,
+        bare-except,
+        unreachable
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

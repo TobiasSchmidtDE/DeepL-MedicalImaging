@@ -386,6 +386,7 @@ class Benchmark:
             "batch_size": self.traingen.batch_size,
             "dim": self.traingen.dim,
             "crop": self.traingen.crop,
+            "transformations": self.traingen.transformations,
             "augmentation": self.traingen.augmentation,
             "n_channels": self.traingen.n_channels,
             "nan_replacement": self.traingen.nan_replacement,

@@ -310,6 +310,6 @@ def benchmark_from_logs(benchmark_dict):
                           crop=benchmark_dict["crop"],
                           augmentation=benchmark_dict["augmentation"],
                           upsample_factors= upsample_factors,
-                          transformations = [])
+                          transformations = {})
     
 #CHEXPERT_BENCHMARKS, CHESTXRAY14_BENCHMARKS = generate_benchmarks ()
