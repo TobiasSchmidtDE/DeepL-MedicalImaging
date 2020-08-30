@@ -134,7 +134,11 @@ class CRM:
         get_output = K.function([self.model.layers[0].input], [
             self.model.layers[-4].output, self.model.layers[-1].output])
         [conv_outputs, predictions] = get_output([input_image])
+
+        print(conv_outputs.shape)
+
         conv_outputs = conv_outputs[0, :, :, :]
+        print(conv_outputs.shape)
 
         final_output = predictions
 
@@ -184,6 +188,7 @@ class CRM:
             self.model.layers[-4].output, self.model.layers[-1].output])
         [conv_outputs, predictions] = get_output([input_image])
         conv_outputs = conv_outputs[0, :, :, :]
+
 
         final_output = predictions
 

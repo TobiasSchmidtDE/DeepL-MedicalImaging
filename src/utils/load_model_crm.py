@@ -7,6 +7,7 @@ from src.utils.crm import CRM
 
 def build_crm(model_name):
     exp_dict = get_experiment(name=model_name, version='1')
+    print(exp_dict)
     benchmark = benchmark_from_logs(exp_dict['benchmark'])
 
     if 'DenseNet121' in model_name:
