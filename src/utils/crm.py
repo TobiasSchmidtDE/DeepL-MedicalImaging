@@ -12,6 +12,57 @@ import matplotlib.patches as patches
 from PIL import Image
 
 
+def generate_ensemble_crm(crms, image_path, thresh):
+    num_models = len(crms)
+    outputs = np.zeros_like(crms)
+    crm_outputs = np.zeros_like(crms)
+
+    for i in range(num_models):
+        original, output, resized_crm = crms[i].generate_crm_combined(
+            image_path)
+        crm_outputs[i] = resized_crm
+        outputs[i]  = output
+
+    output = outputs.sum(axis=0) / num_models
+    resized_crm = crm_outputs.sum(axis=0) / num_models
+
+    heatmap = cv2.applyColorMap(
+        np.uint8(255 * resized_crm), cv2.COLORMAP_JET)
+    heatmap = (255 - heatmap)
+    heatmap[np.where(resized_crm < thresh)] = 0
+    aImg = np.float32(heatmap) * 0.8 + np.float32(original)
+    img = 255 * aImg / np.max(aImg)
+
+    bbox, fig = crms[0].plot_crm(original, img, resized_crm, thresh)
+
+    return img, output, fig, bbox
+
+
+def generate_ensemble_crm_class(crms, image_path, thresh, class_idx=0):
+    num_models = len(crms)
+    outputs = np.zeros_like(crms)
+    crm_outputs = np.zeros_like(crms)
+
+    for i in range(num_models):
+        original, output, resized_crm = crms[i].generate_crm_class(
+            image_path, class_idx)
+        crm_outputs[i] = resized_crm
+        outputs[i] = output
+
+    output = outputs.sum(axis=0) / num_models
+    resized_crm = crm_outputs.sum(axis=0) / num_models
+
+    heatmap = cv2.applyColorMap(
+        np.uint8(255 * resized_crm), cv2.COLORMAP_JET)
+    heatmap = (255 - heatmap)
+    heatmap[np.where(resized_crm < thresh)] = 0
+    aImg = np.float32(heatmap) * 0.8 + np.float32(original)
+    img = 255 * aImg / np.max(aImg)
+
+    bbox, fig = crms[0].plot_crm(original, img, resized_crm, thresh)
+
+    return original, img, output, fig, bbox
+
 class CRM:
     def __init__(self, model, classes, dims=(256, 256)):
         self.model = model
