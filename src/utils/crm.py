@@ -273,8 +273,10 @@ class CRM:
             bbox = b.bbox
             bboxes.append([bbox[1], bbox[0], bbox[3], bbox[2]])
 
-        CRM_bboxes = np.vstack(bboxes)
-
+        if len(bboxes) > 0:
+            CRM_bboxes = np.vstack(bboxes)
+        else:
+            CRM_bboxes = []
         return CRM_bboxes
 
     def generate_BoundingBox(self, aCRM, threshold):
