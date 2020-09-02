@@ -64,11 +64,12 @@ def generate_ensemble_crm_class(crms, image_path, thresh, class_idx=0):
     return original, img, output, fig, bbox
 
 class CRM:
-    def __init__(self, model, classes, dims=(256, 256)):
+    def __init__(self, model, classes, dims=(256, 256), preprocess_fn=None):
         self.model = model
         self.num_classes = len(classes)
         self.dims = dims
         self.classes = classes
+        self.preprocess_fn = preprocess_fn
 
     def generate_crm_combined_plot(self, image_path, thresh):
         original, resized_crm, img, output = self.single_image_crm(
@@ -178,7 +179,7 @@ class CRM:
         input_image = np.asarray(resized_original_image)
 
         input_image = np.expand_dims(input_image, axis=0)
-        input_image = preprocess_input(input_image)
+        input_image = self.preprocess_fn(input_image)
 
         class_weights = self.model.layers[-1].get_weights()[0]
 
