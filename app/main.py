@@ -156,17 +156,18 @@ elif model_type == 'Ensemble':
                 st.write(fig)
             else:
                 st.subheader("Class based CRM Plot")
-                pred_thresh = st.slider('Prediction threshold', 0.0, 1.0, 0.1)
+                pred_thresh = st.slider('Prediction threshold', 0.0, 1.0, 0.2)
 
                 boxes = []
-                for c, i, p in top[:3]:
-                    original, img, output, fig, bbox = generate_ensemble_crm_class(
-                    crms, 'app/temp.png', thresh, class_idx=i)
-                    st.write('{:15s}({}) {:f}'.format(c, i, p))
-                    st.write(fig)
-                    newboxes = bbox.tolist()
-                    newboxes = [(i, box) for box in newboxes]
-                    boxes = boxes + newboxes
+                for c, i, p in top:
+                    if p > pred_thresh:
+                        original, img, output, fig, bbox = generate_ensemble_crm_class(
+                        crms, 'app/temp.png', thresh, class_idx=i)
+                        st.write('{:15s}({}) {:f}'.format(c, i, p))
+                        st.write(fig)
+                        newboxes = bbox.tolist()
+                        newboxes = [(i, box) for box in newboxes]
+                        boxes = boxes + newboxes
 
                 fig = plt.figure(figsize=(6, 4))
                 ax = plt.subplot(111)
