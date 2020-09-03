@@ -24,7 +24,6 @@ model_type = st.sidebar.selectbox(
     "Model Type",
     ("Single", "Ensemble")
 )
-thresh = st.sidebar.slider('Threshold for bounding boxes', 0.0, 1.0, 0.3)
 
 
 # st.set_option('deprecation.showfileUploaderEncoding', False)
@@ -36,6 +35,8 @@ index = models.index(
 models = [model for model in models if "Chexpert" in model]
 
 if model_type == 'Single':
+    thresh = st.sidebar.slider('Threshold for bounding boxes', 0.0, 1.0, 0.3)
+
     model_name = st.selectbox('Select the model', models, index=index)
 
     with st.spinner('Loading model....'):
@@ -71,7 +72,7 @@ if model_type == 'Single':
 
             if visualization == 'class based':
                 st.subheader("Class based CRM Plot")
-                pred_thresh = st.slider('Prediction threshold', 0.0, 1.0, 0.1)
+                pred_thresh = st.slider('Prediction threshold', 0.0, 1.0, 0.3)
 
                 boxes = []
                 for c, i, p in top[:3]:
@@ -117,6 +118,8 @@ if model_type == 'Single':
                 st.write(fig)
 
 elif model_type == 'Ensemble':
+    thresh = st.sidebar.slider('Threshold for bounding boxes', 0.0, 1.0, 0.2)
+
 
     default = ['DenseNet121_Chexpert_BCE_E3_B32_C0_N12_Uones_D256_DS9505_2LR1_LF5_SGD_Upsampled_1',
                'DenseNet121_Chexpert_BCE_E3_B32_C0_N12_AugAffine_Uones_D256_DS9505_2LR1_LF5_SGD_Upsampled_1',
@@ -146,17 +149,18 @@ elif model_type == 'Ensemble':
                 'class based', 'combined'])
 
             top = decode_predictions(
-                crms[0].classes, output[0], crms[0].num_classes)[:7]
+                crms[0].classes, output[0], crms[0].num_classes)
 
             if visualization == 'combined':
                 for c, i, p in top:
-                    st.write('{:15s}({}) {:f}'.format(c, i, p))
+                    if p > 0.3:
+                        st.write('{:15s}({}) {:f}'.format(c, i, p))
 
                 st.subheader("Combined CRM Plot")
                 st.write(fig)
             else:
                 st.subheader("Class based CRM Plot")
-                pred_thresh = st.slider('Prediction threshold', 0.0, 1.0, 0.2)
+                pred_thresh = st.slider('Prediction threshold', 0.0, 1.0, 0.3)
 
                 boxes = []
                 for c, i, p in top:
