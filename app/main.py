@@ -27,7 +27,7 @@ model_type = st.sidebar.selectbox(
 thresh = st.sidebar.slider('Threshold for bounding boxes', 0.0, 1.0, 0.3)
 
 
-st.set_option('deprecation.showfileUploaderEncoding', False)
+# st.set_option('deprecation.showfileUploaderEncoding', False)
 st.title('Model Prediction Visualization')
 
 models = os.listdir('models')
@@ -118,9 +118,10 @@ if model_type == 'Single':
 
 elif model_type == 'Ensemble':
 
-    default = ['DenseNet121_Chexpert_CWBCE_L1Normed_E3_B32_C0_N12_AugAffine_sharp21_U75_D256_DS9505_2LR4_LF5_Adam_Upsampled',
-            'DenseNet121_Chexpert_CWBCE_L1Normed_E3_B32_C0_N12_AugAffineColor_sharp21_U75_D256_DS9505_5LR1_LF1_SGD_Upsampled',
-            'DenseNet121_Chexpert_CWBCE_L1Normed_E3_B32_C0_N12_AugColor_sharp21_U75_D256_DS9505_5LR1_LF1_SGD_Upsampled']
+    default = ['DenseNet121_Chexpert_BCE_E3_B32_C0_N12_Uones_D256_DS9505_2LR1_LF5_SGD_Upsampled_1',
+               'DenseNet121_Chexpert_BCE_E3_B32_C0_N12_AugAffine_Uones_D256_DS9505_2LR1_LF5_SGD_Upsampled_1',
+               'DenseNet121_Chexpert_WBCE_E3_B32_C0_N12_AugAffine_U75_D256_DS9505_1LR1_LF5_SGD_Upsampled',
+               'DenseNet121_Chexpert_BCE_E3_B32_C0_N12_AugAffine_U66_D256_DS9505_2LR1_LF5_SGD_Upsampled_1']
 
     model_names = st.multiselect('Select the models', models, default=default)
 
