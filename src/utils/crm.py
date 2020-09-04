@@ -141,8 +141,8 @@ class CRM:
             xs = bbox[0]
             w = bbox[2] - bbox[0]
             h = bbox[3] - bbox[1]
-            rect = patches.Rectangle((xs, ys), w, h, linewidth=1,
-                                     edgecolor='r', facecolor='none')
+            rect = patches.Rectangle((xs, ys), w, h, linewidth=1 if figsize[0] < 7 else 2,
+                                     edgecolor='#e74c3c', facecolor='none')
 
             # Add the patch to the Axes
             ax.add_patch(rect)

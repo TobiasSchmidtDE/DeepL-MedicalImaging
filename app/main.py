@@ -22,11 +22,11 @@ colors = ['#F79F1F', '#A3CB38', '#1289A7',
 
 model_type = st.sidebar.selectbox(
     "Model Type",
-    ("Single", "Ensemble")
+    ("Ensemble", "Single")
 )
 
 
-# st.set_option('deprecation.showfileUploaderEncoding', False)
+st.set_option('deprecation.showfileUploaderEncoding', False)
 st.title('Model Prediction Visualization')
 
 models = os.listdir('models')
@@ -58,7 +58,7 @@ if model_type == 'Single':
                 'app/temp.png', thresh)
 
             visualization = st.selectbox('Select the visualization mode', [
-                'class based','combined'])
+                'combined', 'class based'])
 
             top = decode_predictions(crm.classes, output[0], crm.num_classes)[:7]
 
@@ -75,7 +75,7 @@ if model_type == 'Single':
                 pred_thresh = st.slider('Prediction threshold', 0.0, 1.0, 0.3)
 
                 boxes = []
-                for c, i, p in top[:3]:
+                for c, i, p in top:
                     if p > pred_thresh:
                         original, resized_crm, img, output = crm.single_image_crm(
                             'app/temp.png', thresh, class_idx=i)
@@ -107,18 +107,18 @@ if model_type == 'Single':
 
                         # Add the patch to the Axes
                         ax.add_patch(rect)
-                        ax.annotate(crm.classes[i], (xs, ys), color='white',
+                        ax.annotate(crm.classes[i], (xs, ys), color=colors[i],
                                     fontsize=6, ha='left', va='bottom')
                         for c, j, p in top[:3]:
                             if i == j:
                                 prob = p
-                        ax.annotate("{:.2f}".format(prob), (xs, ys - 7), color='white',
+                        ax.annotate("{:.2f}".format(prob), (xs, ys + 7), color=colors[i],
                                     fontsize=6, ha='left', va='bottom')
 
                 st.write(fig)
 
 elif model_type == 'Ensemble':
-    thresh = st.sidebar.slider('Threshold for bounding boxes', 0.0, 1.0, 0.2)
+    thresh = st.sidebar.slider('Threshold for bounding boxes', 0.0, 1.0, 0.25)
 
 
     default = ['DenseNet121_Chexpert_BCE_E3_B32_C0_N12_Uones_D256_DS9505_2LR1_LF5_SGD_Upsampled_1',
@@ -146,7 +146,7 @@ elif model_type == 'Ensemble':
                 crms, 'app/temp.png', thresh)
 
             visualization = st.selectbox('Select the visualization mode', [
-                'class based', 'combined'])
+                'combined', 'class based'])
 
             top = decode_predictions(
                 crms[0].classes, output[0], crms[0].num_classes)
@@ -160,7 +160,7 @@ elif model_type == 'Ensemble':
                 st.write(fig)
             else:
                 st.subheader("Class based CRM Plot")
-                pred_thresh = st.slider('Prediction threshold', 0.0, 1.0, 0.3)
+                pred_thresh = st.slider('Prediction threshold', 0.0, 1.0, 0.4)
 
                 boxes = []
                 for c, i, p in top:
