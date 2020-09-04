@@ -112,8 +112,8 @@ if model_type == 'Single':
                         for c, j, p in top[:3]:
                             if i == j:
                                 prob = p
-                        ax.annotate("{:.2f}".format(prob), (xs + w, ys), color=colors[i],
-                                    fontsize=6, ha='left', va='bottom')
+                        ax.annotate("{:.2f}".format(prob), (xs + w, ys), color="white",
+                                    fontsize=6, ha='right', va='bottom')
 
                 st.write(fig)
 
