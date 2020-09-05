@@ -1,3 +1,5 @@
+from src.utils.crm import CRM, decode_predictions, generate_ensemble_crm, generate_ensemble_crm_class
+from src.utils.load_model_crm import build_crm
 import os
 import io
 from pathlib import Path
@@ -14,8 +16,6 @@ if basepath.name != "idp-radio-1":
 
 load_dotenv(find_dotenv())
 
-from src.utils.load_model_crm import build_crm
-from src.utils.crm import CRM, decode_predictions, generate_ensemble_crm, generate_ensemble_crm_class
 
 colors = ['#F79F1F', '#A3CB38', '#1289A7',
           '#D980FA', '#B53471', '#EE5A24', '#009432', '#0652DD', '#9980FA', '#EA2027', '#5758BB', '#ED4C67']
@@ -48,7 +48,6 @@ if model_type == 'Single':
 
     image = st.file_uploader("Upload image")
 
-
     with st.spinner('Evaluating image....'):
         if image:
             with open("app/temp.png", "wb") as f:
@@ -60,7 +59,8 @@ if model_type == 'Single':
             visualization = st.selectbox('Select the visualization mode', [
                 'combined', 'class based'])
 
-            top = decode_predictions(crm.classes, output[0], crm.num_classes)[:7]
+            top = decode_predictions(
+                crm.classes, output[0], crm.num_classes)[:7]
 
             if visualization == 'combined':
                 for c, i, p in top:
@@ -103,7 +103,7 @@ if model_type == 'Single':
 
                     if w > 25 and h > 25:
                         rect = patches.Rectangle((xs, ys), w, h, linewidth=1,
-                                                edgecolor=colors[i], facecolor='none')
+                                                 edgecolor=colors[i], facecolor='none')
 
                         # Add the patch to the Axes
                         ax.add_patch(rect)
@@ -120,11 +120,14 @@ if model_type == 'Single':
 elif model_type == 'Ensemble':
     thresh = st.sidebar.slider('Threshold for bounding boxes', 0.0, 1.0, 0.25)
 
+    default = ['DenseNet121_2_Chexpert_CWBCE_L1Normed_E5_B32_C0_N12_AugAffine_sharp21_U75_D256_DS9505_1LR4_LF1_Adam_Upsampled',
+               'DenseNet121_Chexpert_BCE_NoNorm_E5_B32_C0_N12_AugAffine_sharp21_U75_D256_DS9505_1LR4_LF1_Adam_Upsampled',
+               'InceptionV3_Chexpert_CWBCE_L1Normed_E3_B32_C0_N12_AugAffine_sharp21_U75_D256_DS9505_5LR1_LF1_SGD_Upsampled']
 
-    default = ['DenseNet121_Chexpert_BCE_E3_B32_C0_N12_Uones_D256_DS9505_2LR1_LF5_SGD_Upsampled_1',
-               'DenseNet121_Chexpert_BCE_E3_B32_C0_N12_AugAffine_Uones_D256_DS9505_2LR1_LF5_SGD_Upsampled_1',
-               'DenseNet121_Chexpert_WBCE_E3_B32_C0_N12_AugAffine_U75_D256_DS9505_1LR1_LF5_SGD_Upsampled',
-               'DenseNet121_Chexpert_BCE_E3_B32_C0_N12_AugAffine_U66_D256_DS9505_2LR1_LF5_SGD_Upsampled_1']
+    # default = ['DenseNet121_Chexpert_BCE_E3_B32_C0_N12_Uones_D256_DS9505_2LR1_LF5_SGD_Upsampled_1',
+    #            'DenseNet121_Chexpert_BCE_E3_B32_C0_N12_AugAffine_Uones_D256_DS9505_2LR1_LF5_SGD_Upsampled_1',
+    #            'DenseNet121_Chexpert_WBCE_E3_B32_C0_N12_AugAffine_U75_D256_DS9505_1LR1_LF5_SGD_Upsampled',
+    #            'DenseNet121_Chexpert_BCE_E3_B32_C0_N12_AugAffine_U66_D256_DS9505_2LR1_LF5_SGD_Upsampled_1']
 
     model_names = st.multiselect('Select the models', models, default=default)
 
@@ -166,7 +169,7 @@ elif model_type == 'Ensemble':
                 for c, i, p in top:
                     if p > pred_thresh:
                         original, img, output, fig, bbox = generate_ensemble_crm_class(
-                        crms, 'app/temp.png', thresh, class_idx=i)
+                            crms, 'app/temp.png', thresh, class_idx=i)
                         st.write('{:15s}({}) {:f}'.format(c, i, p))
                         st.write(fig)
                         newboxes = bbox.tolist()
@@ -188,7 +191,7 @@ elif model_type == 'Ensemble':
 
                     if w > 25 and h > 25:
                         rect = patches.Rectangle((xs, ys), w, h, linewidth=1,
-                                                edgecolor=colors[i], facecolor='none')
+                                                 edgecolor=colors[i], facecolor='none')
 
                         # Add the patch to the Axes
                         ax.add_patch(rect)
