@@ -145,7 +145,7 @@ elif model_type == 'Ensemble':
                 crms, 'app/temp.png', thresh)
 
             visualization = st.selectbox('Select the visualization mode', [
-                'combined', 'class based'])
+                'class based', 'combined'])
 
             top = decode_predictions(
                 crms[0].classes, output[0], crms[0].num_classes)
