@@ -5,18 +5,18 @@ import tensorflow as tf
 from dotenv import load_dotenv, find_dotenv
 
 from src.architectures.benchmarks.benchmark import Benchmark, Experiment
+from tensorflow.keras.optimizers import Adam, SGD
 from src.metrics.metrics import F2Score, NaNWrapper
-from src.metrics.losses import WeightedBinaryCrossentropy
+from src.metrics.losses import WeightedBinaryCrossentropy, BinaryCrossentropy, compute_class_weight
 from src.architectures.simple.simple_base import SimpleBaseArchitecture
-
 
 load_dotenv(find_dotenv())
 
-METRICS = [NaNWrapper(tf.keras.metrics.AUC(multi_label=True, name="auc")),
-           NaNWrapper(tf.keras.metrics.Precision(name="precision")),
-           NaNWrapper(tf.keras.metrics.Recall(name="recall")),
-           NaNWrapper(F2Score(name="f2_score")),
-           NaNWrapper(tf.keras.metrics.BinaryAccuracy(name="binary_accuracy"))
+METRICS = [tf.keras.metrics.AUC(multi_label=True, name="auc"),
+           tf.keras.metrics.Precision(name="precision"),
+           tf.keras.metrics.Recall(name="recall"),
+           F2Score(name="f2_score"),
+           tf.keras.metrics.BinaryAccuracy(name="binary_accuracy")
            ]
 SINGLE_CLASS_METRICS = [
     tf.keras.metrics.BinaryAccuracy(name="accuracy"),
@@ -25,6 +25,16 @@ SINGLE_CLASS_METRICS = [
     tf.keras.metrics.Recall(name="recall"),
     F2Score(name="f2_score"),
 ]
+
+"""
+METRICS = [tf.keras.metrics.AUC(multi_label=True, name="auc"),
+           tf.keras.metrics.Precision(name="precision"),
+           tf.keras.metrics.Recall(name="recall"),
+           tf.keras.metrics.BinaryAccuracy(name="binary_accuracy")
+           ]
+SINGLE_CLASS_METRICS = [
+]
+"""
 
 CHEXPERT_COLUMNS = ['No Finding',
                     'Enlarged Cardiomediastinum',
@@ -148,7 +158,7 @@ def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=N
                                            classes=classes,
                                            epochs=epoch_size,
                                            batch_size=batch_size,
-                                           loss=tf.keras.losses.BinaryCrossentropy(),
+                                           loss=BinaryCrossentropy(),
                                            metrics=METRICS,
                                            single_class_metrics=SINGLE_CLASS_METRICS,
                                            crop=crop_val,
@@ -186,8 +196,7 @@ def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=N
                     # otherweise we get pylint line-too-long in next assignment
                     positive_weights, negative_weights = \
                         CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].positive_weights, \
-                        CHEXPERT_BENCHMARKS["CWBCE" +
-                                            key_suffix].negative_weights
+                        CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].negative_weights
                     CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].loss =  \
                         WeightedBinaryCrossentropy(positive_weights,
                                                    negative_weights)
@@ -252,4 +261,5 @@ def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=N
 
     return CHEXPERT_BENCHMARKS, CHESTXRAY14_BENCHMARKS
 
+    
 #CHEXPERT_BENCHMARKS, CHESTXRAY14_BENCHMARKS = generate_benchmarks ()

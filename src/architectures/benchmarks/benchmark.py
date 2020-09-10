@@ -1,18 +1,18 @@
-import math
-import os
-
 from datetime import datetime
 from pathlib import Path
+import os
 import numpy as np
+import math
 import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import TensorBoard
 import pandas as pd
 from sklearn.metrics import classification_report
 from src.datasets.generator import ImageDataGenerator
 from src.utils.save_model import save_model, model_set
 from src.preprocessing.split.train_test_split import train_test_split
-from src.metrics.metrics import SingleClassMetric, NaNWrapper
-from src.metrics.losses import compute_class_weight
+from src.metrics.metrics import SingleClassMetric
+from src.metrics.losses import WeightedBinaryCrossentropy, BinaryCrossentropy, compute_class_weight
 from src.metrics.custom_callbacks import CustomTensorBoard
 
 
@@ -108,7 +108,7 @@ class Experiment:
         model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_filepath,
                                                                        monitor='val_loss',
                                                                        verbose=2,
-                                                                       save_best_only=True,
+                                                                       save_best_only=False,
                                                                        save_weights_only=False,
                                                                        mode='auto',
                                                                        save_freq='epoch')
@@ -122,19 +122,29 @@ class Experiment:
                                                                   cooldown=0,
                                                                   min_lr=0,)
 
-        # terminate_on_nan_callback = tf.keras.callbacks.TerminateOnNaN()
+        def scheduler(epoch, lr): return lr if epoch == 0 else lr * \
+            self.benchmark.lr_factor
+        lr_scheduler_callback = tf.keras.callbacks.LearningRateScheduler(
+            scheduler)
 
+        terminate_on_nan_callback = tf.keras.callbacks.TerminateOnNaN()
+
+        class_weights = None
+        if self.benchmark.use_class_weights:
+            class_weights = {i: float(self.benchmark.class_weights[i]) for i in range(
+                len(self.benchmark.class_weights))}
+            print("Train with class weights: ", class_weights)
         self.train_result = self.model.fit(x=traingen,
                                            steps_per_epoch=len(traingen),
                                            validation_data=valgen,
                                            validation_steps=len(valgen),
                                            epochs=self.benchmark.epochs,
-                                           class_weight=self.benchmark.class_weights,
+                                           class_weight=class_weights,
                                            callbacks=[tensorboard_callback,
                                                       early_stopping_callback,
                                                       model_checkpoint_callback,
                                                       # terminate_on_nan_callback,
-                                                      reduce_lr_callback, ])
+                                                      lr_scheduler_callback, ])
         return self.train_result
 
     def evaluate(self):
@@ -203,7 +213,7 @@ class Experiment:
         Path(folderpath).mkdir(parents=True, exist_ok=True)
 
         np.savetxt(folderpath / "predictions_probs.csv",
-                   self.predictions.numpy(), delimiter=";")
+                   self.predictions, delimiter=";")
         np.savetxt(folderpath / "predictions_classes.csv",
                    self.y_pred, delimiter=";")
 
@@ -212,14 +222,10 @@ class Experiment:
 
 class Benchmark:
     def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
-                 optimizer=Adam(), loss='binary_crossentropy', single_class_metrics=[],
-                 metrics=None, train_labels="train.csv", test_labels=None, split_test_size=0.2,
+                 optimizer=Adam(), lr_factor=1.0, loss=tf.keras.losses.BinaryCrossentropy(), single_class_metrics=[],
+                 metrics=[], train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
-                 shuffle=True, drop_last=True, batch_size=64, dim=(320, 320), crop=False,
-                 crop_template=None, view_pos_column="Frontal/Lateral", view_pos_frontal="Frontal",
-                 view_pos_lateral="Lateral", n_channels=3, nan_replacement=0, unc_value=-1,
-                 u_enc='uzeroes', path_column="Path", path_column_prefix="",
-                 use_class_weights=False, preprocess_input_fn=None):
+                 use_class_weights=False, filter_train_labels=None, **datagenargs):
         """
         Instaniates a benchmark that can be provided as basis of an
         src.architecures.benchmark.Experiment. Provides these experiments with the same
@@ -276,39 +282,6 @@ class Benchmark:
             split_seed (bool): (default None)
                     See docs of src.preprocessing.split.train_test_split.train_test_split
 
-            shuffle (bool): (default True)
-                    See docs of src.datasets.generator.ImageDataGenerator
-            drop_last (bool): (default False)
-                    See docs of src.datasets.generator.ImageDataGenerator
-            batch_size (int): (default 64)
-                    See docs of src.datasets.generator.ImageDataGenerator
-            dim (int): (default 256x256)
-                    See docs of src.datasets.generator.ImageDataGenerator
-            crop_template (dict): (default None)
-                    See docs of src.datasets.generator.ImageDataGenerator
-            n_channels (int): (default 3)
-                    See docs of src.datasets.generator.ImageDataGenerator
-            unc_value (int/str): (default -1)
-                    See docs of src.datasets.generator.ImageDataGenerator
-            nan_replacement (int): (default 0)
-                    See docs of src.datasets.generator.ImageDataGenerator
-            u_enc (string): (default uzeros)
-                    See docs of src.datasets.generator.ImageDataGenerator
-            path_column (str): (default "Path")
-                    See docs of src.datasets.generator.ImageDataGenerator
-            path_column_prefix (str): (default "")
-                    See docs of src.datasets.generator.ImageDataGenerator
-            crop (bool): (default False)
-                    See docs of src.datasets.generator.ImageDataGenerator
-            crop_tempalte (dict): (default None)
-                    See docs of src.datasets.generator.ImageDataGenerator
-            view_pos_column (str): (default "Frontal/Lateral")
-                    See docs of src.datasets.generator.ImageDataGenerator
-            view_pos_frontal (str): (default "Frontal")
-                    See docs of src.datasets.generator.ImageDataGenerator
-            view_pos_lateral (str): (default "Lateral")
-                    See docs of src.datasets.generator.ImageDataGenerator
-
         Returns:
             benchmark (Benchmark):
                     A benchmark given the specifications with data generators already initialized
@@ -325,40 +298,29 @@ class Benchmark:
         self.dataset_folder = dataset_folder
         self.models_dir = models_dir
         self.label_columns = label_columns
-        self.path_column = path_column
-        self.path_column_prefix = path_column_prefix
-        self.shuffle = shuffle
-        self.batch_size = batch_size
-        self.dim = dim
-        self.crop = crop
-        self.view_pos_column = view_pos_column
-        self.view_pos_frontal = view_pos_frontal
-        self.view_pos_lateral = view_pos_lateral
-        self.crop_template = crop_template
-        self.n_channels = n_channels
-        self.nan_replacement = nan_replacement
-        self.unc_value = unc_value
-        self.u_enc = u_enc
-        self.drop_last = drop_last
         self.use_class_weights = use_class_weights
         self.class_weights = None
-        self.preprocess_input_fn = preprocess_input_fn
         self.split_seed = split_seed
+        self.lr = round(
+            float(self.optimizer.learning_rate.read_value().numpy()), 8)
+        self.lr_factor = lr_factor
 
+        
+        if len(self.metrics) == 0:
+            self.metrics = [tf.keras.metrics.AUC()]
+            
         # for each metric in single_class instantiate a metric for each individual pathology
         if self.single_class_metrics is not None:
             for base_metric in self.single_class_metrics:
                 for class_id in iter(range(len(label_columns))):
                     class_name = label_columns[class_id].lower().replace(
                         " ", "_")
-                    self.metrics += [NaNWrapper(SingleClassMetric(
-                        base_metric, class_id, class_name=class_name))]
+                    self.metrics += [SingleClassMetric(
+                        base_metric, class_id, class_name=class_name)]
 
         if self.dataset_name is None:
             self.dataset_name = dataset_folder.parent.name + "_" + dataset_folder.name
 
-        if self.metrics is None:
-            self.metrics = [tf.keras.metrics.AUC()]
 
         if test_labels is None:
             # read all labels from one file and split into train/test/valid
@@ -372,74 +334,32 @@ class Benchmark:
             train_labels = pd.read_csv(self.dataset_folder / train_labels)
             train_labels, validation_labels = train_test_split(
                 train_labels, test_size=split_valid_size, group=split_group, seed=split_seed)
-            validation_labels = test_labels = pd.read_csv(
-                self.dataset_folder / test_labels)
+            test_labels = pd.read_csv(self.dataset_folder / test_labels)
 
-        self.traingen = ImageDataGenerator(dataset=train_labels,
-                                           dataset_folder=self.dataset_folder,
-                                           label_columns=self.label_columns,
-                                           path_column_prefix=self.path_column_prefix,
-                                           path_column=self.path_column,
-                                           shuffle=self.shuffle,
-                                           drop_last=self.drop_last,
-                                           batch_size=self.batch_size,
-                                           n_channels=self.n_channels,
-                                           nan_replacement=self.nan_replacement,
-                                           unc_value=self.unc_value,
-                                           u_enc=self.u_enc,
-                                           dim=self.dim,
-                                           crop=self.crop,
-                                           view_pos_column=self.view_pos_column,
-                                           view_pos_lateral=self.view_pos_lateral,
-                                           view_pos_frontal=self.view_pos_frontal,
-                                           crop_template=self.crop_template,
-                                           preprocess_input_fn=self.preprocess_input_fn)
+        if filter_train_labels:
+            train_labels = filter_train_labels(train_labels)
+        
+        self.traingen = ImageDataGenerator(train_labels,
+                                           self.dataset_folder,
+                                           self.label_columns,
+                                           **datagenargs)
 
-        self.valgen = ImageDataGenerator(dataset=validation_labels,
-                                         dataset_folder=self.dataset_folder,
-                                         label_columns=self.label_columns,
-                                         path_column=self.path_column,
-                                         path_column_prefix=self.path_column_prefix,
-                                         shuffle=self.shuffle,
-                                         drop_last=self.drop_last,
-                                         batch_size=self.batch_size,
-                                         n_channels=self.n_channels,
-                                         nan_replacement=self.nan_replacement,
-                                         unc_value=self.unc_value,
-                                         u_enc=self.u_enc,
-                                         dim=self.dim,
-                                         crop=self.crop,
-                                         view_pos_column=self.view_pos_column,
-                                         view_pos_lateral=self.view_pos_lateral,
-                                         view_pos_frontal=self.view_pos_frontal,
-                                         crop_template=self.crop_template,
-                                         preprocess_input_fn=self.preprocess_input_fn)
+        datagenargs["augmentation"] = None
+        datagenargs["upsample_factors"] = None
+        datagenargs["shuffle"] = False
+        datagenargs["batch_size"] = 1
+        self.valgen = ImageDataGenerator(validation_labels,
+                                         self.dataset_folder,
+                                         self.label_columns,
+                                         **datagenargs)
 
-        self.testgen = ImageDataGenerator(dataset=test_labels,
-                                          dataset_folder=self.dataset_folder,
-                                          label_columns=self.label_columns,
-                                          path_column=self.path_column,
-                                          path_column_prefix=self.path_column_prefix,
-                                          shuffle=self.shuffle,
-                                          drop_last=self.drop_last,
-                                          batch_size=1,
-                                          n_channels=self.n_channels,
-                                          nan_replacement=self.nan_replacement,
-                                          unc_value=self.unc_value,
-                                          u_enc=self.u_enc,
-                                          dim=self.dim,
-                                          crop=self.crop,
-                                          view_pos_column=self.view_pos_column,
-                                          view_pos_lateral=self.view_pos_lateral,
-                                          view_pos_frontal=self.view_pos_frontal,
-                                          crop_template=self.crop_template,
-                                          preprocess_input_fn=self.preprocess_input_fn)
+        self.testgen = ImageDataGenerator(test_labels,
+                                          self.dataset_folder,
+                                          self.label_columns,
+                                          **datagenargs)
 
-        self.positive_weights, self.negative_weights = compute_class_weight(
+        self.class_weights, self.positive_weights, self.negative_weights = compute_class_weight(
             self.traingen)
-        if self.use_class_weights:
-            self.class_weights = {
-                i: float(self.positive_weights[i]) for i in range(len(self.positive_weights))}
 
     def as_dict(self):
         """
@@ -456,27 +376,32 @@ class Benchmark:
             "models_dir": str(self.models_dir),
             "epochs": self.epochs,
             "optimizer": self.optimizer.__class__.__name__,
-            "learning_rate": round(float(self.optimizer.learning_rate), 10),
+            "learning_rate": self.lr,
+            "lr_factor": self.lr_factor,
             "loss": self.loss if isinstance(self.loss, str) else self.loss.name,
             "use_class_weights": self.use_class_weights,
+            "class_weights": [float(i) for i in self.class_weights.numpy()],
             "positive_weights": [float(i) for i in self.positive_weights.numpy()],
             "negative_weights": [float(i) for i in self.negative_weights.numpy()],
             "metrics": metrics,
             "label_columns": self.label_columns,
-            "path_column": self.path_column,
-            "path_column_prefix": self.path_column_prefix,
-            "shuffle": self.shuffle,
-            "batch_size": self.batch_size,
-            "dim": self.dim,
-            "crop": self.crop,
-            "n_channels": self.n_channels,
-            "nan_replacement": self.nan_replacement,
-            "unc_value": self.unc_value,
-            "u_enc": self.u_enc,
-            "drop_last": self.drop_last,
-            "train_num_samples": len(self.traingen.index),
-            "valid_num_samples": len(self.valgen.index),
-            "test_num_samples": len(self.testgen.index),
+            "path_column": self.traingen.path_column,
+            "path_column_prefix": self.traingen.path_column_prefix,
+            "upsample_factors": self.traingen.upsample_factors,
+            "shuffle": self.traingen.shuffle,
+            "batch_size": self.traingen.batch_size,
+            "dim": self.traingen.dim,
+            "crop": self.traingen.crop,
+            "transformations": self.traingen.transformations,
+            "augmentation": self.traingen.augmentation,
+            "n_channels": self.traingen.n_channels,
+            "nan_replacement": self.traingen.nan_replacement,
+            "unc_value": self.traingen.unc_value,
+            "u_enc": self.traingen.u_enc,
+            "drop_last": self.traingen.drop_last,
+            "num_samples_train": len(self.traingen.index),
+            "num_samples_validation": len(self.valgen.index),
+            "num_samples_test": len(self.testgen.index),
             "split_seed": self.split_seed
         }
 
@@ -491,7 +416,7 @@ class Benchmark:
         return ("The benchmark was initialized for the {dataset_name} dataset "
                 "with batch size of {batch_size}, shuffle set to {shuffle} "
                 "and images rescaled " +
-                ("and cropped" if self.crop else "")
+                ("and cropped" if self.traingen.crop else "")
                 + "to dimension {dim}.\n"
                 "The training was done for {epochs} epochs using the {optimizer} optimizer "
                 "and {loss} loss.\nA total of {label_count} labels/pathologies were included "
@@ -508,7 +433,7 @@ class Benchmark:
                          loss=bench_dict["loss"],
                          label_count=len(bench_dict["label_columns"]),
                          u_enc=bench_dict["u_enc"],
-                         train_num_samples=bench_dict["train_num_samples"],
-                         valid_num_samples=bench_dict["valid_num_samples"],
-                         test_num_samples=bench_dict["test_num_samples"],
+                         train_num_samples=bench_dict["num_samples_train"],
+                         valid_num_samples=bench_dict["num_samples_validation"],
+                         test_num_samples=bench_dict["num_samples_test"],
                          )

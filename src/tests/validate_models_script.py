@@ -11,6 +11,7 @@ WIKI_URL = 'https://oauth2:' + token + \
 
 
 def execute():
+    print("Start Notebook Creation")
     try:
         basepath = Path(os.getcwd())
         # make sure your working directory is the repository root.
@@ -20,6 +21,7 @@ def execute():
         logfile_path = basepath / "logs" / "unvalidated-experiment-log.json"
 
         if not logfile_path.is_file():
+            print("{} is not a file".format(logfile_path))
             sys.exit(0)
 
         # load logfile
@@ -31,6 +33,8 @@ def execute():
         unvalidated_experiments = data['experiments']
 
         if len(unvalidated_experiments) < 1:
+            print("no experiments to process from {}".format(logfile_path))
+            print(data)
             return
 
         # create temporary directory
@@ -57,52 +61,54 @@ def execute():
             print("Executing validate_model notebook for " + str(exp['id']))
             os.system('jupyter nbconvert --to markdown --execute ' +
                       str(notebook_path) + ' --output ' + str(output_path))
+            try:
+                # load exectuted notebooks data
+                f = open(output_path_md, 'r')
+                content = f.read()
+                f.close()
 
-            # load exectuted notebooks data
-            f = open(output_path_md, 'r')
-            content = f.read()
-            f.close()
+                # move images to wiki folder and change references in md file
+                for f in os.listdir(tempdir):
+                    if f.split('.')[1] == 'png':
+                        target = tempdir / f
+                        destination = tempdir / "idp-radio-1.wiki" / "uploads" / f
+                        os.system('mv ' + str(target) + ' ' + str(destination))
 
-            # move images to wiki folder and change references in md file
-            for f in os.listdir(tempdir):
-                if f.split('.')[1] == 'png':
-                    target = tempdir / f
-                    destination = tempdir / "idp-radio-1.wiki" / "uploads" / f
-                    os.system('mv ' + str(target) + ' ' + str(destination))
+                        regex = r'!\[png\]\(\S+' + f + r'\)'
+                        content = re.sub(
+                            regex, '![png](../uploads/' + f + ')', content)
 
-                    regex = r'!\[png\]\(\S+' + f + r'\)'
-                    content = re.sub(
-                        regex, '![png](../uploads/' + f + ')', content)
+                # add heading to md file
+                heading = '# ' + exp['name']
+                heading += '\n'
+                heading += 'Version: ' + exp['version']
+                heading += '\n\n'
+                heading += exp['description']
+                heading += '\n\n'
+                content = heading + content
 
-            # add heading to md file
-            heading = '# ' + exp['name']
-            heading += '\n'
-            heading += 'Version: ' + exp['version']
-            heading += '\n\n'
-            heading += exp['description']
-            heading += '\n\n'
-            content = heading + content
+                # write md file into wiki, either append if model with same name exists
+                # or create a new file
+                if os.path.exists(wiki_model_dir / (exp['name'] + '.md')):
+                    mode = 'a'
+                else:
+                    mode = 'w'
 
-            # write md file into wiki, either append if model with same name exists
-            # or create a new file
-            if os.path.exists(wiki_model_dir / (exp['name'] + '.md')):
-                mode = 'a'
-            else:
-                mode = 'w'
+                with open(wiki_model_dir / (exp['name'] + '.md'), mode) as f:
+                    f.write(content)
 
-            with open(wiki_model_dir / (exp['name'] + '.md'), mode) as f:
-                f.write(content)
+                # if no model with same name exists add to home page of wiki
+                if not mode == 'a':
+                    with open(tempdir / 'idp-radio-1.wiki/home.md', 'a') as f:
+                        f.write('\n - [' + exp['name'] + '](' +
+                                'models/' + exp['name'] + ')')
 
-            # if no model with same name exists add to home page of wiki
-            if not mode == 'a':
-                with open(tempdir / 'idp-radio-1.wiki/home.md', 'a') as f:
-                    f.write('\n - [' + exp['name'] + '](' +
-                            'models/' + exp['name'] + ')')
-
-            # commit and push changes to wiki git
-            commit_msg = "Add model '" + exp['name'] + "'"
-            os.system('cd ' + str(wikidir) +
-                      '; git commit -am "' + commit_msg + '"; git push;')
+                # commit and push changes to wiki git
+                commit_msg = "Add model '" + exp['name'] + "'"
+                os.system('cd ' + str(wikidir) +
+                          '; git commit -am "' + commit_msg + '"; git push;')
+            except:
+                traceback.print_exc()
 
         # write to unvalidated experiments log file
         with open(logfile_path, 'w') as f:

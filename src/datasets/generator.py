@@ -6,6 +6,7 @@ from PIL import Image
 from src.datasets.u_encoding import uencode
 from src.preprocessing.cropping.template_matching import TemplateMatcher
 from src.datasets.data_augmentation import augment_image
+from src.preprocessing.normalizing.normalizer import Normalizer
 
 
 class ImageDataGenerator(tf.keras.utils.Sequence):
@@ -15,11 +16,11 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
     """
 
     def __init__(self, dataset, dataset_folder, label_columns, path_column="Path",
-                 path_column_prefix="", shuffle=True, drop_last=False, batch_size=64,
+                 path_column_prefix="", shuffle=True, drop_last=False, batch_size=32,
                  dim=(256, 256), n_channels=3, nan_replacement=0, unc_value=-1, u_enc='uzeroes',
                  crop=False, crop_template=None, view_pos_column="Frontal/Lateral",
                  view_pos_frontal="Frontal", view_pos_lateral="Lateral",
-                 preprocess_input_fn=None, augment=False
+                 preprocess_input_fn=None, augmentation=None, upsample_factors=None, transformations={}
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
                  ):
@@ -150,7 +151,13 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                     label_column + ' contains values which are not valid or NaN. Valid values are '
                     + str(valid_values))
 
-        self.dataset = dataset
+        self.dataset = self.preprocess_labels(
+            dataset, label_columns, nan_replacement, unc_value, u_enc)
+        if upsample_factors is not None:
+            self.dataset = self.upsample_dataset(
+                self.dataset, upsample_factors)
+
+        self.upsample_factors = upsample_factors
         self.dataset_folder = dataset_folder
         self.label_columns = label_columns
         self.path_column = path_column
@@ -168,13 +175,63 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         self.view_pos_lateral = view_pos_lateral
         self.preprocess_input_fn = preprocess_input_fn
         self.template_matcher = None
-        self.augment = augment
+        self.augmentation = augmentation
+        self.transformations = transformations
+        self.crop = crop
 
-        if crop:
+        if self.crop:
             self.template_matcher = TemplateMatcher(
                 template_conf=crop_template, size=dim)
 
         self.on_epoch_end()
+        self.classes = self.get_labels()
+        self.n = len(self) * self.batch_size - 1
+
+    def upsample_dataset(self, dataset, upsample_factors):
+        for label, factor in upsample_factors.items():
+            occurances = dataset[dataset[label] == 1.0]
+            for i in range(factor):
+                dataset = dataset.append(occurances)
+        return dataset
+
+    def preprocess_labels(self, dataset, label_columns, nan_replacement, unc_value, u_enc):
+        replacement_dict = {}
+        if u_enc == 'uzero' or u_enc == 'uzeroes':
+            uzeros = label_columns
+            uones = []
+        elif u_enc == 'uones':
+            uzeros = []
+            uones = label_columns
+        elif isinstance(u_enc, list):
+            assert len(
+                u_enc) == 2, "When providing uncertanity encoding as list for class based encodings, the list must have exactly 2 nested lists"
+
+            uzeros = u_enc[0]
+            uones = u_enc[1]
+
+            assert isinstance(
+                uzeros, list), "When providing uncertanity encoding as list for class based encodings, the first list element must also be a list"
+            assert isinstance(
+                uones, list), "When providing uncertanity encoding as list for class based encodings, the second list element must also be a list"
+            assert not set(uzeros).intersection(
+                uones),  "When providing uncertanity encoding as list for class based encodings, the two nested lists must be disjoint"
+            assert not (bool(set(uzeros + uones).difference(label_columns)) and bool(set(label_columns).difference(uzeros + uones))
+                        ), "When providing uncertanity encoding as list for class based encodings, all classes must be assigned exactly to one of the two lists"
+        else:
+            raise ValueError(
+                "The provided argument u_enc for the uncertainty encoding is not a valid type. Must be 'uzero', 'uones', or a list with two nested lists")
+
+        for label in uzeros:
+            replacement_dict[label] = {unc_value: 0}
+
+        for label in uones:
+            replacement_dict[label] = {unc_value: 1}
+
+        replacement_dict
+        dataset = dataset.replace(to_replace=replacement_dict)
+
+        dataset = dataset.replace(to_replace=np.nan, value=nan_replacement)
+        return dataset
 
     def get_new_index(self):
         """
@@ -208,12 +265,6 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
             list (numpy.array) of the encoded labels
         """
         labels = self.dataset.iloc[sample_ids][self.label_columns].to_numpy()
-
-        # enforce uncertainty encoding strategy
-        labels = uencode(self.u_enc, labels, unc_value=self.unc_value)
-
-        # replace nan values
-        labels[np.isnan(labels)] = self.nan_replacement
 
         return np.array(labels, dtype=np.float32)
 
@@ -273,8 +324,26 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         else:
             img = img.resize(self.dim)
 
-        if self.augment:
-            img = augment_image(img)
+        normalizer = Normalizer(img)
+        for transform_name, transform_params in self.transformations.items():
+            if transform_name == "unsharp_mask":
+                normalizer.apply_unsharp_mask(**transform_params)
+            elif transform_name == "gaussian_blur":
+                normalizer.apply_gaussian_blur(**transform_params)
+            elif transform_name == "windowing":
+                normalizer.apply_windowing(**transform_params)
+            elif transform_name == "median_filter":
+                normalizer.apply_median_filter()
+            elif transform_name == "hist_equalization":
+                normalizer.apply_hist_equalization()
+            else:
+                raise ValueError(
+                    f"Unknown transformation name {transform_name}. Allowed names are 'unsharp_mask', 'gaussian_blur', 'windowing', 'median_filter', 'hist_equalization' ")
+
+        img = Image.fromarray(normalizer.get_img())
+
+        if self.augmentation is not None:
+            img = augment_image(img, self.augmentation)
 
         if self.n_channels == 3:
             img = img.convert(mode="RGB")
@@ -360,3 +429,6 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
 
         self.index = self.get_new_index()
+        
+    def reset(self):
+        self.on_epoch_end()

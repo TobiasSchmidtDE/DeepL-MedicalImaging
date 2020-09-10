@@ -1,26 +1,19 @@
+from src.architectures.benchmarks.benchmark_definitions import generate_benchmarks, simple_architecture_experiment, CHEXPERT_COLUMNS
+from src.metrics.losses import WeightedBinaryCrossentropy, compute_class_weight
+from src.metrics.metrics import F2Score
+from src.architectures.benchmarks.benchmark import Benchmark, Experiment
+from src.architectures.adv.guendel19 import densenet
+from src.architectures.simple.simple_base import SimpleBaseArchitecture
+from tensorflow.keras.applications import InceptionV3, Xception, DenseNet121, InceptionResNetV2, ResNet152V2, NASNetLarge
+from tensorflow.keras.optimizers import Adam, SGD
+import tensorflow as tf
 import os
+import datetime
+from pathlib import Path
+from dotenv import load_dotenv, find_dotenv
 import traceback
 import sys
 
-from pathlib import Path
-from dotenv import load_dotenv, find_dotenv
-import tensorflow as tf
-
-from tensorflow.keras.applications import DenseNet121
-from tensorflow.keras.optimizers import Adam
-
-# pylint: disable=unused-import
-from src.architectures.benchmarks.benchmark_definitions import generate_benchmarks, simple_architecture_experiment, CHEXPERT_COLUMNS
-# pylint: disable=unused-import
-from src.metrics.losses import WeightedBinaryCrossentropy, compute_class_weight
-# pylint: disable=unused-import
-from src.metrics.metrics import F2Score
-# pylint: disable=unused-import
-from src.architectures.benchmarks.benchmark import Benchmark, Experiment
-# pylint: disable=unused-import
-from src.architectures.adv.guendel19 import densenet
-# pylint: disable=unused-import
-from src.architectures.simple.simple_base import SimpleBaseArchitecture
 
 basepath = Path(os.getcwd())
 # make sure your working directory is the repository root.
@@ -36,11 +29,11 @@ print(os.getcwd())
 # Specify which GPU(s) to use
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # Or 2, 3, etc. other than 0
 
-# pylint: disable=no-member
+#config = tf.compat.v1.ConfigProto(device_count={'GPU': 1}, allow_soft_placement=True, log_device_placement=True)
 config = tf.compat.v1.ConfigProto(
-    device_count={'GPU': 1}, allow_soft_placement=True, log_device_placement=True)
+    allow_soft_placement=True, log_device_placement=True)
 config.gpu_options.allow_growth = True
-#config.gpu_options.per_process_gpu_memory_fraction = 0.8
+#config.gpu_options.per_process_gpu_memory_fraction = 1.2
 tf.compat.v1.Session(config=config)
 
 
@@ -49,34 +42,6 @@ run_configs = [
         "architectures": {
             "DenseNet121": {
                 "preprocess_input_fn": tf.keras.applications.densenet.preprocess_input,
-                "model_fn": DenseNet121
-            },
-        },
-        "columns": ['Cardiomegaly',
-                    'Edema',
-                    'Consolidation',
-                    'Atelectasis',
-                    'Pleural Effusion',
-                    ],
-        "epochs": 5,
-        "batch_sizes": 32,
-        "nan_replacement": 0,
-        "dim":(256, 256),
-        "optim": Adam(learning_rate=0.0001),  # Adam()
-        "split_valid_size": 0.1,
-        "name_suffix": "_D256_DS9010_LR4",
-        "loss_functions": ["BCE"],
-        "crop_confs":  ["C0"]
-    }
-]
-
-
-"""
-
-    {
-        "architectures" : {
-            "DenseNet121": {
-                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
                 "model_fn": DenseNet121
             },
         },
@@ -92,6 +57,36 @@ run_configs = [
                     'Pleural Effusion',
                     'Pleural Other',
                     'Fracture'],
+        "epochs": 3,
+        "batch_sizes": 32,
+        "nan_replacement": 0,
+        "u_enc": "uones",
+        "augmentation": None,
+        "dim":(256, 256),
+        "optim": SGD(learning_rate=2e-1),  # Adam()
+        "lr_factor": 0.5,
+        "split_valid_size": 0.05,
+        "name_suffix": "_Uones_D256_DS9505_2LR1_LF5_SGD",
+        "loss_functions": ["BCE"],
+        "crop_confs":  ["C0"]
+    }
+]
+
+
+"""
+
+    {
+        "architectures" : {
+            "DenseNet121": {
+                "preprocess_input_fn":tf.keras.applications.densenet.preprocess_input,
+                "model_fn": DenseNet121
+            },
+        },
+        "columns": ['Cardiomegaly',
+                    'Edema',
+                    'Consolidation',
+                    'Atelectasis',
+                    'Pleural Effusion'],
         "epochs": 9,
         "batch_sizes": 32,
         "nan_replacement": 0,
@@ -125,6 +120,8 @@ run_configs = [
         "loss_functions": ["BCE"],
         "crop_confs":  ["C0"]
     },
+
+
 "InceptionResNetV2": {
     "preprocess_input_fn":tf.keras.applications.inception_resnet_v2.preprocess_input,
     "model_fn": InceptionResNetV2
@@ -133,10 +130,12 @@ run_configs = [
     "preprocess_input_fn":tf.keras.applications.nasnet.preprocess_input,
     "model_fn": NASNetLarge
 }
-"Xception": {
-    "preprocess_input_fn":tf.keras.applications.xception.preprocess_input,
-    "model_fn": Xception
-}
+
+    "Xception": {
+        "preprocess_input_fn":tf.keras.applications.xception.preprocess_input,
+        "model_fn": Xception
+    }
+
 """
 estim_run_time = 0
 for run_conf in run_configs:
@@ -160,10 +159,13 @@ for run_conf in run_configs:
                         test_labels="test.csv",
                         # float("NaN"),
                         nan_replacement=run_conf["nan_replacement"],
+                        u_enc=run_conf["u_enc"],
                         batch_sizes={"b": run_conf["batch_sizes"]},
                         epoch_sizes={"e": epoch_sizes},
                         dim=run_conf["dim"],
                         optimizer=run_conf["optim"],
+                        lr_factor=run_conf["lr_factor"],
+                        augmentation=run_conf["augmentation"],
                         #crop = {"C1": False},
                         #crop = {"C0": False},
                         split_seed=6122156,
