@@ -12,11 +12,11 @@ from src.architectures.simple.simple_base import SimpleBaseArchitecture
 
 load_dotenv(find_dotenv())
 
-METRICS = [NaNWrapper(tf.keras.metrics.AUC(multi_label=True, name="auc")),
-           NaNWrapper(tf.keras.metrics.Precision(name="precision")),
-           NaNWrapper(tf.keras.metrics.Recall(name="recall")),
-           NaNWrapper(F2Score(name="f2_score")),
-           NaNWrapper(tf.keras.metrics.BinaryAccuracy(name="binary_accuracy"))
+METRICS = [tf.keras.metrics.AUC(multi_label=True, name="auc"),
+           tf.keras.metrics.Precision(name="precision"),
+           tf.keras.metrics.Recall(name="recall"),
+           F2Score(name="f2_score"),
+           tf.keras.metrics.BinaryAccuracy(name="binary_accuracy")
            ]
 SINGLE_CLASS_METRICS = [
     tf.keras.metrics.BinaryAccuracy(name="accuracy"),
@@ -261,55 +261,5 @@ def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=N
 
     return CHEXPERT_BENCHMARKS, CHESTXRAY14_BENCHMARKS
 
-
-def benchmark_from_logs(benchmark_dict):
-    lr = benchmark_dict["learning_rate"]
-    lr_factor = benchmark_dict["lr_factor"] if "lr_factor" in benchmark_dict.keys() else 1.0
-    upsample_factors = benchmark_dict["upsample_factors"] if "upsample_factors" in benchmark_dict.keys() else None
-    optimizer_dict = {
-        "Adam": Adam(learning_rate=lr, clipnorm=1),
-        "SGD": SGD(learning_rate=lr, clipnorm=1),
-    }
-    optim = optimizer_dict[benchmark_dict["optimizer"]]
-    
-    pos_weights = tf.constant(benchmark_dict["positive_weights"])
-    neg_weights = tf.constant(benchmark_dict["negative_weights"])
-    loss_dict = {
-        "weighted_binary_crossentropy": WeightedBinaryCrossentropy(pos_weights,neg_weights) ,
-        "binary_crossentropy": tf.keras.losses.BinaryCrossentropy(),
-        "custom_binary_crossentropy": BinaryCrossentropy()
-    }
-    loss = loss_dict[benchmark_dict["loss"]]
-    
-    return Benchmark(Path(benchmark_dict["dataset_folder"]),
-                          benchmark_dict["label_columns"],
-                          benchmark_dict["benchmark_name"],
-                          epochs=benchmark_dict["epochs"],
-                          models_dir= Path(benchmark_dict["models_dir"]),
-                          optimizer=optim,
-                          lr_factor = lr_factor,
-                          loss=loss,
-                          single_class_metrics=SINGLE_CLASS_METRICS,
-                          metrics=METRICS,
-                          train_labels="train.csv",
-                          test_labels="test.csv",
-                          split_test_size= 0.1,
-                          split_valid_size = 0.05,
-                          split_seed=benchmark_dict["split_seed"],
-                          use_class_weights=benchmark_dict["use_class_weights"],
-                          path_column=benchmark_dict["path_column"],
-                          path_column_prefix=benchmark_dict["path_column_prefix"],
-                          shuffle=benchmark_dict["shuffle"],
-                          drop_last=benchmark_dict["drop_last"],
-                          batch_size=benchmark_dict["batch_size"],
-                          dim=benchmark_dict["dim"],
-                          n_channels=benchmark_dict["n_channels"],
-                          nan_replacement=benchmark_dict["nan_replacement"],
-                          unc_value=benchmark_dict["unc_value"],
-                          u_enc=benchmark_dict["u_enc"],
-                          crop=benchmark_dict["crop"],
-                          augmentation=benchmark_dict["augmentation"],
-                          upsample_factors= upsample_factors,
-                          transformations = {})
     
 #CHEXPERT_BENCHMARKS, CHESTXRAY14_BENCHMARKS = generate_benchmarks ()

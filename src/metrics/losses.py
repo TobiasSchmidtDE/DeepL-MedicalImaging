@@ -71,7 +71,7 @@ class BinaryCrossentropy(Loss):
 
         epsilon_ = constant_op.constant(
             self.epsilon(), dtype=y_pred.dtype.base_dtype)
-        #y_pred = clip_ops.clip_by_value(y_pred, epsilon_, 1. - epsilon_)
+        # y_pred = clip_ops.clip_by_value(y_pred, epsilon_, 1. - epsilon_)
         if not tf.reduce_all((y_pred <= 1)):
             print("Some predictions are greater than 1")
         if not tf.reduce_all((y_pred >= 0)):

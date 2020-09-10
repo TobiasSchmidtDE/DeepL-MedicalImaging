@@ -184,6 +184,8 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                 template_conf=crop_template, size=dim)
 
         self.on_epoch_end()
+        self.classes = self.get_labels()
+        self.n = len(self) * self.batch_size - 1
 
     def upsample_dataset(self, dataset, upsample_factors):
         for label, factor in upsample_factors.items():
@@ -194,7 +196,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
 
     def preprocess_labels(self, dataset, label_columns, nan_replacement, unc_value, u_enc):
         replacement_dict = {}
-        if u_enc == 'uzero':
+        if u_enc == 'uzero' or u_enc == 'uzeroes':
             uzeros = label_columns
             uones = []
         elif u_enc == 'uones':
@@ -427,3 +429,6 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
 
         self.index = self.get_new_index()
+        
+    def reset(self):
+        self.on_epoch_end()

@@ -11,7 +11,7 @@ from sklearn.metrics import classification_report
 from src.datasets.generator import ImageDataGenerator
 from src.utils.save_model import save_model, model_set
 from src.preprocessing.split.train_test_split import train_test_split
-from src.metrics.metrics import SingleClassMetric, NaNWrapper
+from src.metrics.metrics import SingleClassMetric
 from src.metrics.losses import WeightedBinaryCrossentropy, BinaryCrossentropy, compute_class_weight
 from src.metrics.custom_callbacks import CustomTensorBoard
 
@@ -223,9 +223,9 @@ class Experiment:
 class Benchmark:
     def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
                  optimizer=Adam(), lr_factor=1.0, loss=tf.keras.losses.BinaryCrossentropy(), single_class_metrics=[],
-                 metrics=None, train_labels="train.csv", test_labels=None, split_test_size=0.2,
+                 metrics=[], train_labels="train.csv", test_labels=None, split_test_size=0.2,
                  split_valid_size=0.2, split_group='patient_id', split_seed=None, dataset_name=None,
-                 use_class_weights=False, **datagenargs):
+                 use_class_weights=False, filter_train_labels=None, **datagenargs):
         """
         Instaniates a benchmark that can be provided as basis of an
         src.architecures.benchmark.Experiment. Provides these experiments with the same
@@ -305,20 +305,22 @@ class Benchmark:
             float(self.optimizer.learning_rate.read_value().numpy()), 8)
         self.lr_factor = lr_factor
 
+        
+        if len(self.metrics) == 0:
+            self.metrics = [tf.keras.metrics.AUC()]
+            
         # for each metric in single_class instantiate a metric for each individual pathology
         if self.single_class_metrics is not None:
             for base_metric in self.single_class_metrics:
                 for class_id in iter(range(len(label_columns))):
                     class_name = label_columns[class_id].lower().replace(
                         " ", "_")
-                    self.metrics += [NaNWrapper(SingleClassMetric(
-                        base_metric, class_id, class_name=class_name))]
+                    self.metrics += [SingleClassMetric(
+                        base_metric, class_id, class_name=class_name)]
 
         if self.dataset_name is None:
             self.dataset_name = dataset_folder.parent.name + "_" + dataset_folder.name
 
-        if self.metrics is None:
-            self.metrics = [tf.keras.metrics.AUC()]
 
         if test_labels is None:
             # read all labels from one file and split into train/test/valid
@@ -334,6 +336,9 @@ class Benchmark:
                 train_labels, test_size=split_valid_size, group=split_group, seed=split_seed)
             test_labels = pd.read_csv(self.dataset_folder / test_labels)
 
+        if filter_train_labels:
+            train_labels = filter_train_labels(train_labels)
+        
         self.traingen = ImageDataGenerator(train_labels,
                                            self.dataset_folder,
                                            self.label_columns,
@@ -341,12 +346,13 @@ class Benchmark:
 
         datagenargs["augmentation"] = None
         datagenargs["upsample_factors"] = None
+        datagenargs["shuffle"] = False
+        datagenargs["batch_size"] = 1
         self.valgen = ImageDataGenerator(validation_labels,
                                          self.dataset_folder,
                                          self.label_columns,
                                          **datagenargs)
 
-        datagenargs["batch_size"] = 1
         self.testgen = ImageDataGenerator(test_labels,
                                           self.dataset_folder,
                                           self.label_columns,
