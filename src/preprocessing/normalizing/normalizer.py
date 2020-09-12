@@ -5,6 +5,7 @@ import numpy as np
 
 
 class Normalizer:
+    # Author: Tobias
     """
     Usage:
     1. intantiate the normalizer with a given image using the constructor
@@ -24,9 +25,10 @@ class Normalizer:
             self.img, in_range=window)
         return self
 
-    def apply_gaussian_blur(self, kernal_size = 3, sigma=0):
-        self.img = cv2.GaussianBlur(self.img, (kernal_size, kernal_size), sigma)
-        
+    def apply_gaussian_blur(self, kernal_size=3, sigma=0):
+        self.img = cv2.GaussianBlur(
+            self.img, (kernal_size, kernal_size), sigma)
+
         return self
 
     def apply_hist_equalization(self):

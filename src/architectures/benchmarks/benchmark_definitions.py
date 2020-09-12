@@ -1,3 +1,5 @@
+# Author: Tobias
+
 import os
 
 from pathlib import Path
@@ -196,7 +198,8 @@ def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=N
                     # otherweise we get pylint line-too-long in next assignment
                     positive_weights, negative_weights = \
                         CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].positive_weights, \
-                        CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].negative_weights
+                        CHEXPERT_BENCHMARKS["CWBCE" +
+                                            key_suffix].negative_weights
                     CHEXPERT_BENCHMARKS["CWBCE" + key_suffix].loss =  \
                         WeightedBinaryCrossentropy(positive_weights,
                                                    negative_weights)
@@ -261,5 +264,5 @@ def generate_benchmarks(classes=None, batch_sizes=None, epoch_sizes=None, crop=N
 
     return CHEXPERT_BENCHMARKS, CHESTXRAY14_BENCHMARKS
 
-    
+
 #CHEXPERT_BENCHMARKS, CHESTXRAY14_BENCHMARKS = generate_benchmarks ()

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Author: Tobias
 
 # Downloads smallest version of Chexpert and Chestxray14 dataset by default. Optionally downloads all versions.
 

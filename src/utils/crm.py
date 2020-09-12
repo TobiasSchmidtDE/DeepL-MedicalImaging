@@ -12,6 +12,7 @@ import matplotlib.patches as patches
 
 
 class CRM:
+    # Author: Kristian
     def __init__(self, model, classes, dims=(256, 256)):
         self.model = model
         self.num_classes = len(classes)
@@ -243,6 +244,7 @@ class CRM:
 
 
 def decode_predictions(classes, predictions, num_classes):
+    # Author: Kristian
     decoded_predictions = []
     for i in range(num_classes):
         decoded_predictions.append((classes[i], i, predictions[i]))

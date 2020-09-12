@@ -17,6 +17,7 @@ from src.metrics.custom_callbacks import CustomTensorBoard
 
 
 class Experiment:
+    # Author: Johanna & Tobias
     def __init__(self, benchmark, model, model_name=None, model_version='1'):
         """
         Intiantiates an experiment to train and evaluate a given model.
@@ -221,6 +222,7 @@ class Experiment:
 
 
 class Benchmark:
+    # Author: Johanna & Tobias
     def __init__(self, dataset_folder, label_columns, name, epochs=10, models_dir=Path("models/"),
                  optimizer=Adam(), lr_factor=1.0, loss=tf.keras.losses.BinaryCrossentropy(), single_class_metrics=[],
                  metrics=[], train_labels="train.csv", test_labels=None, split_test_size=0.2,
@@ -305,10 +307,9 @@ class Benchmark:
             float(self.optimizer.learning_rate.read_value().numpy()), 8)
         self.lr_factor = lr_factor
 
-        
         if len(self.metrics) == 0:
             self.metrics = [tf.keras.metrics.AUC()]
-            
+
         # for each metric in single_class instantiate a metric for each individual pathology
         if self.single_class_metrics is not None:
             for base_metric in self.single_class_metrics:
@@ -320,7 +321,6 @@ class Benchmark:
 
         if self.dataset_name is None:
             self.dataset_name = dataset_folder.parent.name + "_" + dataset_folder.name
-
 
         if test_labels is None:
             # read all labels from one file and split into train/test/valid
@@ -338,7 +338,7 @@ class Benchmark:
 
         if filter_train_labels:
             train_labels = filter_train_labels(train_labels)
-        
+
         self.traingen = ImageDataGenerator(train_labels,
                                            self.dataset_folder,
                                            self.label_columns,

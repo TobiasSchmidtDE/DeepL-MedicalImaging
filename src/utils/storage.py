@@ -1,3 +1,5 @@
+
+# Author: Kristian
 from google.cloud import storage
 from google.cloud.exceptions import NotFound
 from dotenv import load_dotenv, find_dotenv

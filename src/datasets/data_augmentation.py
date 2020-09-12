@@ -12,6 +12,7 @@ import numpy as np
 # torchvision.transforms.RandomErasing
 
 def augment_image_affine(image, shift=True, rotate=True, zoom=True):
+    # Author: Tobias
     """
       Random affine transformations from https://github.com/jfhealthcare/Chexpert
 
@@ -27,25 +28,8 @@ def augment_image_affine(image, shift=True, rotate=True, zoom=True):
     return image
 
 
-def augment_image_eqhist(image):
-    """
-     Equalize Hist transformations from https://github.com/jfhealthcare/Chexpert
-
-      Parameters:
-        image (Image)
-    """
-    # TODO: fix this function
-    raise NotImplementedError("No functional yet.")
-
-    image = np.float32(image)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    image = cv2.equalizeHist(image)
-    image = cv2.GaussianBlur(image, (3, 3), 0)
-
-    return image
-
-
 def augment_color(image):
+    # Author: Kristian
     img_aug = tfs.Compose([
         tfs.ColorJitter(
             brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1)
@@ -57,14 +41,13 @@ def augment_color(image):
 
 
 def augment_image(image, augmentation="affine"):
+    # Author: Kristian
 
     augmentations = augmentation.lower().split(',')
 
     for aug in augmentations:
         if aug.lower() == "affine":
             image = augment_image_affine(image)
-        elif aug.lower() == "eqhist":
-            image = augment_image_eqhist(image)
         elif aug.lower() == "color":
             image = augment_color(image)
         else:

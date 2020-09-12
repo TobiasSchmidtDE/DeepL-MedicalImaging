@@ -3,6 +3,7 @@ from tensorflow.keras.callbacks import TensorBoard
 
 
 class CustomTensorBoard(TensorBoard):
+    # Author: Tobias
     def __init__(self, log_dir, **kwargs):
         super().__init__(log_dir=log_dir, **kwargs)
 

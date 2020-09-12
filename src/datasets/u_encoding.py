@@ -5,6 +5,7 @@ import tensorflow as tf
 
 
 def uencode(enc_type, labels, unc_value=-1):
+    # Author: Johanna & Tobias
     """
     uncertainty encoding as described in
     https://arxiv.org/pdf/1901.07031.pdf

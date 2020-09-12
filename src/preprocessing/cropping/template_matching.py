@@ -22,6 +22,7 @@ DEFAULT_TEMPLATE = {
 
 
 class TemplateMatcher():
+    # Author: Kristian
     """ Crops an image to a given size using a template """
 
     def __init__(self, template_conf=None, matching_method=cv2.TM_CCORR_NORMED, size=(256, 256)):

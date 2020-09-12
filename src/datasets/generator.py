@@ -24,6 +24,8 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                  # TODO: Add support for non-image features (continous and categorical)
                  # conti_feature_columns=[], cat_feature_columns=[],
                  ):
+
+        # Author: Johanna
         """
         Returns a data generator for an image classifier model, that provides batch wise access
         to the data.
@@ -188,6 +190,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         self.n = len(self) * self.batch_size - 1
 
     def upsample_dataset(self, dataset, upsample_factors):
+        # Author: Tobias
         for label, factor in upsample_factors.items():
             occurances = dataset[dataset[label] == 1.0]
             for i in range(factor):
@@ -195,6 +198,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         return dataset
 
     def preprocess_labels(self, dataset, label_columns, nan_replacement, unc_value, u_enc):
+        # Author: Tobias
         replacement_dict = {}
         if u_enc == 'uzero' or u_enc == 'uzeroes':
             uzeros = label_columns
@@ -234,6 +238,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         return dataset
 
     def get_new_index(self):
+        # Author: Johanna
         """
             Returns a list of ids for the data generation.
         """
@@ -243,6 +248,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         return range(len(self.dataset))
 
     def __len__(self):
+        # Author: Johanna
         """
         Denotes the number of batches per epoch
         """
@@ -254,6 +260,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         return int(np.ceil(num_batches))
 
     def label_generation(self, sample_ids):
+        # Author: Johanna
         """
         Loads one batch of encoded and cleaned labels.
 
@@ -269,6 +276,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         return np.array(labels, dtype=np.float32)
 
     def data_generation(self, sample_ids):
+        # Author: Johanna & Tobias
         """
         Loads one batch of data.
 
@@ -300,6 +308,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         return images, labels
 
     def load_image(self, path, template_type):
+        # Author: Tobias
         """
         Paramter:
             path: the path to the image. Either absolut or relative to repositories root directory.
@@ -354,6 +363,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         return img_array
 
     def __getitem__(self, batch_index):
+        # Author: Johanna
         """
         Loads specific batch of data
 
@@ -377,6 +387,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         return self.data_generation(self.index[start_index:end_index])
 
     def _iter_(self):
+        # Author: Johanna
         """
         An iterable function that samples batches from the dataset.
         """
@@ -385,6 +396,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
             yield self.data_generation(self[i])
 
     def get_label_batch(self, batch_index):
+        # Author: Johanna
         """
         Loads a batch of labels (without loading the images)
 
@@ -407,6 +419,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         return self.label_generation(self.index[start_index:end_index])
 
     def get_labels(self):
+        # Author: Johanna
         """
         Returns all labels encoded and cleaned
         """
@@ -415,6 +428,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         return self.label_generation(self.index)
 
     def get_labels_nonan(self):
+        # Author: Tobias
         """
         Returns all labels with NaNs encoded as 0
         """
@@ -424,6 +438,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         return labels
 
     def on_epoch_end(self):
+        # Author: Johanna
         """
         Updates indexes after each epoch
         """
@@ -431,4 +446,5 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         self.index = self.get_new_index()
         
     def reset(self):
+        # Author: Johanna
         self.on_epoch_end()

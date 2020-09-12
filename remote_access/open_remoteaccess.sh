@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# Author: Tobias
 
 PASS_HASH="sha1:bbea9cdc2680:5b7c455593d9ed710a81c0fa4e5af3e91e941237"
 HOST_IP=0.0.0.0

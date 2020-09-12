@@ -11,6 +11,7 @@ from tensorflow.python.keras import backend as K
 
 
 class WeightedBinaryCrossentropy(Loss):
+    # Author: Tobias
     def __init__(self, positive_class_weights, negative_class_weights):
         super().__init__(
             name="weighted_binary_crossentropy")
@@ -60,6 +61,7 @@ class WeightedBinaryCrossentropy(Loss):
 
 
 class BinaryCrossentropy(Loss):
+    # Author: Tobias
     def __init__(self):
         super().__init__(
             name="custom_binary_crossentropy")
@@ -85,6 +87,7 @@ class BinaryCrossentropy(Loss):
 
 
 def compute_class_weight(datagenerator):
+    # Author: Tobias
     """
     Calculates the class weightes for each class based on the number
     of positive occurances (e.g. 5 examples contained the class 'c' as label)

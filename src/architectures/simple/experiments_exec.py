@@ -1,3 +1,5 @@
+# Author: Tobias
+
 from src.architectures.benchmarks.benchmark_definitions import generate_benchmarks, simple_architecture_experiment, CHEXPERT_COLUMNS
 from src.metrics.losses import WeightedBinaryCrossentropy, compute_class_weight
 from src.metrics.metrics import F2Score

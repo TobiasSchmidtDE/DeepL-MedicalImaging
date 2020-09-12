@@ -11,6 +11,7 @@ WIKI_URL = 'https://oauth2:' + token + \
 
 
 def execute():
+    # Author: Kristian
     print("Start Notebook Creation")
     try:
         basepath = Path(os.getcwd())

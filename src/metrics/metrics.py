@@ -2,10 +2,12 @@ import tensorflow as tf
 
 
 def FBetaScore(precision, recall, beta):
+    # Author: Tobias
     return (1+beta**2) * tf.math.divide_no_nan((precision * recall), (beta**2 * precision + recall))
 
 
 class F2Score(tf.keras.metrics.Metric):
+    # Author: Tobias
     def __init__(self, thresholds=None, top_k=None, class_id=None, name=None, dtype=None):
         super(F2Score, self).__init__(name=name, dtype=dtype)
         self.precision_metric = tf.keras.metrics.Precision(thresholds=thresholds,
@@ -34,6 +36,7 @@ class F2Score(tf.keras.metrics.Metric):
 
 
 class SingleClassMetric(tf.keras.metrics.Metric):
+    # Author: Tobias
     def __init__(self, base_metric, class_id, class_name=None, dtype=None, **vargs):
         name = base_metric.name + "_" + \
             str(class_id if class_name is None else class_name)
@@ -60,6 +63,7 @@ class SingleClassMetric(tf.keras.metrics.Metric):
 
 
 class NaNWrapper(tf.keras.metrics.Metric):
+    # Author: Tobias
     def __init__(self, base_metric, *args, **vargs):
         # initalize a fresh instance of the metric. Otherwise the same base_metric instance
         # might be shared between different wrapper instances and interfere with each other

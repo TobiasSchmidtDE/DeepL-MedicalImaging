@@ -5,6 +5,7 @@ from skmultilearn.model_selection import IterativeStratification
 
 
 def train_test_split(data, test_size=0.2, group='patient_id', labels=None, seed=None):
+    # Author: Kristian & Tobias
     """
      Split dataset into random train and test subsets, while keeping all the
      samples of one patient in the same set.

@@ -7,6 +7,7 @@ from src.utils.storage import upload_file, download_file, delete_file
 
 
 def save_model(model, history, name, filename, description, version='1', upload=True):
+    # Author: Kristian & Tobias
     """
     Wrapper for the model.save function which logs the results
 
@@ -98,6 +99,7 @@ def save_model(model, history, name, filename, description, version='1', upload=
 
 
 def model_set(identifier, attribute, value):
+    # Author: Kristian
     """
     Util function to set attributes in the log of the model
 
@@ -152,6 +154,7 @@ def model_set(identifier, attribute, value):
 
 
 def load_model(identifier=None, name=None, version=None):
+    # Author: Kristian
     """
      Loads a given model (by identifier or by name and version) from gcp-storage if its not
      loaded locally
@@ -213,6 +216,7 @@ def load_model(identifier=None, name=None, version=None):
 
 
 def delete_model(identifier=None, name=None, version=None):
+    # Author: Kristian
     """
     Deletes a given model (by identifier or by name and version)
 
@@ -281,6 +285,7 @@ def delete_model(identifier=None, name=None, version=None):
 
 
 def find_experiment(experiments, identifier=None, name=None, version=None):
+    # Author: Kristian
     """
     Helper function to find an experiment in a list
 
@@ -301,6 +306,7 @@ def find_experiment(experiments, identifier=None, name=None, version=None):
 
 
 def get_experiment(identifier=None, name=None, version=None):
+    # Author: Kristian
     """
     Helper function to find an experiment from the logs
 

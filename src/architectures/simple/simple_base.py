@@ -3,6 +3,7 @@ from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 
 
 def SimpleBaseArchitecture(base_model_fn, num_classes, name=None, train_last_layer_only=False):
+    # Author: Johanna
     """
     Instantiates a customized version of a predifined keras architecture that uses
     the specified keras architecture and adds a dense layer as the last layer.
