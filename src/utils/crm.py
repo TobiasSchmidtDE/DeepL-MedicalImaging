@@ -9,15 +9,69 @@ from scipy import ndimage
 from skimage.measure import regionprops
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+from PIL import Image
+
+
+def generate_ensemble_crm(crms, image_path, thresh):
+    num_models = len(crms)
+    outputs = np.zeros_like(crms)
+    crm_outputs = np.zeros_like(crms)
+
+    for i in range(num_models):
+        original, output, resized_crm = crms[i].generate_crm_combined(
+            image_path)
+        crm_outputs[i] = resized_crm
+        outputs[i] = output
+
+    output = outputs.sum(axis=0) / num_models
+    resized_crm = crm_outputs.sum(axis=0) / num_models
+
+    heatmap = cv2.applyColorMap(
+        np.uint8(255 * resized_crm), cv2.COLORMAP_JET)
+    heatmap = (255 - heatmap)
+    heatmap[np.where(resized_crm < thresh)] = 0
+    aImg = np.float32(heatmap) * 0.8 + np.float32(original)
+    img = 255 * aImg / np.max(aImg)
+
+    bbox, fig = crms[0].plot_crm(original, img, resized_crm, thresh)
+
+    return img, output, fig, bbox
+
+
+def generate_ensemble_crm_class(crms, image_path, thresh, class_idx=0):
+    num_models = len(crms)
+    outputs = np.zeros_like(crms)
+    crm_outputs = np.zeros_like(crms)
+
+    for i in range(num_models):
+        original, output, resized_crm = crms[i].generate_crm_class(
+            image_path, class_idx)
+        crm_outputs[i] = resized_crm
+        outputs[i] = output
+
+    output = outputs.sum(axis=0) / num_models
+    resized_crm = crm_outputs.sum(axis=0) / num_models
+
+    heatmap = cv2.applyColorMap(
+        np.uint8(255 * resized_crm), cv2.COLORMAP_JET)
+    heatmap = (255 - heatmap)
+    heatmap[np.where(resized_crm < thresh)] = 0
+    aImg = np.float32(heatmap) * 0.8 + np.float32(original)
+    img = 255 * aImg / np.max(aImg)
+
+    bbox, fig = crms[0].plot_crm(original, img, resized_crm, thresh)
+
+    return original, img, output, fig, bbox
 
 
 class CRM:
     # Author: Kristian
-    def __init__(self, model, classes, dims=(256, 256)):
+    def __init__(self, model, classes, dims=(256, 256), preprocess_fn=None):
         self.model = model
         self.num_classes = len(classes)
         self.dims = dims
         self.classes = classes
+        self.preprocess_fn = preprocess_fn
 
     def generate_crm_combined_plot(self, image_path, thresh):
         original, resized_crm, img, output = self.single_image_crm(
@@ -28,9 +82,9 @@ class CRM:
         for c, i, p in top:
             print('\t{:15s}\t({})\twith probability \t{}'.format(c, i, p))
 
-        self.plot_crm(original, img, resized_crm, thresh)
+        return self.plot_crm(original, img, resized_crm, thresh)
 
-    def generate_crm_class_plot(self, image_path, thresh, top_num=3):
+    def generate_crm_class_plot(self, image_path, thresh, top_num=3, figsize=(6, 3)):
         original, resized_crm, img, output = self.single_image_crm(
             image_path, thresh)
 
@@ -42,7 +96,8 @@ class CRM:
             original, resized_crm, img, output = self.single_image_crm(
                 image_path, thresh, class_idx=i)
             print('{:15s}({})with probability {}'.format(c, i, p))
-            bbox = self.plot_crm(original, img, resized_crm, thresh)
+            bbox, fig = self.plot_crm(
+                original, img, resized_crm, thresh, figsize=figsize)
             boxes = boxes + bbox.tolist()
 
         plt.figure(figsize=(5, 5))
@@ -50,11 +105,11 @@ class CRM:
         plt.imshow(original)
 
         for bbox in boxes:
-            xs = bbox[1]
-            ys = bbox[0]
-            w = bbox[3] - bbox[1]
-            h = bbox[2] - bbox[0]
-            rect = patches.Rectangle((ys, xs), w, h, linewidth=1,
+            ys = bbox[1]
+            xs = bbox[0]
+            w = bbox[2] - bbox[0]
+            h = bbox[3] - bbox[1]
+            rect = patches.Rectangle((xs, ys), w, h, linewidth=1,
                                      edgecolor='r', facecolor='none')
 
             # Add the patch to the Axes
@@ -62,10 +117,10 @@ class CRM:
 
         plt.show()
 
-    def plot_crm(self, original, img, resized_crm, thresh):
+    def plot_crm(self, original, img, resized_crm, thresh, figsize=(6, 3)):
         aBBox_coord = self.generate_bBox(resized_crm, thresh + 0.3)
 
-        plt.figure(figsize=(15, 10))
+        fig = plt.figure(figsize=figsize)
 
         plt.subplot(131)
         plt.title('Original')
@@ -84,19 +139,17 @@ class CRM:
 
         # Create a Rectangle patch
         for bbox in aBBox_coord:
-            xs = bbox[1]
-            ys = bbox[0]
-            w = bbox[3] - bbox[1]
-            h = bbox[2] - bbox[0]
-            rect = patches.Rectangle((ys, xs), w, h, linewidth=1,
-                                     edgecolor='r', facecolor='none')
+            ys = bbox[1]
+            xs = bbox[0]
+            w = bbox[2] - bbox[0]
+            h = bbox[3] - bbox[1]
+            rect = patches.Rectangle((xs, ys), w, h, linewidth=1 if figsize[0] < 7 else 2,
+                                     edgecolor='#e74c3c', facecolor='none')
 
             # Add the patch to the Axes
             ax.add_patch(rect)
 
-        plt.show()
-
-        return aBBox_coord
+        return aBBox_coord, fig
 
     def get_predictions(self, image):
         image = np.expand_dims(image, axis=0)
@@ -120,13 +173,15 @@ class CRM:
         return original, resized_crm, aImg, output
 
     def generate_crm_combined(self, image_path):
-        original_img = cv2.imread(image_path)
         width, height = self.dims
-        resized_original_image = cv2.resize(original_img, (width, height))
 
-        input_image = img_to_array(resized_original_image)
+        original_img = Image.open(image_path)
+        original_img = original_img.convert(mode="RGB")
+        resized_original_image = original_img.resize(self.dims)
+        input_image = np.asarray(resized_original_image)
+
         input_image = np.expand_dims(input_image, axis=0)
-        input_image = preprocess_input(input_image)
+        input_image = self.preprocess_fn(input_image)
 
         class_weights = self.model.layers[-1].get_weights()[0]
 
@@ -220,8 +275,10 @@ class CRM:
             bbox = b.bbox
             bboxes.append([bbox[1], bbox[0], bbox[3], bbox[2]])
 
-        CRM_bboxes = np.vstack(bboxes)
-
+        if len(bboxes) > 0:
+            CRM_bboxes = np.vstack(bboxes)
+        else:
+            CRM_bboxes = np.array([])
         return CRM_bboxes
 
     # pylint: disable=no-self-use
