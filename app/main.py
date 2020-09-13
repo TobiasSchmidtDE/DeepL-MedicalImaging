@@ -1,3 +1,5 @@
+# Author: Kristian
+
 from src.utils.crm import CRM, decode_predictions, generate_ensemble_crm, generate_ensemble_crm_class
 from src.utils.load_model_crm import build_crm
 import os
@@ -16,7 +18,6 @@ if basepath.name != "idp-radio-1":
 
 load_dotenv(find_dotenv())
 
-
 colors = ['#F79F1F', '#A3CB38', '#1289A7',
           '#D980FA', '#B53471', '#EE5A24', '#009432', '#0652DD', '#9980FA', '#EA2027', '#5758BB', '#ED4C67']
 
@@ -29,6 +30,8 @@ model_type = st.sidebar.selectbox(
 st.set_option('deprecation.showfileUploaderEncoding', False)
 st.title('Model Prediction Visualization')
 
+
+# add model select
 models = os.listdir('models')
 index = models.index(
     'DenseNet121_Chexpert_CWBCE_L1Normed_E3_B32_C0_N12_AugAffine_sharp21_U75_D256_DS9505_2LR4_LF5_Adam_Upsampled')
@@ -39,6 +42,7 @@ if model_type == 'Single':
 
     model_name = st.selectbox('Select the model', models, index=index)
 
+    # load the model and build the crm
     with st.spinner('Loading model....'):
         try:
             crm = build_crm(model_name)
@@ -48,6 +52,7 @@ if model_type == 'Single':
 
     image = st.file_uploader("Upload image")
 
+    # visualization
     with st.spinner('Evaluating image....'):
         if image:
             with open("app/temp.png", "wb") as f:
@@ -127,6 +132,7 @@ elif model_type == 'Ensemble':
 
     model_names = st.multiselect('Select the models', models, default=default)
 
+    # load the models and build the crms
     with st.spinner('Loading models....'):
         try:
             crms = [build_crm(model) for model in model_names]
@@ -136,6 +142,7 @@ elif model_type == 'Ensemble':
 
     image = st.file_uploader("Upload image")
 
+    # visualization
     with st.spinner('Evaluating image....'):
         if image:
             with open("app/temp.png", "wb") as f:
