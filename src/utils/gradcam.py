@@ -1,5 +1,6 @@
 
 # Author: Kristian
+
 import sys
 import os
 import numpy as np
@@ -9,8 +10,6 @@ from tensorflow.keras import backend as K
 
 import tensorflow as tf
 from tensorflow.python.framework import ops as tf_ops
-
-
 from matplotlib import pyplot as plt
 from keras import backend as K
 from keras.preprocessing import image
@@ -18,7 +17,6 @@ from keras.applications.densenet import preprocess_input
 
 
 H, W = 224, 224  # Input shape, defined by the model (model.input_shape)
-# ---------------------------------------------------------------------
 
 
 def load_image(path, preprocess=True):

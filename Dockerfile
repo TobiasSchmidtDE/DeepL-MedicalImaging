@@ -1,10 +1,11 @@
 # This image is based on tensorflow/tensorflow-latest-gpy-py3,
 # and fixes the CUDA and CDNN version
-
 ARG UBUNTU_VERSION=18.04
 ARG ARCH=
 ARG CUDA=10.1
 FROM nvidia/cuda${ARCH:+-$ARCH}:${CUDA}-base-ubuntu${UBUNTU_VERSION} as base
+
+LABEL maintainer="Kristian,Tobias"
 
 
 # ARCH and CUDA are specified again because the FROM directive resets ARGs
@@ -78,17 +79,6 @@ RUN python3 -m pip --no-cache-dir install --upgrade \
 
 # Some TF tools expect a "python" binary
 RUN ln -s $(which python3) /usr/local/bin/python
-
-# Options:
-#   tensorflow
-#   tensorflow-gpu
-#   tf-nightly
-#   tf-nightly-gpu
-# Set --build-arg TF_PACKAGE_VERSION=1.11.0rc0 to install a specific version.
-# Installs the latest version by default.
-#ARG TF_PACKAGE=tf-nightly
-#ARG TF_PACKAGE_VERSION=
-#RUN python3 -m pip install --no-cache-dir ${TF_PACKAGE}${TF_PACKAGE_VERSION:+==${TF_PACKAGE_VERSION}}
 
 # set working directory
 WORKDIR  /srv/idp-radio-1

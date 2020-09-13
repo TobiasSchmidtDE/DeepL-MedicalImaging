@@ -5,7 +5,7 @@ ARG UBUNTU_VERSION=18.04
 ARG ARCH=
 ARG CUDA=10.1
 FROM nvidia/cuda${ARCH:+-$ARCH}:${CUDA}-base-ubuntu${UBUNTU_VERSION} as base
-
+LABEL maintainer="Kristian"
 
 # ARCH and CUDA are specified again because the FROM directive resets ARGs
 ARG ARCH

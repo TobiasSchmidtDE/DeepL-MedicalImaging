@@ -8,6 +8,16 @@ from src.utils.crm import CRM
 
 
 def build_crm(model_name):
+    # Author: Kristian
+    """
+        Utility function to build a CRM class using just the model name
+
+        params:
+            model_name (string)
+        returns:
+            crm (CRM)
+    """
+
     exp_dict = get_experiment(name=model_name, version='1')
     benchmark = benchmark_from_logs(exp_dict['benchmark'])
 
@@ -29,7 +39,6 @@ def build_crm(model_name):
 
     else:
         raise Exception('Architecture not defined in build_crm function')
-
 
     num_classes = len(benchmark.label_columns)
 

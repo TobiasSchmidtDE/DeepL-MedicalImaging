@@ -3,14 +3,6 @@ import cv2
 import numpy as np
 
 
-# more augmentations to explore:
-# torchvision.transforms.CenterCrop
-# torchvision.transforms.ColorJitter
-# torchvision.transforms.RandomCrop
-# torchvision.transforms.RandomPerspective
-# torchvision.transforms.RandomResizedCrop
-# torchvision.transforms.RandomErasing
-
 def augment_image_affine(image, shift=True, rotate=True, zoom=True):
     # Author: Tobias
     """
@@ -30,6 +22,12 @@ def augment_image_affine(image, shift=True, rotate=True, zoom=True):
 
 def augment_color(image):
     # Author: Kristian
+    """
+      Random color transformations
+
+      Parameters:
+        image (Image)
+    """
     img_aug = tfs.Compose([
         tfs.ColorJitter(
             brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1)
@@ -42,6 +40,13 @@ def augment_color(image):
 
 def augment_image(image, augmentation="affine"):
     # Author: Kristian
+    """
+      performs an augmentation on a given image
+
+      Parameters:
+        image (Image)
+        augmentation (string)
+    """
 
     augmentations = augmentation.lower().split(',')
 
