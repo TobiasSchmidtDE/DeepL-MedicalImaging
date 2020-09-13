@@ -1,4 +1,5 @@
 # Author: Johanna
+# official implementation by the authors
 import tensorflow as tf
 
 
