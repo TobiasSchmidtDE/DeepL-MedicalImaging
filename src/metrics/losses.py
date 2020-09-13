@@ -12,6 +12,20 @@ from tensorflow.python.keras import backend as K
 
 class WeightedBinaryCrossentropy(Loss):
     # Author: Tobias
+
+    """
+    Our Custom Weighted Binary Cross Entropy loss function.
+    This loss function calculates the binary cross entropy for all classes individually, 
+    weighting the positive and negative term of the binary cross entropy independently 
+    as proposed by Guendel et al in "Multi-task Learning for Chest X-ray Abnormality 
+    Classification on Noisy Labels"
+
+    Additionally this loss function is also capable of masking certain preditcions.
+    This can be used to calculate the loss for samples which are sparsely labeled, 
+    using only explicitly labled predictions. For this all unlabled classes in any given 
+    sample have to be encoded with -1. This will be ommited when calculating the loss.
+    """
+
     def __init__(self, positive_class_weights, negative_class_weights):
         super().__init__(
             name="weighted_binary_crossentropy")
