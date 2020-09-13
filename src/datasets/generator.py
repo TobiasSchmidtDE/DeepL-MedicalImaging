@@ -86,9 +86,15 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                 Value that nan values are replaced with.
                 Must be a valid value for label columns.
 
-            u_enc (string): (default 'uzeros')
+            u_enc (string|tuple): (default 'uzeros')
                 style of encoding for uncertainty
-                valid values: (uzeros, uones, umulticlass)
+                if given as string:
+                    valid values: (uzeros, uones)
+                if given as list:
+                    we expect a touple of two lists: the first list containing the 
+                    names of all classes that should be encoded as uzeros,
+                    the second list containt all classes that should be encoded as uones.
+                    The two lists must contain all classes. No class can be ommited.
 
             crop (bool): (default False)
                 Wether to crop images or not. Optional template may be supplied.
@@ -113,6 +119,20 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
                 used to provide the corresponding tf.application.*.preprocess_input function
                 which will be called for each image input.
 
+            upsample_factors (dict): (default {})
+                A dictonary specificing which classes should be upsampled.
+                Each key can be any valid class name and its value must be an integer, 
+                specifying how often it should be duplicated.
+
+            augmentation (str): (default None)
+                The name of the augmentation to be used. Either "affine", "color" or "affine, color".
+
+            transformations (dict): (default {})
+                A dictionary specifying the transformations to be used.
+                The key can be 'unsharp_mask', 'gaussian_blur', 'windowing', 'median_filter', 'hist_equalization'.
+                The values must again be a dictionary specifying the parameters that should be passed to 
+                the corresponding transformation functions. See "src/preprocessing/normalizing/normalizing.py"
+                The values can also be empty dictionaries. Then the default values for the parameters are used.
         Returns:
             generator (DataGenerator): generator with the given specifications
         """
@@ -444,7 +464,7 @@ class ImageDataGenerator(tf.keras.utils.Sequence):
         """
 
         self.index = self.get_new_index()
-        
+
     def reset(self):
         # Author: Johanna
         self.on_epoch_end()
