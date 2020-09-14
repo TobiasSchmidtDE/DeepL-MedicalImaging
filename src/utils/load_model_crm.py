@@ -1,7 +1,9 @@
 import tensorflow as tf
 from tensorflow.keras.applications import InceptionV3, Xception, DenseNet121, InceptionResNetV2, ResNet152V2, NASNetLarge, DenseNet169
 
-from src.architectures.benchmarks.benchmark_definitions import benchmark_from_logs, simple_architecture_experiment
+from src.architectures.benchmarks.benchmark_definitions import simple_architecture_experiment
+from src.architectures.simple.load_model import benchmark_from_logs
+
 from src.utils.save_model import get_experiment, load_model
 from src.architectures.simple.simple_base import SimpleBaseArchitecture
 from src.utils.crm import CRM

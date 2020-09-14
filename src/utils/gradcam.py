@@ -10,7 +10,6 @@ from tensorflow.keras import backend as K
 
 import tensorflow as tf
 from tensorflow.python.framework import ops as tf_ops
-from matplotlib import pyplot as plt
 from keras import backend as K
 from keras.preprocessing import image
 from keras.applications.densenet import preprocess_input
