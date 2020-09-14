@@ -65,3 +65,22 @@ To run with root access inside the conatiner use:
 ```
 docker exec --user root -it radio  /bin/bash
 ```
+
+
+## Run the demo application
+
+1. Clone this repository
+
+2. Install [Docker](https://docs.docker.com/engine/install/ubuntu/)
+
+3. Build the docker image
+```
+docker build . -f Dockerfile-streamlit --tag idp1-demo
+```
+
+4. Start the docker container
+```
+docker run -v $PWD:/srv/idp-radio-1 --name radio idp1-demo
+```
+
+5. The application will run on port `1337` of your local machine
